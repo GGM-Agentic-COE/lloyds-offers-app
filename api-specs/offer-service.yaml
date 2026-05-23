@@ -1,0 +1,560 @@
+openapi: 3.0.3
+info:
+  title: Offer Service - Smart Location-Based Offers Platform
+  description: Manages offers, redemptions, and offer history for the Smart Location-Based Offers Platform.
+  version: 1.0.0
+  contact:
+    name: Platform Engineering
+servers:
+  - url: https://api.offers-platform.lloyds.com
+    description: Production
+  - url: https://api.offers-platform.staging.lloyds.com
+    description: Staging
+
+security:
+  - BearerAuth: []
+
+paths:
+  /api/v1/offers:
+    get:
+      operationId: getNearbyOffers
+      summary: Get nearby offers
+      tags: [Offers]
+      parameters:
+        - name: lat
+          in: query
+          required: true
+          schema:
+            type: number
+            format: double
+            minimum: -90
+            maximum: 90
+        - name: lng
+          in: query
+          required: true
+          schema:
+            type: number
+            format: double
+            minimum: -180
+            maximum: 180
+        - name: radiusMeters
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 100
+            maximum: 50000
+            default: 5000
+        - name: categories
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+          style: form
+          explode: false
+        - name: sort
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: [nearest, newest, expiring]
+            default: nearest
+        - name: pageNumber
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 0
+            default: 0
+        - name: pageSize
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 20
+      responses:
+        '200':
+          description: List of nearby offers
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OffersPageResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /api/v1/offers/{offerId}:
+    get:
+      operationId: getOfferDetail
+      summary: Get offer detail with terms, merchant info, and distance
+      tags: [Offers]
+      parameters:
+        - $ref: '#/components/parameters/OfferId'
+      responses:
+        '200':
+          description: Offer detail
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OfferDetail'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /api/v1/offers/{offerId}/redeem:
+    post:
+      operationId: redeemOffer
+      summary: Generate QR redemption token
+      tags: [Redemptions]
+      parameters:
+        - $ref: '#/components/parameters/OfferId'
+      responses:
+        '200':
+          description: Redemption token generated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RedemptionTokenResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          description: Offer already redeemed or expired
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/v1/offers/{offerId}/confirm-redemption:
+    post:
+      operationId: confirmRedemption
+      summary: Merchant confirms redemption
+      tags: [Redemptions]
+      security:
+        - MerchantAuth: []
+      parameters:
+        - $ref: '#/components/parameters/OfferId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConfirmRedemptionRequest'
+      responses:
+        '200':
+          description: Redemption confirmed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConfirmRedemptionResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /api/v1/offers/history:
+    get:
+      operationId: getOfferHistory
+      summary: Get user's offer history
+      tags: [History]
+      parameters:
+        - name: status
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: [redeemed, expired]
+        - name: pageNumber
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 0
+            default: 0
+        - name: pageSize
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 20
+      responses:
+        '200':
+          description: Offer history
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OfferHistoryResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /api/v1/offers/{offerId}/report:
+    post:
+      operationId: reportOffer
+      summary: Report an offer
+      tags: [Offers]
+      parameters:
+        - $ref: '#/components/parameters/OfferId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReportOfferRequest'
+      responses:
+        '201':
+          description: Report submitted
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /api/v1/offers/{offerId}/rate:
+    post:
+      operationId: rateOffer
+      summary: Rate an offer
+      tags: [Offers]
+      parameters:
+        - $ref: '#/components/parameters/OfferId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RateOfferRequest'
+      responses:
+        '201':
+          description: Rating submitted
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /api/v1/offers/{offerId}/share:
+    post:
+      operationId: shareOffer
+      summary: Generate share link for an offer
+      tags: [Offers]
+      parameters:
+        - $ref: '#/components/parameters/OfferId'
+      responses:
+        '200':
+          description: Share link generated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ShareOfferResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /health:
+    get:
+      operationId: healthCheck
+      summary: Liveness health check
+      tags: [Health]
+      security: []
+      responses:
+        '200':
+          description: Service is alive
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthResponse'
+
+  /health/ready:
+    get:
+      operationId: readinessCheck
+      summary: Readiness health check
+      tags: [Health]
+      security: []
+      responses:
+        '200':
+          description: Service is ready
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthResponse'
+        '503':
+          description: Service not ready
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthResponse'
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+    MerchantAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: Merchant-specific JWT authentication
+
+  parameters:
+    OfferId:
+      name: offerId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+
+  responses:
+    BadRequest:
+      description: Bad request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    Unauthorized:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+
+
+  parameters:
+    CorrelationId:
+      name: X-Correlation-Id
+      in: header
+      required: false
+      description: Unique ID for distributed tracing
+      schema:
+        type: string
+        format: uuid
+    IdempotencyKey:
+      name: Idempotency-Key
+      in: header
+      required: true
+      description: Idempotent write key (required on POST/PUT/PATCH/DELETE)
+      schema:
+        type: string
+
+  schemas:
+    OfferSummary:
+      type: object
+      properties:
+        offerId:
+          type: string
+          format: uuid
+        title:
+          type: string
+        description:
+          type: string
+        merchantName:
+          type: string
+        category:
+          type: string
+        discountValue:
+          type: string
+        distanceMeters:
+          type: number
+          format: double
+        expiresAt:
+          type: string
+          format: date-time
+        imageUrl:
+          type: string
+          format: uri
+
+    OfferDetail:
+      type: object
+      properties:
+        offerId:
+          type: string
+          format: uuid
+        title:
+          type: string
+        description:
+          type: string
+        terms:
+          type: string
+        discountValue:
+          type: string
+        expiresAt:
+          type: string
+          format: date-time
+        imageUrl:
+          type: string
+          format: uri
+        distanceMeters:
+          type: number
+          format: double
+        merchant:
+          $ref: '#/components/schemas/MerchantInfo'
+
+    MerchantInfo:
+      type: object
+      properties:
+        merchantId:
+          type: string
+          format: uuid
+        name:
+          type: string
+        address:
+          type: string
+        lat:
+          type: number
+          format: double
+        lng:
+          type: number
+          format: double
+        logoUrl:
+          type: string
+          format: uri
+
+    OffersPageResponse:
+      type: object
+      properties:
+        content:
+          type: array
+          items:
+            $ref: '#/components/schemas/OfferSummary'
+        pageNumber:
+          type: integer
+        pageSize:
+          type: integer
+        totalElements:
+          type: integer
+        totalPages:
+          type: integer
+
+    RedemptionTokenResponse:
+      type: object
+      properties:
+        redemptionToken:
+          type: string
+        code:
+          type: string
+        expiresAt:
+          type: string
+          format: date-time
+
+    ConfirmRedemptionRequest:
+      type: object
+      required: [redemptionToken]
+      properties:
+        redemptionToken:
+          type: string
+
+    ConfirmRedemptionResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [confirmed]
+        redeemedAt:
+          type: string
+          format: date-time
+
+    OfferHistoryResponse:
+      type: object
+      properties:
+        content:
+          type: array
+          items:
+            $ref: '#/components/schemas/OfferHistoryItem'
+        totalSaved:
+          type: number
+          format: double
+        pageNumber:
+          type: integer
+        pageSize:
+          type: integer
+        totalElements:
+          type: integer
+        totalPages:
+          type: integer
+
+    OfferHistoryItem:
+      type: object
+      properties:
+        offerId:
+          type: string
+          format: uuid
+        title:
+          type: string
+        merchantName:
+          type: string
+        status:
+          type: string
+          enum: [redeemed, expired]
+        redeemedAt:
+          type: string
+          format: date-time
+        savedAmount:
+          type: number
+          format: double
+
+    ReportOfferRequest:
+      type: object
+      required: [type]
+      properties:
+        type:
+          type: string
+          enum: [expired, invalid, inappropriate, other]
+        description:
+          type: string
+          maxLength: 500
+
+    RateOfferRequest:
+      type: object
+      required: [stars]
+      properties:
+        stars:
+          type: integer
+          minimum: 1
+          maximum: 5
+        review:
+          type: string
+          maxLength: 200
+
+    ShareOfferResponse:
+      type: object
+      properties:
+        shareUrl:
+          type: string
+          format: uri
+        offerId:
+          type: string
+          format: uuid
+
+    HealthResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [UP, DOWN]
+
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+        message:
+          type: string
+        timestamp:
+          type: string
+          format: date-time

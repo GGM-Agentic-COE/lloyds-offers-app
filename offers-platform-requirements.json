@@ -1,0 +1,817 @@
+{
+  "document_title": "Smart Location-Based Offers Platform for Personalized Customer Engagement",
+  "source_summary": "A mobile app that integrates geofencing, behavioral analytics, and transaction data to deliver targeted, real-time offers to users based on their location, activity, and spending patterns, with seamless redemption at partner merchants.",
+
+  "functional_requirements": [
+    {
+      "id": "FR-01",
+      "title": "Real-Time Location-Based Offer Delivery",
+      "description": "The system must deliver offers to users in real time based on their current location and time of day when they enter a geofenced area during merchant offer hours",
+      "user_facing": true,
+      "priority": "Must-Have",
+      "baseline_classification": "new",
+      "baseline_reference": null,
+      "baseline_impact": null,
+      "citation": {
+        "source_reference": "The app must deliver location-based offers to users in real time based on their current location and time of day",
+        "source_location": "Functional Requirements - Must Have - FR1"
+      },
+      "reasoning": "Core capability of the platform. Priority Must-Have from explicit 'must' language. Combines FR1 and AC1 which describe the same capability."
+    },
+    {
+      "id": "FR-02",
+      "title": "User Location Tracking Controls",
+      "description": "The system must allow users to control location tracking settings with options: always-on, app-open only, or off",
+      "user_facing": true,
+      "priority": "Must-Have",
+      "baseline_classification": "new",
+      "baseline_reference": null,
+      "baseline_impact": null,
+      "citation": {
+        "source_reference": "The app must allow users to control location tracking settings (always-on, app-open only, or off)",
+        "source_location": "Functional Requirements - Must Have - FR2"
+      },
+      "reasoning": "Privacy control capability. Must-Have from explicit 'must' language. Maps to AC2 and US2."
+    },
+    {
+      "id": "FR-03",
+      "title": "Transaction History Analysis for Personalization",
+      "description": "The system must analyze user transaction history to personalize offer recommendations based on spending patterns",
+      "user_facing": false,
+      "priority": "Must-Have",
+      "baseline_classification": "new",
+      "baseline_reference": null,
+      "baseline_impact": null,
+      "citation": {
+        "source_reference": "The app must analyze user transaction history to personalize offer recommendations",
+        "source_location": "Functional Requirements - Must Have - FR3"
+      },
+      "reasoning": "Backend analytics capability that drives personalization. Must-Have from explicit 'must' language. Maps to US5."
+    },
+    {
+      "id": "FR-04",
+      "title": "Instant Offer Redemption at Merchant",
+      "description": "Users must be able to redeem offers instantly via a mobile interface at participating merchants, with the offer marked as redeemed and merchant receiving confirmation",
+      "user_facing": true,
+      "priority": "Must-Have",
+      "baseline_classification": "new",
+      "baseline_reference": null,
+      "baseline_impact": null,
+      "citation": {
+        "source_reference": "Users must be able to redeem offers instantly via a mobile interface at participating merchants",
+        "source_location": "Functional Requirements - Must Have - FR4"
+      },
+      "reasoning": "Core redemption flow. Must-Have from explicit 'must' language. Maps to US3 and AC3."
+    },
+    {
+      "id": "FR-05",
+      "title": "Push Notification Delivery",
+      "description": "The system must support push notifications for relevant offers delivered within 2 seconds of a qualifying geofence event",
+      "user_facing": true,
+      "priority": "Must-Have",
+      "baseline_classification": "new",
+      "baseline_reference": null,
+      "baseline_impact": null,
+      "citation": {
+        "source_reference": "The app must support push notifications for relevant offers",
+        "source_location": "Functional Requirements - Must Have - FR5"
+      },
+      "reasoning": "Primary delivery channel for offers. Must-Have from explicit 'must' language. 2-second target from NFR Performance section."
+    },
+    {
+      "id": "FR-06",
+      "title": "Offer History and Redemption Status",
+      "description": "Users must be able to view their offer history including all redeemed and active offers with status and date",
+      "user_facing": true,
+      "priority": "Must-Have",
+      "baseline_classification": "new",
+      "baseline_reference": null,
+      "baseline_impact": null,
+      "citation": {
+        "source_reference": "Users must be able to view their offer history and redemption status",
+        "source_location": "Functional Requirements - Must Have - FR6"
+      },
+      "reasoning": "User transparency feature. Must-Have from explicit 'must' language. Maps to US4 and AC4."
+    },
+    {
+      "id": "FR-07",
+      "title": "Data Sharing Opt-Out and Account Deletion",
+      "description": "Users must be able to opt out of data sharing at any time (stopping collection of transaction and location data, disabling personalized offers) and request account/data deletion with completion within 30 days",
+      "user_facing": true,
+      "priority": "Must-Have",
+      "baseline_classification": "new",
+      "baseline_reference": null,
+      "baseline_impact": null,
+      "citation": {
+        "source_reference": "The app must allow users to opt out of data sharing and delete their account/data",
+        "source_location": "Functional Requirements - Must Have - FR7"
+      },
+      "reasoning": "Privacy and compliance capability. Must-Have from explicit 'must' language. Maps to US10, AC5, and AC10. 30-day deletion window from AC10."
+    },
+    {
+      "id": "FR-08",
+      "title": "Report Expired or Invalid Offers",
+      "description": "Users should be able to report expired or invalid offers, receive confirmation of report submission, and have the offer flagged for review",
+      "user_facing": true,
+      "priority": "Should-Have",
+      "baseline_classification": "new",
+      "baseline_reference": null,
+      "baseline_impact": null,
+      "citation": {
+        "source_reference": "The app should allow users to report expired or invalid offers",
+        "source_location": "Functional Requirements - Should Have - FR8"
+      },
+      "reasoning": "Quality control mechanism. Should-Have from explicit 'should' language. Maps to US8 and AC6."
+    },
+    {
+      "id": "FR-09",
+      "title": "Notification Frequency Limiting",
+      "description": "The system should limit offer notifications to one per offer per day per user, suppressing duplicate notifications when re-entering the same geofenced area",
+      "user_facing": false,
+      "priority": "Should-Have",
+      "baseline_classification": "new",
+      "baseline_reference": null,
+      "baseline_impact": null,
+      "citation": {
+        "source_reference": "The app should limit offer notifications to one per offer per day per user",
+        "source_location": "Functional Requirements - Should Have - FR9"
+      },
+      "reasoning": "Anti-spam mechanism. Should-Have from explicit 'should' language. Maps to US9 and AC7."
+    },
+    {
+      "id": "FR-10",
+      "title": "Merchant Analytics Dashboard",
+      "description": "Merchants should have access to a dashboard displaying campaign analytics including impressions, redemptions, and user engagement metrics",
+      "user_facing": true,
+      "priority": "Should-Have",
+      "baseline_classification": "new",
+      "baseline_reference": null,
+      "baseline_impact": null,
+      "citation": {
+        "source_reference": "Merchants should have access to a dashboard with analytics on offer performance and user engagement",
+        "source_location": "Functional Requirements - Should Have - FR10"
+      },
+      "reasoning": "Merchant-facing capability. Should-Have from explicit 'should' language. Maps to US7 and AC9."
+    },
+    {
+      "id": "FR-11",
+      "title": "Social Sharing of Offers",
+      "description": "Users could share offers with friends via social channels",
+      "user_facing": true,
+      "priority": "Nice-to-Have",
+      "baseline_classification": "new",
+      "baseline_reference": null,
+      "baseline_impact": null,
+      "citation": {
+        "source_reference": "The app could support social sharing of offers with friends",
+        "source_location": "Functional Requirements - Nice to Have - FR11"
+      },
+      "reasoning": "Viral growth feature. Nice-to-Have from explicit 'could' language."
+    },
+    {
+      "id": "FR-12",
+      "title": "Personalized Recommendations from Reviews",
+      "description": "The system could provide personalized recommendations based on user reviews and ratings",
+      "user_facing": true,
+      "priority": "Nice-to-Have",
+      "baseline_classification": "new",
+      "baseline_reference": null,
+      "baseline_impact": null,
+      "citation": {
+        "source_reference": "The app could provide personalized recommendations based on user reviews and ratings",
+        "source_location": "Functional Requirements - Nice to Have - FR12"
+      },
+      "reasoning": "Enhanced personalization. Nice-to-Have from explicit 'could' language."
+    },
+    {
+      "id": "FR-13",
+      "title": "Wearable Device Integration",
+      "description": "The system could integrate with wearable devices for proximity-based notifications",
+      "user_facing": true,
+      "priority": "Nice-to-Have",
+      "baseline_classification": "new",
+      "baseline_reference": null,
+      "baseline_impact": null,
+      "citation": {
+        "source_reference": "The app could integrate with wearable devices for proximity-based notifications",
+        "source_location": "Functional Requirements - Nice to Have - FR13"
+      },
+      "reasoning": "Extended device support. Nice-to-Have from explicit 'could' language."
+    },
+    {
+      "id": "FR-14",
+      "title": "Geofence Boundary Enforcement",
+      "description": "The system must not deliver offers to users when they are outside supported cities or geofenced areas",
+      "user_facing": false,
+      "priority": "Should-Have",
+      "baseline_classification": "new",
+      "baseline_reference": null,
+      "baseline_impact": null,
+      "citation": {
+        "source_reference": "As a User, Not receive offers when outside supported cities, Prevents irrelevant notifications",
+        "source_location": "User Stories - US6"
+      },
+      "reasoning": "Extracted from US6 as a distinct testable capability not covered by other FRs. Should-Have based on Medium priority in source."
+    },
+    {
+      "id": "FR-15",
+      "title": "User Notification Preferences",
+      "description": "Users must be able to control notification preferences including always-on push notifications versus in-app only delivery",
+      "user_facing": true,
+      "priority": "Must-Have",
+      "baseline_classification": "new",
+      "baseline_reference": null,
+      "baseline_impact": null,
+      "citation": {
+        "source_reference": "Allow users to control notification preferences (always-on vs. app-open only)",
+        "source_location": "Proposed Solution - Key Decisions"
+      },
+      "reasoning": "Distinct from FR-02 (location tracking control). This is about notification delivery channel preference. Must-Have as it's listed as a key decision."
+    },
+    {
+      "id": "FR-16",
+      "title": "User Registration and Authentication",
+      "description": "Users must be able to create an account and authenticate to access personalized features, offer history, and privacy settings",
+      "user_facing": true,
+      "priority": "Must-Have",
+      "baseline_classification": "new",
+      "baseline_reference": null,
+      "baseline_impact": null,
+      "citation": {
+        "source_reference": "Given a user is logged in, When They navigate to the offer history screen",
+        "source_location": "Acceptance Criteria - AC4"
+      },
+      "reasoning": "AC4 implies authentication exists ('logged in'). Multiple features depend on user identity. Must-Have as it's a prerequisite for core functionality."
+    },
+    {
+      "id": "FR-17",
+      "title": "Merchant Registration and Onboarding",
+      "description": "Merchants must be able to register on the platform and undergo a quality review process before their campaigns go live",
+      "user_facing": true,
+      "priority": "Must-Have",
+      "baseline_classification": "new",
+      "baseline_reference": null,
+      "baseline_impact": null,
+      "citation": {
+        "source_reference": "Merchant onboarding subject to quality review",
+        "source_location": "Scope & Constraints - Constraints"
+      },
+      "reasoning": "Implied by the constraint that merchants must be onboarded with quality review. Must-Have as merchant participation is core to the platform."
+    },
+    {
+      "id": "FR-18",
+      "title": "Merchant Campaign Management",
+      "description": "Merchants must be able to create, configure, and manage offer campaigns including setting geofence areas, offer hours, and target audience parameters",
+      "user_facing": true,
+      "priority": "Must-Have",
+      "baseline_classification": "new",
+      "baseline_reference": null,
+      "baseline_impact": null,
+      "citation": {
+        "source_reference": "10,000 simultaneous merchant campaigns",
+        "source_location": "Non-Functional Requirements - Scalability"
+      },
+      "reasoning": "The platform must support 10,000 campaigns — implying merchants can create and manage them. Must-Have as offers cannot exist without campaign management."
+    },
+    {
+      "id": "FR-19",
+      "title": "Payment Provider Integration",
+      "description": "The system must integrate with payment providers to securely access and analyze user transaction history for offer personalization",
+      "user_facing": false,
+      "priority": "Must-Have",
+      "baseline_classification": "new",
+      "baseline_reference": null,
+      "baseline_impact": null,
+      "citation": {
+        "source_reference": "Integrate with payment providers to analyze transaction history securely",
+        "source_location": "Proposed Solution - Key Decisions"
+      },
+      "reasoning": "Key architectural decision and dependency. Must-Have as FR-03 (personalization) depends on this integration."
+    },
+    {
+      "id": "FR-20",
+      "title": "User Consent Management",
+      "description": "The system must implement transparent consent flows for location tracking and transaction data access, collecting explicit user consent before accessing any personal data",
+      "user_facing": true,
+      "priority": "Must-Have",
+      "baseline_classification": "new",
+      "baseline_reference": null,
+      "baseline_impact": null,
+      "citation": {
+        "source_reference": "User consent required for location and transaction data access",
+        "source_location": "Scope & Constraints - Constraints"
+      },
+      "reasoning": "Regulatory requirement (GDPR/CCPA) and explicit constraint. Must-Have for compliance. Mitigation strategy also mentions 'Transparent consent flows'."
+    },
+    {
+      "id": "FR-21",
+      "title": "Geofence Zone Management",
+      "description": "The system must support creation, modification, and deletion of geofence zones associated with merchant locations, including defining radius/polygon boundaries and active hours",
+      "user_facing": false,
+      "priority": "Must-Have",
+      "baseline_classification": "new",
+      "baseline_reference": null,
+      "baseline_impact": null,
+      "citation": {
+        "source_reference": "Develop a mobile app that integrates geofencing, behavioral analytics, and transaction data to deliver targeted, real-time offers",
+        "source_location": "Proposed Solution - Approach"
+      },
+      "reasoning": "Geofencing is the core delivery mechanism. FR-01 describes delivery but not the management of geofence zones themselves. Without this, offers cannot be spatially targeted. Must-Have as prerequisite to FR-01."
+    },
+    {
+      "id": "FR-22",
+      "title": "In-App Offer Feed",
+      "description": "Users must be able to browse available offers within the app, filtered by proximity, category, and relevance, without relying solely on push notifications",
+      "user_facing": true,
+      "priority": "Must-Have",
+      "baseline_classification": "new",
+      "baseline_reference": null,
+      "baseline_impact": null,
+      "citation": {
+        "source_reference": "Offers are delivered via push notifications or in-app, with seamless redemption at partner merchants",
+        "source_location": "Proposed Solution - Approach"
+      },
+      "reasoning": "Source explicitly states 'or in-app' as a delivery channel alongside push. Users who disable push or have notification preferences set to in-app-only need a browsable offer feed. Must-Have as it's a stated delivery channel."
+    },
+    {
+      "id": "FR-23",
+      "title": "Offer Expiry and Lifecycle Management",
+      "description": "The system must automatically expire offers based on their validity period, remove expired offers from user views, and prevent redemption of expired offers",
+      "user_facing": false,
+      "priority": "Must-Have",
+      "baseline_classification": "new",
+      "baseline_reference": null,
+      "baseline_impact": null,
+      "citation": {
+        "source_reference": "As a User, Report an expired or invalid offer",
+        "source_location": "User Stories - US8"
+      },
+      "reasoning": "US8 and AC6 reference expired offers, implying offers have lifecycles. Without automatic expiry management, users would constantly encounter stale offers. Must-Have for data integrity and UX."
+    },
+    {
+      "id": "FR-24",
+      "title": "User Profile and Preference Management",
+      "description": "Users must be able to view and update their profile information and set spending category preferences to improve offer relevance",
+      "user_facing": true,
+      "priority": "Should-Have",
+      "baseline_classification": "new",
+      "baseline_reference": null,
+      "baseline_impact": null,
+      "citation": {
+        "source_reference": "The offer matches the user's preferences and transaction history",
+        "source_location": "Acceptance Criteria - AC1"
+      },
+      "reasoning": "AC1 references 'user's preferences' as a matching criterion. Users need a way to set/update these preferences. Should-Have as transaction history can bootstrap personalization without explicit preferences."
+    },
+    {
+      "id": "FR-25",
+      "title": "Offer Content Creation by Merchants",
+      "description": "Merchants must be able to create offer content including title, description, terms and conditions, images, discount value, validity period, and redemption limits",
+      "user_facing": true,
+      "priority": "Must-Have",
+      "baseline_classification": "new",
+      "baseline_reference": null,
+      "baseline_impact": null,
+      "citation": {
+        "source_reference": "Partner with merchants for exclusive, redeemable offers",
+        "source_location": "Proposed Solution - Key Decisions"
+      },
+      "reasoning": "Offers must be created before they can be delivered. FR-18 covers campaign management (targeting, scheduling) but not the offer content itself. Must-Have as the platform cannot function without offer content."
+    },
+    {
+      "id": "FR-26",
+      "title": "Geofence Entry/Exit Event Detection",
+      "description": "The system must detect when a user enters or exits a geofenced area and trigger the offer matching pipeline within the 2-second delivery window",
+      "user_facing": false,
+      "priority": "Must-Have",
+      "baseline_classification": "new",
+      "baseline_reference": null,
+      "baseline_impact": null,
+      "citation": {
+        "source_reference": "A user with location tracking enabled enters a geofenced area during merchant offer hours, When The user is detected within the geofence",
+        "source_location": "Acceptance Criteria - AC1"
+      },
+      "reasoning": "AC1 explicitly describes geofence entry detection as the trigger. This is the event-driven mechanism that connects location to offer delivery. Distinct from FR-21 (zone management) and FR-01 (delivery). Must-Have as the triggering mechanism."
+    },
+    {
+      "id": "FR-27",
+      "title": "Duplicate Redemption Prevention",
+      "description": "The system must prevent users from redeeming the same offer more than once, displaying clear status when an offer has already been redeemed",
+      "user_facing": true,
+      "priority": "Must-Have",
+      "baseline_classification": "new",
+      "baseline_reference": null,
+      "baseline_impact": null,
+      "citation": {
+        "source_reference": "Tracks savings and avoids duplicate redemptions",
+        "source_location": "User Stories - US4"
+      },
+      "reasoning": "US4 explicitly mentions avoiding duplicate redemptions. Without this, merchants face financial loss from multi-use of single-use offers. Must-Have for platform integrity."
+    }
+  ],
+
+  "non_functional_requirements": [
+    {
+      "id": "NFR-01",
+      "category": "Performance",
+      "title": "Offer Notification Delivery Latency",
+      "description": "Offer notifications must be delivered within 2 seconds of a qualifying geofence event",
+      "priority": "Must-Have",
+      "citation": {
+        "source_reference": "Offer notifications must be delivered within 2 seconds of a qualifying event (e.g., entering a geofenced area)",
+        "source_location": "Non-Functional Requirements - Performance"
+      },
+      "reasoning": "Explicit measurable target provided. Must-Have from 'must' language. Also a KPI target."
+    },
+    {
+      "id": "NFR-02",
+      "category": "Performance",
+      "title": "App Screen Load Time",
+      "description": "App screens must load within 1 second on devices from the last 3 years",
+      "priority": "Must-Have",
+      "citation": {
+        "source_reference": "App screens must load within 1 second on devices from the last 3 years",
+        "source_location": "Non-Functional Requirements - Performance"
+      },
+      "reasoning": "Explicit measurable target with device scope defined. Must-Have from 'must' language."
+    },
+    {
+      "id": "NFR-03",
+      "category": "Security",
+      "title": "Data Encryption in Transit and at Rest",
+      "description": "All user data must be encrypted in transit (TLS 1.2+) and at rest (AES-256 or equivalent)",
+      "priority": "Must-Have",
+      "citation": {
+        "source_reference": "All user data must be encrypted in transit and at rest",
+        "source_location": "Non-Functional Requirements - Security"
+      },
+      "reasoning": "Explicit security requirement. Must-Have from 'must' language. Encryption standards inferred from industry best practice."
+    },
+    {
+      "id": "NFR-04",
+      "category": "Compliance",
+      "title": "GDPR Compliance",
+      "description": "The system must comply with GDPR for data privacy, user consent, right to erasure, and data portability",
+      "priority": "Must-Have",
+      "citation": {
+        "source_reference": "The app must comply with GDPR and CCPA for data privacy and user consent",
+        "source_location": "Non-Functional Requirements - Security"
+      },
+      "reasoning": "Explicit regulatory requirement. Split from CCPA as they are distinct regulations with different obligations. Must-Have as regulatory compliance is mandatory."
+    },
+    {
+      "id": "NFR-05",
+      "category": "Compliance",
+      "title": "CCPA Compliance",
+      "description": "The system must comply with CCPA for California consumer data privacy rights including right to know, delete, and opt-out of sale",
+      "priority": "Must-Have",
+      "citation": {
+        "source_reference": "The app must comply with GDPR and CCPA for data privacy and user consent",
+        "source_location": "Non-Functional Requirements - Security"
+      },
+      "reasoning": "Explicit regulatory requirement. Split from GDPR as a separate compliance obligation. Must-Have as regulatory compliance is mandatory."
+    },
+    {
+      "id": "NFR-06",
+      "category": "Scalability",
+      "title": "Concurrent User Capacity",
+      "description": "The platform must support at least 1 million concurrent users without performance degradation",
+      "priority": "Must-Have",
+      "citation": {
+        "source_reference": "The platform must support at least 1 million concurrent users and 10,000 simultaneous merchant campaigns without degradation",
+        "source_location": "Non-Functional Requirements - Scalability"
+      },
+      "reasoning": "Explicit scalability target. Split from campaign capacity as they are independently testable. Must-Have from 'must' language."
+    },
+    {
+      "id": "NFR-07",
+      "category": "Scalability",
+      "title": "Simultaneous Campaign Capacity",
+      "description": "The platform must support at least 10,000 simultaneous merchant campaigns without performance degradation",
+      "priority": "Must-Have",
+      "citation": {
+        "source_reference": "The platform must support at least 1 million concurrent users and 10,000 simultaneous merchant campaigns without degradation",
+        "source_location": "Non-Functional Requirements - Scalability"
+      },
+      "reasoning": "Explicit scalability target for merchant side. Split from user capacity. Must-Have from 'must' language."
+    },
+    {
+      "id": "NFR-08",
+      "category": "Accessibility",
+      "title": "WCAG 2.1 AA Compliance",
+      "description": "The app must meet WCAG 2.1 AA standards including support for screen readers, high-contrast modes, and adjustable font sizes",
+      "priority": "Must-Have",
+      "citation": {
+        "source_reference": "The app must meet WCAG 2.1 AA standards, including support for screen readers, high-contrast modes, and adjustable font sizes",
+        "source_location": "Non-Functional Requirements - Accessibility"
+      },
+      "reasoning": "Explicit accessibility standard with specific features listed. Must-Have from 'must' language. Maps to AC8."
+    },
+    {
+      "id": "NFR-09",
+      "category": "Availability",
+      "title": "System Uptime",
+      "description": "The system must maintain 99.9% uptime with automated failover and recovery for critical services",
+      "priority": "Must-Have",
+      "citation": {
+        "source_reference": "The system must maintain 99.9% uptime, with automated failover and recovery for critical services",
+        "source_location": "Non-Functional Requirements - Reliability"
+      },
+      "reasoning": "Explicit availability target with recovery mechanism specified. Must-Have from 'must' language."
+    },
+    {
+      "id": "NFR-10",
+      "category": "Performance",
+      "title": "Battery Efficiency",
+      "description": "Geofencing logic must be optimized to minimize battery drain from continuous location tracking",
+      "priority": "Should-Have",
+      "citation": {
+        "source_reference": "Battery drain from continuous location tracking - Mitigation: Optimize geofencing logic, allow user control over tracking frequency",
+        "source_location": "Dependencies & Risks"
+      },
+      "reasoning": "Identified as a medium-likelihood risk with explicit mitigation strategy. Should-Have as it's a mitigation rather than a hard requirement. No specific target defined — flagged in gaps."
+    },
+    {
+      "id": "NFR-11",
+      "category": "Scalability",
+      "title": "Geofence Event Processing Throughput",
+      "description": "The system must process geofence entry/exit events at a rate sufficient to serve 1 million concurrent users, each potentially triggering multiple geofence events per hour, without exceeding the 2-second delivery SLA",
+      "priority": "Must-Have",
+      "citation": {
+        "source_reference": "The platform must support at least 1 million concurrent users... Offer notifications must be delivered within 2 seconds",
+        "source_location": "Non-Functional Requirements - Scalability and Performance"
+      },
+      "reasoning": "Combining NFR-01 (2s latency) with NFR-06 (1M users) implies a massive event processing throughput requirement. This is a distinct scalability concern from user connections or campaign count."
+    },
+    {
+      "id": "NFR-12",
+      "category": "Security",
+      "title": "Location Data Minimization",
+      "description": "The system must implement data minimization principles — collecting only the location precision necessary for geofence matching and not storing continuous location trails",
+      "priority": "Must-Have",
+      "citation": {
+        "source_reference": "The app must comply with GDPR... Utilize real-time location tracking with user consent for precise offer delivery",
+        "source_location": "Non-Functional Requirements - Security; Proposed Solution - Key Decisions"
+      },
+      "reasoning": "GDPR Article 5(1)(c) requires data minimization. Continuous location storage would be disproportionate to the purpose of offer delivery. Must-Have for GDPR compliance."
+    }
+  ],
+
+  "constraints": [
+    {
+      "id": "CON-01",
+      "type": "Technology",
+      "description": "Mobile app must be built for iOS and Android platforms",
+      "citation": {
+        "source_reference": "Mobile app for iOS and Android",
+        "source_location": "Scope & Constraints - In Scope"
+      },
+      "reasoning": "Fixed platform decision — not negotiable. Constrains technology choices to cross-platform or dual native development."
+    },
+    {
+      "id": "CON-02",
+      "type": "Regulatory",
+      "description": "User consent is required before accessing location and transaction data",
+      "citation": {
+        "source_reference": "User consent required for location and transaction data access",
+        "source_location": "Scope & Constraints - Constraints"
+      },
+      "reasoning": "Regulatory constraint from GDPR/CCPA. Fixed decision that affects all data collection flows."
+    },
+    {
+      "id": "CON-03",
+      "type": "Organisational",
+      "description": "Initial launch limited to select urban markets only",
+      "citation": {
+        "source_reference": "Initial launch limited to select urban markets",
+        "source_location": "Scope & Constraints - Constraints"
+      },
+      "reasoning": "Business decision constraining geographic scope. Affects geofence coverage and merchant partnerships."
+    },
+    {
+      "id": "CON-04",
+      "type": "Organisational",
+      "description": "Merchant onboarding is subject to quality review before campaigns go live",
+      "citation": {
+        "source_reference": "Merchant onboarding subject to quality review",
+        "source_location": "Scope & Constraints - Constraints"
+      },
+      "reasoning": "Operational constraint affecting merchant go-live timelines. Fixed process decision."
+    },
+    {
+      "id": "CON-05",
+      "type": "Technology",
+      "description": "Push notifications must use APNs (iOS) and FCM (Android)",
+      "citation": {
+        "source_reference": "Push notification services (APNs, FCM)",
+        "source_location": "Dependencies & Risks - Dependencies"
+      },
+      "reasoning": "Technology dependency that constrains notification implementation. These are the only viable push services for mobile platforms."
+    },
+    {
+      "id": "CON-06",
+      "type": "Technology",
+      "description": "No web-based consumer interface — mobile app only",
+      "citation": {
+        "source_reference": "Web-based user interface for consumers",
+        "source_location": "Scope & Constraints - Out of Scope"
+      },
+      "reasoning": "Explicit scope exclusion. Constrains delivery to mobile channels only for consumers."
+    }
+  ],
+
+  "assumptions": [
+    {
+      "id": "ASM-01",
+      "description": "The merchant analytics dashboard will be a web application (not mobile), as it is targeted at marketing managers who work from desktops",
+      "needs_confirmation": true,
+      "reasoning": "Source says consumer web UI is out of scope but does not specify the merchant dashboard platform. Marketing managers typically use desktop tools. If wrong, merchant dashboard would need to be mobile-native too."
+    },
+    {
+      "id": "ASM-02",
+      "description": "Payment provider integration will use Open Banking APIs or similar standardized interfaces rather than direct bank integrations",
+      "needs_confirmation": true,
+      "reasoning": "Source mentions 'integration with payment providers' but does not specify the mechanism. Open Banking is the standard approach in UK/EU. If wrong, custom integrations per provider would significantly increase scope."
+    },
+    {
+      "id": "ASM-03",
+      "description": "The 30-day data deletion window (from AC10) applies to all user data including backups and analytics aggregates",
+      "needs_confirmation": true,
+      "reasoning": "AC10 states 'All user data is permanently deleted from the system within 30 days' but does not clarify if aggregated/anonymized analytics data is included. GDPR allows retention of anonymized data."
+    },
+    {
+      "id": "ASM-04",
+      "description": "Geofencing will use a combination of GPS, Wi-Fi, and cell tower triangulation for accuracy in urban environments",
+      "needs_confirmation": true,
+      "reasoning": "Source mentions 'Mobile OS location services APIs' as a dependency but does not specify accuracy requirements. Urban environments may need multiple signals for reliable geofence triggering."
+    },
+    {
+      "id": "ASM-05",
+      "description": "The platform will operate in English language only for initial launch",
+      "needs_confirmation": true,
+      "reasoning": "No mention of internationalization or multi-language support in the source. Urban markets could include non-English-speaking populations. If wrong, i18n adds significant scope."
+    },
+    {
+      "id": "ASM-06",
+      "description": "Offer redemption will use a QR code or unique code mechanism presented on the user's device and scanned/entered by the merchant",
+      "needs_confirmation": true,
+      "reasoning": "Source says 'redeem offers instantly via a mobile interface' but does not specify the redemption mechanism. QR/code is the most common pattern. If wrong (e.g., NFC, automatic via payment), architecture changes significantly."
+    },
+    {
+      "id": "ASM-07",
+      "description": "Cloud-based infrastructure will be used (AWS, GCP, or Azure) with auto-scaling capabilities",
+      "needs_confirmation": true,
+      "reasoning": "Risk mitigation mentions 'Cloud-based infrastructure with auto-scaling' but does not specify provider. This is assumed as the deployment model. If on-premise is required, architecture changes fundamentally."
+    },
+    {
+      "id": "ASM-08",
+      "description": "The 100,000 MAU target within 12 months implies a phased rollout starting with a smaller beta cohort",
+      "needs_confirmation": true,
+      "reasoning": "KPI target is 100K MAU in 12 months from 0 baseline. This implies a growth curve, not a big-bang launch. Phased rollout affects infrastructure sizing and merchant onboarding pace."
+    },
+    {
+      "id": "ASM-09",
+      "description": "Merchants will pay for the platform via a subscription or per-campaign fee model",
+      "needs_confirmation": true,
+      "reasoning": "Source mentions merchants 'willing to pay for premium placement' but does not define the business model. Revenue model affects merchant-facing features (billing, tiers, etc.)."
+    },
+    {
+      "id": "ASM-10",
+      "description": "User authentication will use email/phone + password with optional biometric (Face ID/Touch ID) for convenience",
+      "needs_confirmation": true,
+      "reasoning": "Source implies authentication exists (AC4: 'logged in') but never specifies the method. Email/phone + biometric is standard for consumer mobile apps. If SSO or social login is required, scope increases."
+    }
+  ],
+
+  "gaps": [
+    {
+      "id": "GAP-01",
+      "description": "No authentication or authorization approach specified for users or merchants",
+      "impact": "Cannot design login flow, session management, role-based access, or security architecture",
+      "suggested_question": "What authentication methods should be supported? (email/password, social login, biometric, SSO for merchants?)",
+      "reasoning": "Source implies users are 'logged in' (AC4) and merchants 'log into the dashboard' (AC9) but never defines how. Authentication is foundational to all personalized features."
+    },
+    {
+      "id": "GAP-02",
+      "description": "No offer redemption mechanism specified",
+      "impact": "Cannot design the merchant-side redemption flow or POS integration",
+      "suggested_question": "How will offers be redeemed? QR code scan, unique code entry, NFC tap, or automatic via linked payment card?",
+      "reasoning": "FR4 says 'redeem offers instantly via a mobile interface' but the actual mechanism (QR, code, NFC, payment-linked) is undefined. This affects both mobile app UX and merchant integration."
+    },
+    {
+      "id": "GAP-03",
+      "description": "No data retention policy defined beyond the 30-day deletion window",
+      "impact": "Cannot design data lifecycle management, archival strategy, or compliance reporting",
+      "suggested_question": "What is the data retention policy for transaction history, offer history, and analytics data? How long should data be kept for active users?",
+      "reasoning": "GDPR requires defined retention periods. Source only mentions deletion on request (30 days) but not routine retention limits for active accounts."
+    },
+    {
+      "id": "GAP-04",
+      "description": "No offline behavior specified for the mobile app",
+      "impact": "Cannot design caching strategy, offline offer display, or sync mechanisms",
+      "suggested_question": "How should the app behave when the user has no network connectivity? Should cached offers be viewable? Should redemption work offline?",
+      "reasoning": "Mobile apps commonly face connectivity issues. Source does not address offline scenarios, which affects UX and architecture (local storage, sync queues)."
+    },
+    {
+      "id": "GAP-05",
+      "description": "No error handling or fallback behavior defined for failed geofence detection or notification delivery",
+      "impact": "Cannot design retry logic, fallback notification channels, or user communication for service degradation",
+      "suggested_question": "What should happen if a geofence event is missed or a notification fails to deliver? Should there be retry logic, in-app fallback, or email/SMS backup?",
+      "reasoning": "Real-time geofencing can fail due to device settings, battery optimization, or network issues. No fallback strategy is defined."
+    },
+    {
+      "id": "GAP-06",
+      "description": "No battery drain target or acceptable threshold specified",
+      "impact": "Cannot set acceptance criteria for battery optimization or test against a measurable standard",
+      "suggested_question": "What is the acceptable battery impact? (e.g., <5% additional drain per day with always-on tracking)",
+      "reasoning": "NFR-10 identifies battery optimization as needed but provides no measurable target. Cannot verify compliance without a threshold."
+    },
+    {
+      "id": "GAP-07",
+      "description": "No merchant POS integration requirements specified",
+      "impact": "Cannot design the merchant-side technical integration for offer redemption confirmation",
+      "suggested_question": "How will merchants confirm redemptions? Via a separate merchant app, existing POS integration, or manual confirmation on a web dashboard?",
+      "reasoning": "AC3 states 'the merchant receives confirmation of redemption' but does not specify the channel or integration point."
+    },
+    {
+      "id": "GAP-08",
+      "description": "No specific urban markets identified for initial launch",
+      "impact": "Cannot size geofence infrastructure, plan merchant partnerships, or estimate initial load",
+      "suggested_question": "Which cities/markets are targeted for initial launch? How many merchants per market?",
+      "reasoning": "CON-03 constrains launch to 'select urban markets' but does not name them. Market selection affects infrastructure region, merchant onboarding, and regulatory considerations."
+    },
+    {
+      "id": "GAP-09",
+      "description": "No merchant billing or revenue model defined",
+      "impact": "Cannot design merchant billing features, pricing tiers, or payment collection",
+      "suggested_question": "What is the merchant pricing model? Subscription, per-campaign, per-redemption, or commission-based?",
+      "reasoning": "Source mentions merchants 'willing to pay for premium placement' but defines no pricing structure. This affects merchant dashboard features and backend billing systems."
+    },
+    {
+      "id": "GAP-10",
+      "description": "No user onboarding or tutorial flow specified",
+      "impact": "Cannot design first-time user experience or consent collection sequence",
+      "suggested_question": "What should the first-time user experience look like? What permissions are requested at what point in the onboarding?",
+      "reasoning": "Location and data permissions require careful UX to maximize opt-in rates (identified as a high-impact risk). No onboarding flow is defined."
+    },
+    {
+      "id": "GAP-11",
+      "description": "No API rate limiting or abuse prevention strategy defined",
+      "impact": "Cannot protect the platform from malicious actors or ensure fair usage",
+      "suggested_question": "What rate limits should apply to API consumers? What abuse scenarios need to be mitigated (fake redemptions, location spoofing)?",
+      "reasoning": "Location-based systems are vulnerable to GPS spoofing and fraudulent redemptions. No anti-abuse measures are mentioned."
+    },
+    {
+      "id": "GAP-12",
+      "description": "No monitoring, alerting, or observability requirements specified",
+      "impact": "Cannot design operational dashboards, incident response, or SLA monitoring",
+      "suggested_question": "What monitoring and alerting is required? What are the escalation paths for service degradation?",
+      "reasoning": "99.9% uptime (NFR-09) requires robust monitoring to detect and respond to incidents. No observability strategy is defined."
+    },
+    {
+      "id": "GAP-13",
+      "description": "No push notification permission denial handling specified",
+      "impact": "Cannot design fallback UX for users who deny push permissions on iOS/Android",
+      "suggested_question": "What should happen if a user denies push notification permission? Should the app still function with in-app-only offers, or is push required for core value?",
+      "reasoning": "iOS requires explicit push permission. Denial rates can be 40-60%. Without a fallback strategy, a large portion of users may get no offers at all."
+    },
+    {
+      "id": "GAP-14",
+      "description": "No offer matching/ranking algorithm defined",
+      "impact": "Cannot design the personalization engine that selects which offers to show each user",
+      "suggested_question": "How should offers be ranked and matched to users? Rules-based (category matching), ML-based (collaborative filtering), or hybrid? What signals beyond transaction history should be used?",
+      "reasoning": "FR-03 says 'analyze transaction history to personalize' but does not define the algorithm. This is the core differentiator of the platform and affects architecture (ML pipeline vs rules engine)."
+    },
+    {
+      "id": "GAP-15",
+      "description": "No testing or QA strategy for location-based features specified",
+      "impact": "Cannot validate geofence accuracy, notification timing, or location-dependent behavior in CI/CD",
+      "suggested_question": "How should location-based features be tested? Simulated locations in CI, field testing in target markets, or both?",
+      "reasoning": "Location-based features are notoriously difficult to test in automated environments. Without a strategy, quality assurance for the core feature is undefined."
+    },
+    {
+      "id": "GAP-16",
+      "description": "No multi-tenancy or white-label requirements specified for merchant isolation",
+      "impact": "Cannot determine if merchants see each other's data, if campaigns are isolated, or if the platform could be white-labeled",
+      "suggested_question": "Should merchants be fully isolated from each other? Can a merchant see competitor campaigns in the same area? Is white-labeling a future consideration?",
+      "reasoning": "With 10,000 simultaneous campaigns, data isolation between competing merchants is critical for trust. Source does not address multi-tenancy boundaries."
+    }
+  ],
+
+  "requirement_count": {
+    "functional": 27,
+    "non_functional": 12,
+    "constraints": 6,
+    "assumptions": 10,
+    "gaps": 16
+  },
+
+  "baseline_summary": {
+    "mode": "greenfield",
+    "baseline_kb_version": null,
+    "new_requirements": 27,
+    "enhancement_requirements": 0,
+    "existing_requirements": 0,
+    "regression_risks": []
+  }
+}

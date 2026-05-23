@@ -1,0 +1,354 @@
+{
+  "epic_id": "EP-05",
+  "epic_title": "Personalization Engine & Merchant Platform",
+  "mode": "greenfield",
+  "total_stories": 9,
+  "total_story_points": 36,
+  "stories": [
+    {
+      "story_id": "US-044",
+      "title": "Open Banking AISP Connection & Transaction Sync",
+      "feature_id": "F-05.1",
+      "user_story": "As a consumer, I want the platform to securely connect to my bank accounts via Open Banking AISP so that my transaction history is available for personalised offer matching.",
+      "story_points": 5,
+      "acceptance_criteria": [
+        "Consumer grants consent via FCA-compliant Open Banking redirect flow",
+        "System retrieves transactions from authorised AISP endpoint using OAuth 2.0 tokens",
+        "Transaction data is encrypted at rest (AES-256) and in transit (TLS 1.3)",
+        "Circuit breaker activates after 3 consecutive failures with 30-second half-open retry",
+        "Consent status and token refresh state are persisted in Cloud SQL",
+        "Consumer can revoke consent at any time from account settings; revocation deletes synced data within 24 hours",
+        "Audit log records all consent grants, revocations, and data access events",
+        "All transaction data access is restricted to authorised service accounts via Cloud IAM policies",
+        "Screen reader announces consent flow status and completion"
+      ],
+      "data_sensitivity": "Internal",
+      "regulatory_linkage": null,
+      "depends_on": [],
+      "change_type": "new",
+      "existing_context": {
+        "existing_feature_ref": null,
+        "what_exists_today": null,
+        "what_changes": null,
+        "screens_affected": [],
+        "apis_affected": [],
+        "tables_affected": [],
+        "backward_compatible": true
+      },
+      "regression_criteria": [],
+      "citation": {
+        "requirements_used": [],
+        "domain_kb_sections": [],
+        "architecture_kb_sections": [],
+        "baseline_refs": []
+      },
+      "reasoning": "Must Have"
+    },
+    {
+      "story_id": "US-045",
+      "title": "Transaction Analysis Dataflow Pipeline",
+      "feature_id": "F-05.2",
+      "user_story": "As a platform operator, I want an automated Dataflow pipeline that processes synced transactions, groups them by MCC code, and builds spending profiles in BigQuery so that the personalisation engine can target offers accurately.",
+      "story_points": 5,
+      "acceptance_criteria": [
+        "Dataflow pipeline consumes transaction events from Pub/Sub topic in real-time",
+        "Transactions are categorised by MCC code into spending groups (e.g., groceries, dining, travel)",
+        "Spending profile is written to BigQuery partitioned by consumer_id and date",
+        "Pipeline handles at least 10,000 transactions per second at peak",
+        "Failed records are routed to a dead-letter topic for manual review",
+        "Pipeline auto-scales based on backlog size",
+        "All PII fields are pseudonymised before writing to BigQuery analytics tables",
+        "Monitoring dashboard shows pipeline lag, throughput, and error rate"
+      ],
+      "data_sensitivity": "Internal",
+      "regulatory_linkage": null,
+      "depends_on": [],
+      "change_type": "new",
+      "existing_context": {
+        "existing_feature_ref": null,
+        "what_exists_today": null,
+        "what_changes": null,
+        "screens_affected": [],
+        "apis_affected": [],
+        "tables_affected": [],
+        "backward_compatible": true
+      },
+      "regression_criteria": [],
+      "citation": {
+        "requirements_used": [],
+        "domain_kb_sections": [],
+        "architecture_kb_sections": [],
+        "baseline_refs": []
+      },
+      "reasoning": "Must Have"
+    },
+    {
+      "story_id": "US-046",
+      "title": "Consumer Spending Profile View",
+      "feature_id": "F-05.2",
+      "user_story": "As a consumer, I want to see a summary of my spending categories so that I understand why certain offers are recommended to me.",
+      "story_points": 3,
+      "acceptance_criteria": [
+        "Spending profile displays top 5 MCC categories with percentage breakdown",
+        "Data refreshes within 4 hours of new transactions syncing",
+        "Consumer can opt out of personalisation without losing access to generic offers",
+        "Visualisation uses accessible colour palette with sufficient contrast (WCAG 2.1 AA)",
+        "Chart data is available as a text-based table alternative for screen readers",
+        "Loading state is communicated via aria-live region"
+      ],
+      "data_sensitivity": "Internal",
+      "regulatory_linkage": null,
+      "depends_on": [],
+      "change_type": "new",
+      "existing_context": {
+        "existing_feature_ref": null,
+        "what_exists_today": null,
+        "what_changes": null,
+        "screens_affected": [],
+        "apis_affected": [],
+        "tables_affected": [],
+        "backward_compatible": true
+      },
+      "regression_criteria": [],
+      "citation": {
+        "requirements_used": [],
+        "domain_kb_sections": [],
+        "architecture_kb_sections": [],
+        "baseline_refs": []
+      },
+      "reasoning": "Should Have"
+    },
+    {
+      "story_id": "US-047",
+      "title": "Merchant Registration & Document Upload",
+      "feature_id": "F-05.3",
+      "user_story": "As a merchant marketer, I want to register my business via a web form and upload verification documents so that I can be onboarded to the offers platform.",
+      "story_points": 5,
+      "acceptance_criteria": [
+        "Registration form captures: business name, Companies House number, contact details, business category",
+        "Document upload accepts PDF and JPEG (max 10MB per file) for business verification",
+        "Files are stored in Cloud Storage with virus scanning before acceptance",
+        "Form validates all required fields client-side and server-side",
+        "Confirmation email sent within 60 seconds of successful submission",
+        "Form is fully keyboard-navigable with visible focus indicators",
+        "Error messages are associated with form fields via aria-describedby",
+        "Upload progress is announced to assistive technology"
+      ],
+      "data_sensitivity": "Internal",
+      "regulatory_linkage": null,
+      "depends_on": [],
+      "change_type": "new",
+      "existing_context": {
+        "existing_feature_ref": null,
+        "what_exists_today": null,
+        "what_changes": null,
+        "screens_affected": [],
+        "apis_affected": [],
+        "tables_affected": [],
+        "backward_compatible": true
+      },
+      "regression_criteria": [],
+      "citation": {
+        "requirements_used": [],
+        "domain_kb_sections": [],
+        "architecture_kb_sections": [],
+        "baseline_refs": []
+      },
+      "reasoning": "Must Have"
+    },
+    {
+      "story_id": "US-048",
+      "title": "Merchant Quality Review & Approval Queue",
+      "feature_id": "F-05.3",
+      "user_story": "As a platform operator, I want to review merchant applications in an admin queue and approve or reject them within 48 hours so that only legitimate businesses publish offers.",
+      "story_points": 3,
+      "acceptance_criteria": [
+        "Admin queue displays pending applications sorted by submission date (oldest first)",
+        "Operator can view uploaded documents inline without downloading",
+        "Approve or reject action requires a reason/note (mandatory for rejection)",
+        "Merchant receives email notification of decision within 5 minutes of action",
+        "SLA timer shows time remaining against 48-hour target with visual and text indicator",
+        "Queue supports filtering by business category and submission date",
+        "All approval/rejection actions are audit-logged with operator identity and timestamp",
+        "Queue table is accessible with proper row/column headers and sortable via keyboard",
+        "Given a screen reader is active, When the campaign creation form loads, Then all fields announce their labels, required status, and any validation errors"
+      ],
+      "data_sensitivity": "Internal",
+      "regulatory_linkage": null,
+      "depends_on": [],
+      "change_type": "new",
+      "existing_context": {
+        "existing_feature_ref": null,
+        "what_exists_today": null,
+        "what_changes": null,
+        "screens_affected": [],
+        "apis_affected": [],
+        "tables_affected": [],
+        "backward_compatible": true
+      },
+      "regression_criteria": [],
+      "citation": {
+        "requirements_used": [],
+        "domain_kb_sections": [],
+        "architecture_kb_sections": [],
+        "baseline_refs": []
+      },
+      "reasoning": "Must Have"
+    },
+    {
+      "story_id": "US-049",
+      "title": "Campaign & Offer Creation",
+      "feature_id": "F-05.4",
+      "user_story": "As a merchant marketer, I want to create a campaign with offer details, targeting rules, and redemption limits so that I can attract relevant consumers near my locations.",
+      "story_points": 5,
+      "acceptance_criteria": [
+        "Campaign form captures: title (max 60 chars), description (max 250 chars), image, discount type/value, start/end dates",
+        "Targeting rules allow selection by: spending category, radius from store, time of day",
+        "Redemption limits configurable: per-consumer limit and total campaign cap",
+        "Image upload validates dimensions (min 600x400px) and file size (max 5MB)",
+        "Draft campaigns auto-save every 30 seconds",
+        "Form fields have associated labels and validation errors announced by screen readers",
+        "Colour contrast of all form elements meets WCAG 2.1 AA (4.5:1 minimum)"
+      ],
+      "data_sensitivity": "Internal",
+      "regulatory_linkage": null,
+      "depends_on": [],
+      "change_type": "new",
+      "existing_context": {
+        "existing_feature_ref": null,
+        "what_exists_today": null,
+        "what_changes": null,
+        "screens_affected": [],
+        "apis_affected": [],
+        "tables_affected": [],
+        "backward_compatible": true
+      },
+      "regression_criteria": [],
+      "citation": {
+        "requirements_used": [],
+        "domain_kb_sections": [],
+        "architecture_kb_sections": [],
+        "baseline_refs": []
+      },
+      "reasoning": "Must Have"
+    },
+    {
+      "story_id": "US-050",
+      "title": "Campaign Preview & Publish",
+      "feature_id": "F-05.4",
+      "user_story": "As a merchant marketer, I want to preview my campaign as consumers will see it and then publish it so that I can verify the offer appearance before it goes live.",
+      "story_points": 3,
+      "acceptance_criteria": [
+        "Preview renders offer card exactly as it appears in the consumer mobile app",
+        "Preview is available on desktop and mobile viewport sizes",
+        "Publish action requires confirmation dialog before activation",
+        "Published campaign status changes to 'Active' and becomes visible to targeted consumers within 5 minutes",
+        "Merchant cannot edit live campaigns \u2014 must pause, edit, then republish",
+        "Preview mode is navigable by keyboard and announces content structure to screen readers",
+        "Confirmation dialog traps focus and is dismissible via Escape key"
+      ],
+      "data_sensitivity": "Internal",
+      "regulatory_linkage": null,
+      "depends_on": [],
+      "change_type": "new",
+      "existing_context": {
+        "existing_feature_ref": null,
+        "what_exists_today": null,
+        "what_changes": null,
+        "screens_affected": [],
+        "apis_affected": [],
+        "tables_affected": [],
+        "backward_compatible": true
+      },
+      "regression_criteria": [],
+      "citation": {
+        "requirements_used": [],
+        "domain_kb_sections": [],
+        "architecture_kb_sections": [],
+        "baseline_refs": []
+      },
+      "reasoning": "Must Have"
+    },
+    {
+      "story_id": "US-051",
+      "title": "Merchant Analytics Dashboard",
+      "feature_id": "F-05.5",
+      "user_story": "As a merchant marketer, I want to view campaign performance metrics including impressions, redemptions, and engagement rate so that I can measure ROI and optimise future campaigns.",
+      "story_points": 5,
+      "acceptance_criteria": [
+        "Dashboard displays: total impressions, redemptions, engagement rate (redemptions/impressions), revenue attributed",
+        "Date range selector allows custom range and presets (7d, 30d, 90d)",
+        "Charts update within 3 seconds of date range change",
+        "Data exportable as CSV with all visible metrics and date range",
+        "Dashboard refreshes metrics at most 1 hour behind real-time",
+        "Charts include text alternatives and data tables for screen reader users",
+        "Interactive chart elements are keyboard-focusable with tooltip content in aria-label",
+        "Export button has accessible name describing the action and file format"
+      ],
+      "data_sensitivity": "Internal",
+      "regulatory_linkage": null,
+      "depends_on": [],
+      "change_type": "new",
+      "existing_context": {
+        "existing_feature_ref": null,
+        "what_exists_today": null,
+        "what_changes": null,
+        "screens_affected": [],
+        "apis_affected": [],
+        "tables_affected": [],
+        "backward_compatible": true
+      },
+      "regression_criteria": [],
+      "citation": {
+        "requirements_used": [],
+        "domain_kb_sections": [],
+        "architecture_kb_sections": [],
+        "baseline_refs": []
+      },
+      "reasoning": "Must Have"
+    },
+    {
+      "story_id": "US-052",
+      "title": "Circuit Breaker & Resilience for Payment Provider Integration",
+      "feature_id": "F-05.1",
+      "user_story": "As a platform operator, I want circuit breaker patterns on all Open Banking AISP connections so that downstream provider failures do not cascade and degrade the platform.",
+      "story_points": 2,
+      "acceptance_criteria": [
+        "Circuit breaker transitions: Closed \u2192 Open after 3 failures in 60 seconds",
+        "Half-open state allows 1 probe request after 30-second cooldown",
+        "Open circuit returns cached last-known-good data where available, or graceful degradation message",
+        "Circuit state changes emit alerts to Cloud Monitoring with PagerDuty integration",
+        "Dashboard shows per-provider circuit state (Closed/Open/Half-Open) in real-time",
+        "Metrics recorded: failure count, open duration, recovery time per provider",
+        "Alert notifications meet WCAG 2.1 AA contrast requirements in operator dashboard"
+      ],
+      "data_sensitivity": "Internal",
+      "regulatory_linkage": null,
+      "depends_on": [],
+      "change_type": "new",
+      "existing_context": {
+        "existing_feature_ref": null,
+        "what_exists_today": null,
+        "what_changes": null,
+        "screens_affected": [],
+        "apis_affected": [],
+        "tables_affected": [],
+        "backward_compatible": true
+      },
+      "regression_criteria": [],
+      "citation": {
+        "requirements_used": [],
+        "domain_kb_sections": [],
+        "architecture_kb_sections": [],
+        "baseline_refs": []
+      },
+      "reasoning": "Must Have"
+    }
+  ],
+  "coverage_matrix": [],
+  "regression_summary": {
+    "total_regression_criteria": 0,
+    "existing_features_with_regression_tests": [],
+    "recommendation": "Greenfield \u2014 no regression testing needed."
+  }
+}

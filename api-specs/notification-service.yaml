@@ -1,0 +1,387 @@
+openapi: 3.0.3
+info:
+  title: Notification Service - Smart Location-Based Offers Platform
+  description: Manages push notification delivery, device registration, and frequency capping.
+  version: 1.0.0
+  contact:
+    name: Offers Platform Team
+
+servers:
+  - url: https://api.offers.lloyds.com
+    description: Production
+  - url: https://api.offers.staging.lloyds.com
+    description: Staging
+
+tags:
+  - name: Devices
+    description: Device push token management
+  - name: Notifications
+    description: Notification delivery and history
+  - name: Frequency Cap
+    description: Notification frequency capping (internal)
+  - name: Health
+    description: Service health checks
+
+paths:
+  /api/v1/devices:
+    post:
+      tags: [Devices]
+      summary: Register device push token
+      operationId: registerDevice
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterDeviceRequest'
+      responses:
+        '201':
+          description: Device registered
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeviceResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /api/v1/devices/{deviceId}:
+    delete:
+      tags: [Devices]
+      summary: Deregister device
+      operationId: deregisterDevice
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: deviceId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Device deregistered
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /api/v1/notifications/send:
+    post:
+      tags: [Notifications]
+      summary: Send notification to user (internal)
+      operationId: sendNotification
+      security:
+        - ServiceAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SendNotificationRequest'
+      responses:
+        '202':
+          description: Notification accepted for delivery
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SendNotificationResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+
+  /api/v1/notifications/history:
+    get:
+      tags: [Notifications]
+      summary: Get user's notification history
+      operationId: getNotificationHistory
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: pageNumber
+          in: query
+          schema:
+            type: integer
+            minimum: 0
+            default: 0
+        - name: pageSize
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 20
+      responses:
+        '200':
+          description: Paginated notification history
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotificationHistoryResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /api/v1/notifications/{notificationId}/read:
+    post:
+      tags: [Notifications]
+      summary: Mark notification as read
+      operationId: markNotificationRead
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: notificationId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '204':
+          description: Notification marked as read
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /api/v1/frequency-cap/check:
+    get:
+      tags: [Frequency Cap]
+      summary: Check if user can receive notification (internal)
+      operationId: checkFrequencyCap
+      security:
+        - ServiceAuth: []
+      parameters:
+        - name: userId
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: offerId
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Frequency cap check result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FrequencyCapResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+
+  /health:
+    get:
+      tags: [Health]
+      summary: Liveness probe
+      operationId: healthLiveness
+      responses:
+        '200':
+          description: Service is alive
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthResponse'
+
+  /health/ready:
+    get:
+      tags: [Health]
+      summary: Readiness probe
+      operationId: healthReadiness
+      responses:
+        '200':
+          description: Service is ready
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthResponse'
+        '503':
+          description: Service is not ready
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthResponse'
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+    ServiceAuth:
+      type: apiKey
+      in: header
+      name: X-Service-Auth
+
+
+  parameters:
+    CorrelationId:
+      name: X-Correlation-Id
+      in: header
+      required: false
+      description: Unique ID for distributed tracing
+      schema:
+        type: string
+        format: uuid
+    IdempotencyKey:
+      name: Idempotency-Key
+      in: header
+      required: true
+      description: Idempotent write key (required on POST/PUT/PATCH/DELETE)
+      schema:
+        type: string
+
+  schemas:
+    RegisterDeviceRequest:
+      type: object
+      required: [deviceId, platform, pushToken]
+      properties:
+        deviceId:
+          type: string
+        platform:
+          type: string
+          enum: [ios, android]
+        pushToken:
+          type: string
+
+    DeviceResponse:
+      type: object
+      properties:
+        deviceId:
+          type: string
+        platform:
+          type: string
+          enum: [ios, android]
+        registeredAt:
+          type: string
+          format: date-time
+
+    SendNotificationRequest:
+      type: object
+      required: [userId, title, body]
+      properties:
+        userId:
+          type: string
+        title:
+          type: string
+        body:
+          type: string
+        deepLink:
+          type: string
+          format: uri
+        imageUrl:
+          type: string
+          format: uri
+
+    SendNotificationResponse:
+      type: object
+      properties:
+        notificationId:
+          type: string
+          format: uuid
+        status:
+          type: string
+          enum: [accepted, rejected]
+
+    NotificationHistoryResponse:
+      type: object
+      properties:
+        content:
+          type: array
+          items:
+            $ref: '#/components/schemas/NotificationItem'
+        pageNumber:
+          type: integer
+        pageSize:
+          type: integer
+        totalElements:
+          type: integer
+        totalPages:
+          type: integer
+
+    NotificationItem:
+      type: object
+      properties:
+        notificationId:
+          type: string
+          format: uuid
+        title:
+          type: string
+        body:
+          type: string
+        deepLink:
+          type: string
+          format: uri
+        imageUrl:
+          type: string
+          format: uri
+        read:
+          type: boolean
+        sentAt:
+          type: string
+          format: date-time
+
+    FrequencyCapResponse:
+      type: object
+      properties:
+        eligible:
+          type: boolean
+        reason:
+          type: string
+
+    HealthResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [UP, DOWN]
+
+    ProblemDetail:
+      type: object
+      description: RFC 7807 Problem Detail
+      properties:
+        type:
+          type: string
+          format: uri
+        title:
+          type: string
+        status:
+          type: integer
+        detail:
+          type: string
+        instance:
+          type: string
+          format: uri
+
+  responses:
+    BadRequest:
+      description: Bad request
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/ProblemDetail'
+    Unauthorized:
+      description: Unauthorized
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/ProblemDetail'
+    Forbidden:
+      description: Forbidden
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/ProblemDetail'
+    NotFound:
+      description: Not found
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/ProblemDetail'

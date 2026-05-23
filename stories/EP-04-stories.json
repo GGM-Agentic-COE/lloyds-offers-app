@@ -1,0 +1,303 @@
+{
+  "epic_id": "EP-04",
+  "epic_title": "Offer Redemption & History",
+  "mode": "greenfield",
+  "total_stories": 8,
+  "total_story_points": 31,
+  "stories": [
+    {
+      "story_id": "US-034",
+      "feature_id": "F-04.1",
+      "title": "Generate Time-Limited QR Code for Offer Redemption",
+      "user_story": "As a consumer, I want to generate a time-limited QR code for my selected offer so that I can present it to the merchant for redemption.",
+      "acceptance_criteria": [
+        "GIVEN a consumer selects 'Redeem' on an active offer, WHEN the QR code screen loads, THEN a unique QR code is generated with a 5-minute expiry timestamp encoded",
+        "GIVEN the QR code is displayed, WHEN the screen renders, THEN device brightness is set to maximum automatically",
+        "GIVEN the QR code is displayed, WHEN time elapses, THEN a visible countdown timer shows remaining seconds until expiry",
+        "GIVEN the countdown reaches zero, WHEN the QR expires, THEN the QR code is invalidated and the consumer is prompted to regenerate",
+        "GIVEN the QR code screen is displayed, WHEN a screen reader is active, THEN the countdown is announced at 60-second intervals and at 10 seconds remaining",
+        "GIVEN the QR code screen is displayed, WHEN rendered, THEN the QR code has a minimum contrast ratio of 4.5:1 and a text alternative describing its purpose"
+      ],
+      "story_points": 5,
+      "depends_on": [],
+      "data_sensitivity": "Internal",
+      "regulatory_linkage": null,
+      "change_type": "new",
+      "existing_context": {
+        "existing_feature_ref": null,
+        "what_exists_today": null,
+        "what_changes": null,
+        "screens_affected": [],
+        "apis_affected": [],
+        "tables_affected": [],
+        "backward_compatible": true
+      },
+      "regression_criteria": [],
+      "citation": {
+        "requirements_used": [],
+        "domain_kb_sections": [],
+        "architecture_kb_sections": [],
+        "baseline_refs": []
+      },
+      "reasoning": "must-have"
+    },
+    {
+      "story_id": "US-035",
+      "feature_id": "F-04.1",
+      "title": "QR Code Generation Error Handling",
+      "user_story": "As a consumer, I want clear feedback when QR code generation fails so that I understand what went wrong and can retry.",
+      "acceptance_criteria": [
+        "GIVEN a network error occurs during QR generation, WHEN the request fails, THEN an error message is displayed with a 'Retry' button",
+        "GIVEN the offer has already been redeemed, WHEN the consumer attempts to generate a QR, THEN a message states the offer is no longer available",
+        "GIVEN the offer has expired, WHEN the consumer attempts to generate a QR, THEN a message states the offer has expired with a link to browse new offers",
+        "GIVEN an error message is displayed, WHEN a screen reader is active, THEN the error is announced via an ARIA live region with role='alert'"
+      ],
+      "story_points": 3,
+      "depends_on": [
+        "US-034"
+      ],
+      "data_sensitivity": "Internal",
+      "regulatory_linkage": null,
+      "change_type": "new",
+      "existing_context": {
+        "existing_feature_ref": null,
+        "what_exists_today": null,
+        "what_changes": null,
+        "screens_affected": [],
+        "apis_affected": [],
+        "tables_affected": [],
+        "backward_compatible": true
+      },
+      "regression_criteria": [],
+      "citation": {
+        "requirements_used": [],
+        "domain_kb_sections": [],
+        "architecture_kb_sections": [],
+        "baseline_refs": []
+      },
+      "reasoning": "must-have"
+    },
+    {
+      "story_id": "US-036",
+      "feature_id": "F-04.2",
+      "title": "Server-Side Duplicate Redemption Prevention",
+      "user_story": "As a consumer, I want the system to prevent duplicate redemptions so that each offer can only be used once as intended.",
+      "acceptance_criteria": [
+        "GIVEN a redemption request is received, WHEN the server processes it, THEN a unique constraint on (offer_id, consumer_id) prevents duplicate entries",
+        "GIVEN a duplicate redemption request is received, WHEN the unique constraint is violated, THEN the server returns an idempotent success response (HTTP 200) with the original redemption record",
+        "GIVEN concurrent redemption requests for the same offer, WHEN processed simultaneously, THEN only one redemption is recorded and the second receives the idempotent response",
+        "GIVEN a redemption is attempted on an expired QR code, WHEN the server validates the timestamp, THEN the request is rejected with a 410 Gone status"
+      ],
+      "story_points": 5,
+      "depends_on": [
+        "US-034"
+      ],
+      "data_sensitivity": "Internal",
+      "regulatory_linkage": null,
+      "change_type": "new",
+      "existing_context": {
+        "existing_feature_ref": null,
+        "what_exists_today": null,
+        "what_changes": null,
+        "screens_affected": [],
+        "apis_affected": [],
+        "tables_affected": [],
+        "backward_compatible": true
+      },
+      "regression_criteria": [],
+      "citation": {
+        "requirements_used": [],
+        "domain_kb_sections": [],
+        "architecture_kb_sections": [],
+        "baseline_refs": []
+      },
+      "reasoning": "must-have"
+    },
+    {
+      "story_id": "US-037",
+      "feature_id": "F-04.3",
+      "title": "Offer History with Tabbed Status View",
+      "user_story": "As a consumer, I want to view my offers organised by status (active, redeemed, expired) so that I can track my offer activity.",
+      "acceptance_criteria": [
+        "GIVEN the consumer navigates to Offer History, WHEN the screen loads, THEN three tabs are displayed: Active, Redeemed, Expired with counts",
+        "GIVEN the Active tab is selected, WHEN offers are listed, THEN they are sorted by expiry date ascending (soonest first)",
+        "GIVEN the Redeemed tab is selected, WHEN offers are listed, THEN each shows the redemption date, merchant name, and savings amount",
+        "GIVEN any tab is selected, WHEN a filter is applied (date range, merchant, category), THEN the list updates to show matching offers only",
+        "GIVEN the tabs are rendered, WHEN navigated via keyboard, THEN ARIA tablist/tab/tabpanel roles are correctly applied and arrow keys move between tabs",
+        "GIVEN the consumer has redeemed offers, WHEN the history screen loads, THEN a total savings counter is displayed at the top"
+      ],
+      "story_points": 5,
+      "depends_on": [],
+      "data_sensitivity": "Internal",
+      "regulatory_linkage": null,
+      "change_type": "new",
+      "existing_context": {
+        "existing_feature_ref": null,
+        "what_exists_today": null,
+        "what_changes": null,
+        "screens_affected": [],
+        "apis_affected": [],
+        "tables_affected": [],
+        "backward_compatible": true
+      },
+      "regression_criteria": [],
+      "citation": {
+        "requirements_used": [],
+        "domain_kb_sections": [],
+        "architecture_kb_sections": [],
+        "baseline_refs": []
+      },
+      "reasoning": "must-have"
+    },
+    {
+      "story_id": "US-038",
+      "feature_id": "F-04.4",
+      "title": "Automated Offer Expiry Batch Processing",
+      "user_story": "As a consumer, I want expired offers to be automatically updated so that my offer list always reflects current availability.",
+      "acceptance_criteria": [
+        "GIVEN the batch job runs every 15 minutes, WHEN offers have passed their expiry datetime, THEN their status transitions from 'active' to 'expired'",
+        "GIVEN an offer will expire within 1 hour, WHEN the batch job identifies it, THEN an 'expiring soon' push notification is sent to the consumer",
+        "GIVEN the batch job processes offers, WHEN a status transition occurs, THEN an audit log entry is created with timestamp and previous/new status",
+        "GIVEN the batch job fails, WHEN an error occurs, THEN it is retried with exponential backoff (max 3 retries) and an alert is raised to operations"
+      ],
+      "story_points": 3,
+      "depends_on": [],
+      "data_sensitivity": "Internal",
+      "regulatory_linkage": null,
+      "change_type": "new",
+      "existing_context": {
+        "existing_feature_ref": null,
+        "what_exists_today": null,
+        "what_changes": null,
+        "screens_affected": [],
+        "apis_affected": [],
+        "tables_affected": [],
+        "backward_compatible": true
+      },
+      "regression_criteria": [],
+      "citation": {
+        "requirements_used": [],
+        "domain_kb_sections": [],
+        "architecture_kb_sections": [],
+        "baseline_refs": []
+      },
+      "reasoning": "must-have"
+    },
+    {
+      "story_id": "US-039",
+      "feature_id": "F-04.4",
+      "title": "Expiring Soon Notification Preferences",
+      "user_story": "As a consumer, I want to control whether I receive 'expiring soon' notifications so that I am not overwhelmed by alerts.",
+      "acceptance_criteria": [
+        "GIVEN the consumer accesses notification settings, WHEN they toggle 'Expiring Soon Alerts', THEN the preference is persisted and respected by the batch job",
+        "GIVEN the consumer has disabled expiring soon alerts, WHEN the batch job identifies an expiring offer, THEN no notification is sent for that consumer",
+        "GIVEN the toggle control is rendered, WHEN a screen reader is active, THEN the toggle has an accessible label and announces its current state"
+      ],
+      "story_points": 2,
+      "depends_on": [
+        "US-038"
+      ],
+      "data_sensitivity": "Internal",
+      "regulatory_linkage": null,
+      "change_type": "new",
+      "existing_context": {
+        "existing_feature_ref": null,
+        "what_exists_today": null,
+        "what_changes": null,
+        "screens_affected": [],
+        "apis_affected": [],
+        "tables_affected": [],
+        "backward_compatible": true
+      },
+      "regression_criteria": [],
+      "citation": {
+        "requirements_used": [],
+        "domain_kb_sections": [],
+        "architecture_kb_sections": [],
+        "baseline_refs": []
+      },
+      "reasoning": "should-have"
+    },
+    {
+      "story_id": "US-040",
+      "feature_id": "F-04.5",
+      "title": "Merchant QR Code Scanning and Redemption Confirmation",
+      "user_story": "As a merchant marketer, I want to scan a consumer's QR code and receive confirmation of a valid redemption so that I can honour the offer with confidence.",
+      "acceptance_criteria": [
+        "GIVEN the merchant opens the scan screen, WHEN the camera activates, THEN the QR scanner is ready within 2 seconds",
+        "GIVEN a valid QR code is scanned, WHEN the server validates it, THEN a green confirmation screen displays offer details, consumer reference, and timestamp",
+        "GIVEN an expired or already-redeemed QR is scanned, WHEN the server rejects it, THEN a red rejection screen displays the reason (expired/already used)",
+        "GIVEN a successful redemption is confirmed, WHEN the merchant sees confirmation, THEN the consumer receives a real-time push notification confirming redemption",
+        "GIVEN the merchant is offline, WHEN a QR code is scanned, THEN a 6-digit offline fallback code is displayed for manual entry later",
+        "GIVEN the confirmation/rejection screen is displayed, WHEN a screen reader is active, THEN the result is announced immediately via an ARIA live region"
+      ],
+      "story_points": 5,
+      "depends_on": [
+        "US-034",
+        "US-036"
+      ],
+      "data_sensitivity": "Internal",
+      "regulatory_linkage": null,
+      "change_type": "new",
+      "existing_context": {
+        "existing_feature_ref": null,
+        "what_exists_today": null,
+        "what_changes": null,
+        "screens_affected": [],
+        "apis_affected": [],
+        "tables_affected": [],
+        "backward_compatible": true
+      },
+      "regression_criteria": [],
+      "citation": {
+        "requirements_used": [],
+        "domain_kb_sections": [],
+        "architecture_kb_sections": [],
+        "baseline_refs": []
+      },
+      "reasoning": "must-have"
+    },
+    {
+      "story_id": "US-041",
+      "feature_id": "F-04.5",
+      "title": "Merchant Offline Fallback Code Reconciliation",
+      "user_story": "As a merchant marketer, I want offline fallback codes to be reconciled when connectivity is restored so that redemptions are not lost.",
+      "acceptance_criteria": [
+        "GIVEN the merchant regains connectivity, WHEN pending offline codes exist, THEN they are automatically submitted to the server for validation",
+        "GIVEN an offline code is submitted, WHEN the server validates it, THEN the redemption is recorded and the consumer is notified retrospectively",
+        "GIVEN an offline code has expired beyond a 24-hour grace period, WHEN submitted, THEN it is rejected and the merchant is notified to contact support",
+        "Given a screen reader is active, When the merchant scans a QR code and confirmation appears, Then the redemption status is announced clearly"
+      ],
+      "story_points": 3,
+      "depends_on": [
+        "US-040"
+      ],
+      "data_sensitivity": "Internal",
+      "regulatory_linkage": null,
+      "change_type": "new",
+      "existing_context": {
+        "existing_feature_ref": null,
+        "what_exists_today": null,
+        "what_changes": null,
+        "screens_affected": [],
+        "apis_affected": [],
+        "tables_affected": [],
+        "backward_compatible": true
+      },
+      "regression_criteria": [],
+      "citation": {
+        "requirements_used": [],
+        "domain_kb_sections": [],
+        "architecture_kb_sections": [],
+        "baseline_refs": []
+      },
+      "reasoning": "must-have"
+    }
+  ],
+  "coverage_matrix": [],
+  "regression_summary": {
+    "total_regression_criteria": 0,
+    "existing_features_with_regression_tests": [],
+    "recommendation": "Greenfield \u2014 no regression testing needed."
+  }
+}

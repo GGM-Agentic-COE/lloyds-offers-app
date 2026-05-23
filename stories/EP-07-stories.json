@@ -1,0 +1,172 @@
+{
+  "epic_id": "EP-07",
+  "epic_title": "Social Features & Extended Channels",
+  "mode": "greenfield",
+  "total_stories": 6,
+  "total_story_points": 18,
+
+  "stories": [
+    {
+      "story_id": "US-064",
+      "feature_id": "F-07.1",
+      "title": "Share Offer via Native Share Sheet",
+      "user_story": "As a consumer, I want to share an offer using my device's native share sheet, so that I can send it to friends through any messaging or social app I already use",
+      "acceptance_criteria": [
+        "Given I am viewing an offer detail screen, When I tap the 'Share' button, Then the OS native share sheet opens with a pre-composed message containing the offer title, merchant name, and a deep link",
+        "Given the share sheet is open, When I select a target app and confirm, Then the share completes and a share event is recorded with offer_id, channel, and timestamp",
+        "Given the shared content, When it is received by the recipient, Then no personally identifiable information about the sharer is included in the message or deep link",
+        "Given a screen reader is active, When navigating the offer detail screen, Then the Share button announces 'Share this offer' and its action clearly",
+        "Given the share action fails (no network, cancelled), When the failure occurs, Then the app returns gracefully to the offer detail screen with no error unless network-related"
+      ],
+      "story_points": 3,
+      "data_sensitivity": "Internal",
+      "regulatory_linkage": "GDPR Art. 5(1)(c) — data minimization (no PII in shared content)",
+      "depends_on": [],
+      "change_type": "new",
+      "existing_context": {"existing_feature_ref": null, "what_exists_today": null, "what_changes": null, "screens_affected": [], "apis_affected": [], "tables_affected": [], "backward_compatible": true},
+      "regression_criteria": [],
+      "citation": {
+        "requirements_used": ["F-07.1 — Social Offer Sharing"],
+        "domain_kb_sections": [],
+        "architecture_kb_sections": ["kb-L0-lloyds-enterprise-architecture §3.1 (Native iOS/Android)"],
+        "baseline_refs": []
+      },
+      "reasoning": "Core sharing mechanic using platform-native share sheet. 3 points: native integration on both iOS/Android + event tracking + anonymity enforcement. Internal sensitivity as no PII is transmitted."
+    },
+    {
+      "story_id": "US-065",
+      "feature_id": "F-07.1",
+      "title": "Deep Link Resolution & Attribution Tracking",
+      "user_story": "As a consumer who received a shared offer link, I want to tap the link and land directly on the offer in the app, so that I can view and redeem it without searching",
+      "acceptance_criteria": [
+        "Given I tap a shared offer deep link and have the app installed, When the app opens, Then I am navigated directly to the offer detail screen for the referenced offer",
+        "Given I tap a shared offer deep link and do not have the app installed, When the link resolves, Then I am directed to the appropriate app store listing",
+        "Given I arrived via a shared deep link, When the offer detail loads, Then the system records an attribution event linking this view to the original share event (without revealing sharer identity)",
+        "Given the deep link references an expired or invalid offer, When the app opens, Then I see a message 'This offer is no longer available' with a link to browse current offers",
+        "Given a screen reader is active, When the deep-linked offer detail loads, Then focus is placed on the offer title and the screen content is announced"
+      ],
+      "story_points": 5,
+      "data_sensitivity": "Internal",
+      "regulatory_linkage": "GDPR Art. 5(1)(c) — anonymous attribution (no sharer PII stored with recipient data)",
+      "depends_on": ["US-064"],
+      "change_type": "new",
+      "existing_context": {"existing_feature_ref": null, "what_exists_today": null, "what_changes": null, "screens_affected": [], "apis_affected": [], "tables_affected": [], "backward_compatible": true},
+      "regression_criteria": [],
+      "citation": {
+        "requirements_used": ["F-07.1 — Social Offer Sharing (deep link, attribution tracking, anonymous)"],
+        "domain_kb_sections": [],
+        "architecture_kb_sections": ["kb-L0-lloyds-enterprise-architecture §3.1 (Native iOS/Android)", "kb-L0-lloyds-enterprise-architecture §3.2 (RESTful APIs)"],
+        "baseline_refs": []
+      },
+      "reasoning": "5 points: universal/app link configuration on both platforms + deferred deep linking for non-installed case + attribution service + expired offer handling. Higher complexity due to cross-platform link routing and backend attribution logic."
+    },
+    {
+      "story_id": "US-066",
+      "feature_id": "F-07.2",
+      "title": "Post-Redemption Rating Prompt",
+      "user_story": "As a consumer who has just redeemed an offer, I want to be prompted to rate my experience, so that I can help other consumers find the best offers",
+      "acceptance_criteria": [
+        "Given I have successfully redeemed an offer, When the redemption confirmation screen is displayed, Then a rating prompt appears after a 2-second delay showing 1–5 stars and 'How was this offer?'",
+        "Given the rating prompt is visible, When I tap a star (1–5), Then my rating is submitted, the prompt dismisses with a 'Thanks for your feedback' confirmation, and the rating is stored against the offer",
+        "Given the rating prompt is visible, When I tap 'Not now' or dismiss it, Then the prompt closes and does not reappear for this redemption",
+        "Given I have already rated this specific redemption, When I view the redemption history, Then my submitted rating is displayed (read-only)",
+        "Given a screen reader is active, When the rating prompt appears, Then each star is announced as 'Rate X out of 5 stars' and the selected state is conveyed"
+      ],
+      "story_points": 2,
+      "data_sensitivity": "Internal",
+      "regulatory_linkage": null,
+      "depends_on": [],
+      "change_type": "new",
+      "existing_context": {"existing_feature_ref": null, "what_exists_today": null, "what_changes": null, "screens_affected": [], "apis_affected": [], "tables_affected": [], "backward_compatible": true},
+      "regression_criteria": [],
+      "citation": {
+        "requirements_used": ["F-07.2 — Review-Based Recommendations (post-redemption rating prompt, 1-5 stars)"],
+        "domain_kb_sections": [],
+        "architecture_kb_sections": [],
+        "baseline_refs": []
+      },
+      "reasoning": "2 points: simple UI prompt with star input + API call to store rating. Low complexity — single screen interaction with straightforward backend persistence."
+    },
+    {
+      "story_id": "US-067",
+      "feature_id": "F-07.2",
+      "title": "Rating-Based Offer Ranking & Moderation",
+      "user_story": "As a consumer browsing offers, I want offers to be ranked considering user ratings, so that highly-rated offers surface higher and poorly-rated ones are deprioritised",
+      "acceptance_criteria": [
+        "Given an offer has an average rating ≥ 4.0 with at least 10 ratings, When the offer list is generated, Then the offer receives a ranking boost (weighted factor applied to relevance score)",
+        "Given an offer has an average rating ≤ 2.0 with at least 10 ratings, When the offer list is generated, Then the offer receives a ranking penalty (reduced visibility in results)",
+        "Given a newly submitted rating, When it is processed, Then the system checks for abuse patterns (same user rating same merchant repeatedly, burst of 1-star ratings) and flags suspicious ratings for moderation",
+        "Given a flagged rating is reviewed by the moderation system, When it is confirmed as abusive, Then it is excluded from the average calculation",
+        "Given a screen reader is active, When browsing the offer list, Then the average rating for each offer is announced as 'Rated X out of 5 stars based on N reviews'"
+      ],
+      "story_points": 3,
+      "data_sensitivity": "Internal",
+      "regulatory_linkage": null,
+      "depends_on": ["US-066"],
+      "change_type": "new",
+      "existing_context": {"existing_feature_ref": null, "what_exists_today": null, "what_changes": null, "screens_affected": [], "apis_affected": [], "tables_affected": [], "backward_compatible": true},
+      "regression_criteria": [],
+      "citation": {
+        "requirements_used": ["F-07.2 — Review-Based Recommendations (ranking boost/penalty, moderation)"],
+        "domain_kb_sections": [],
+        "architecture_kb_sections": ["kb-L0-lloyds-enterprise-architecture §4.1 (BigQuery for analytics)"],
+        "baseline_refs": []
+      },
+      "reasoning": "3 points: ranking algorithm adjustment + abuse detection heuristics + moderation exclusion logic. Medium complexity — backend scoring changes with basic fraud detection rules."
+    },
+    {
+      "story_id": "US-068",
+      "feature_id": "F-07.3",
+      "title": "Wearable Offer Notification Delivery",
+      "user_story": "As a consumer wearing an Apple Watch or Wear OS device, I want to receive nearby offer notifications on my wrist, so that I can see relevant offers without taking out my phone",
+      "acceptance_criteria": [
+        "Given I have the companion app installed on my Apple Watch or Wear OS device and notifications are enabled, When a location-triggered offer notification fires, Then it is delivered to my wearable with offer title, merchant name, and discount summary",
+        "Given a notification is displayed on my wearable, When I view it, Then I see a clear 'Open on phone to redeem' action button",
+        "Given I tap 'Open on phone to redeem', When the action is triggered, Then the paired phone opens the app directly to the offer detail screen",
+        "Given I have notification permissions disabled for the wearable companion app, When a location-triggered offer fires, Then no wearable notification is sent and the phone notification is unaffected",
+        "Given VoiceOver (watchOS) or TalkBack (Wear OS) is active, When a notification arrives, Then the offer title, merchant, and action are announced audibly"
+      ],
+      "story_points": 3,
+      "data_sensitivity": "Internal",
+      "regulatory_linkage": null,
+      "depends_on": [],
+      "change_type": "new",
+      "existing_context": {"existing_feature_ref": null, "what_exists_today": null, "what_changes": null, "screens_affected": [], "apis_affected": [], "tables_affected": [], "backward_compatible": true},
+      "regression_criteria": [],
+      "citation": {
+        "requirements_used": ["F-07.3 — Wearable Device Notifications (Apple Watch/Wear OS companion, 'Open on phone to redeem')"],
+        "domain_kb_sections": [],
+        "architecture_kb_sections": ["kb-L0-lloyds-enterprise-architecture §3.1 (Native iOS/Android — Swift, Kotlin)"],
+        "baseline_refs": []
+      },
+      "reasoning": "3 points: companion app notification routing on both watchOS and Wear OS + phone handoff action + permission handling. Medium complexity due to dual-platform wearable support."
+    },
+    {
+      "story_id": "US-069",
+      "feature_id": "F-07.3",
+      "title": "Wearable Complication for Active Offers",
+      "user_story": "As a consumer, I want a watch face complication showing my nearest active offer count, so that I can glance at my wrist to know if offers are available nearby",
+      "acceptance_criteria": [
+        "Given I have added the offers complication to my watch face, When offers are available within my configured radius, Then the complication displays the count of nearby active offers (e.g., '3 offers')",
+        "Given no offers are available nearby, When the complication refreshes, Then it displays '0 offers' or a placeholder icon indicating no current offers",
+        "Given I tap the complication, When the companion app opens, Then I see a summary list of nearby offers with 'Open on phone to redeem' for each",
+        "Given the complication data is stale (>15 minutes since last update), When the next background refresh cycle runs, Then the count is updated from the phone's cached offer data",
+        "Given VoiceOver (watchOS) or TalkBack (Wear OS) is active, When the complication is focused, Then it announces 'X nearby offers available'"
+      ],
+      "story_points": 2,
+      "data_sensitivity": "Internal",
+      "regulatory_linkage": null,
+      "depends_on": ["US-068"],
+      "change_type": "new",
+      "existing_context": {"existing_feature_ref": null, "what_exists_today": null, "what_changes": null, "screens_affected": [], "apis_affected": [], "tables_affected": [], "backward_compatible": true},
+      "regression_criteria": [],
+      "citation": {
+        "requirements_used": ["F-07.3 — Wearable Device Notifications (complication)"],
+        "domain_kb_sections": [],
+        "architecture_kb_sections": ["kb-L0-lloyds-enterprise-architecture §3.1 (Native iOS/Android — Swift, Kotlin)"],
+        "baseline_refs": []
+      },
+      "reasoning": "2 points: complication UI is simple (count display) + background refresh from phone cache. Lower complexity than notification delivery — primarily a data display widget with periodic updates."
+    }
+  ]
+}

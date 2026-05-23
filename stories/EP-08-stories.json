@@ -1,0 +1,305 @@
+{
+  "epic_id": "EP-08",
+  "epic_title": "Platform Resilience & Operational Excellence",
+  "mode": "greenfield",
+  "total_stories": 8,
+  "total_story_points": 31,
+  "stories": [
+    {
+      "story_id": "US-071",
+      "title": "Configure GKE Horizontal Pod Autoscaler for offer services",
+      "feature_id": "F-08.1",
+      "user_story": "As a platform operator, I want GKE Horizontal Pod Autoscalers configured with appropriate min/max pod counts and CPU/memory thresholds for all offer microservices, so that the platform scales automatically under load without manual intervention.",
+      "acceptance_criteria": [
+        "HPA configured for each offer microservice with min 3 / max 20 pods",
+        "Scale-up triggered at 70% CPU or 80% memory utilisation",
+        "Scale-down cooldown set to 5 minutes to prevent flapping",
+        "Pre-scaling CronJobs configured for known peak periods (lunchtime 11:30-13:30, evening 17:00-19:00)",
+        "Load test confirms scale-up from 3 to 12 pods within 90 seconds under 10x traffic spike"
+      ],
+      "story_points": 5,
+      "depends_on": [],
+      "data_sensitivity": "Internal",
+      "regulatory_linkage": null,
+      "change_type": "new",
+      "existing_context": {
+        "existing_feature_ref": null,
+        "what_exists_today": null,
+        "what_changes": null,
+        "screens_affected": [],
+        "apis_affected": [],
+        "tables_affected": [],
+        "backward_compatible": true
+      },
+      "regression_criteria": [],
+      "citation": {
+        "requirements_used": [],
+        "domain_kb_sections": [],
+        "architecture_kb_sections": [],
+        "baseline_refs": []
+      },
+      "reasoning": "Must Have"
+    },
+    {
+      "story_id": "US-072",
+      "title": "Implement Cloud Monitoring dashboards and PagerDuty alerting",
+      "feature_id": "F-08.2",
+      "user_story": "As a platform operator, I want unified Cloud Monitoring dashboards with SLA tracking and PagerDuty integration, so that I have real-time visibility into platform health and receive immediate alerts when SLOs are breached.",
+      "acceptance_criteria": [
+        "SLA dashboard displays p50/p95/p99 latency, error rate, and availability for each service",
+        "Alerts fire to PagerDuty when error rate exceeds 1% or p99 latency exceeds 500ms for 5 minutes",
+        "Cloud Trace enabled with 10% sampling rate across all services for distributed tracing",
+        "Structured logging via Cloud Logging with correlation IDs propagated across service boundaries",
+        "Dashboard accessible to on-call engineers with no additional auth beyond Lloyds SSO"
+      ],
+      "story_points": 5,
+      "depends_on": [],
+      "data_sensitivity": "Internal",
+      "regulatory_linkage": null,
+      "change_type": "new",
+      "existing_context": {
+        "existing_feature_ref": null,
+        "what_exists_today": null,
+        "what_changes": null,
+        "screens_affected": [],
+        "apis_affected": [],
+        "tables_affected": [],
+        "backward_compatible": true
+      },
+      "regression_criteria": [],
+      "citation": {
+        "requirements_used": [],
+        "domain_kb_sections": [],
+        "architecture_kb_sections": [],
+        "baseline_refs": []
+      },
+      "reasoning": "Must Have"
+    },
+    {
+      "story_id": "US-073",
+      "title": "Deploy multi-zone GKE cluster with Cloud SQL high availability",
+      "feature_id": "F-08.3",
+      "user_story": "As a platform operator, I want the GKE cluster deployed across multiple zones with Cloud SQL regional HA, so that a single zone failure does not cause service disruption.",
+      "acceptance_criteria": [
+        "GKE node pools span at least 3 zones within europe-west2 (London)",
+        "Cloud SQL configured with regional HA (automatic failover to standby in different zone)",
+        "Pod anti-affinity rules ensure replicas are distributed across zones",
+        "Simulated zone failure demonstrates zero-downtime failover within 30 seconds",
+        "Terraform IaC defines all multi-zone configuration"
+      ],
+      "story_points": 5,
+      "depends_on": [],
+      "data_sensitivity": "Internal",
+      "regulatory_linkage": null,
+      "change_type": "new",
+      "existing_context": {
+        "existing_feature_ref": null,
+        "what_exists_today": null,
+        "what_changes": null,
+        "screens_affected": [],
+        "apis_affected": [],
+        "tables_affected": [],
+        "backward_compatible": true
+      },
+      "regression_criteria": [],
+      "citation": {
+        "requirements_used": [],
+        "domain_kb_sections": [],
+        "architecture_kb_sections": [],
+        "baseline_refs": []
+      },
+      "reasoning": "Must Have"
+    },
+    {
+      "story_id": "US-074",
+      "title": "Implement circuit breakers and graceful degradation",
+      "feature_id": "F-08.3",
+      "user_story": "As a platform operator, I want circuit breakers on all external service calls and graceful degradation paths, so that downstream failures do not cascade and users still receive a reduced-functionality experience.",
+      "acceptance_criteria": [
+        "Circuit breakers configured via Cloud Service Mesh (Istio) for all external dependencies",
+        "Circuit opens after 5 consecutive failures or 50% error rate in a 30-second window",
+        "Graceful degradation returns cached offers when the personalisation engine is unavailable",
+        "Health check endpoints report degraded state (HTTP 200 with degraded flag) rather than failing",
+        "Runbook documents each degradation path and expected user impact"
+      ],
+      "story_points": 3,
+      "depends_on": [
+        "US-073"
+      ],
+      "data_sensitivity": "Internal",
+      "regulatory_linkage": null,
+      "change_type": "new",
+      "existing_context": {
+        "existing_feature_ref": null,
+        "what_exists_today": null,
+        "what_changes": null,
+        "screens_affected": [],
+        "apis_affected": [],
+        "tables_affected": [],
+        "backward_compatible": true
+      },
+      "regression_criteria": [],
+      "citation": {
+        "requirements_used": [],
+        "domain_kb_sections": [],
+        "architecture_kb_sections": [],
+        "baseline_refs": []
+      },
+      "reasoning": "Must Have"
+    },
+    {
+      "story_id": "US-075",
+      "title": "Configure Cloud Armor WAF with rate limiting and abuse prevention",
+      "feature_id": "F-08.4",
+      "user_story": "As a platform operator, I want Cloud Armor policies enforcing rate limits, bot detection, and location spoofing prevention, so that the platform is protected from abuse and fraudulent redemptions.",
+      "acceptance_criteria": [
+        "Cloud Armor rate limiting set to 100 requests/minute per authenticated user",
+        "Bot detection rules block known automated user agents and headless browsers",
+        "Location spoofing detection flags requests where GPS coordinates conflict with IP geolocation by >50km",
+        "Redemption fraud rules limit offer redemptions to 1 per user per offer per 24-hour window",
+        "Blocked requests return HTTP 429 with appropriate Retry-After header"
+      ],
+      "story_points": 3,
+      "depends_on": [],
+      "data_sensitivity": "Internal",
+      "regulatory_linkage": null,
+      "change_type": "new",
+      "existing_context": {
+        "existing_feature_ref": null,
+        "what_exists_today": null,
+        "what_changes": null,
+        "screens_affected": [],
+        "apis_affected": [],
+        "tables_affected": [],
+        "backward_compatible": true
+      },
+      "regression_criteria": [],
+      "citation": {
+        "requirements_used": [],
+        "domain_kb_sections": [],
+        "architecture_kb_sections": [],
+        "baseline_refs": []
+      },
+      "reasoning": "Must Have"
+    },
+    {
+      "story_id": "US-076",
+      "title": "Implement Redis caching layer and CDN for offer content",
+      "feature_id": "F-08.5",
+      "user_story": "As a platform operator, I want Memorystore (Redis) caching for hot offer data and Cloud CDN for static offer assets, so that read-heavy workloads are served with sub-50ms latency without hitting the database.",
+      "acceptance_criteria": [
+        "Memorystore Redis cluster deployed with 2 read replicas in europe-west2",
+        "Offer catalogue cached with 5-minute TTL; cache-aside pattern implemented",
+        "Cloud CDN configured for offer images and merchant logos with 24-hour cache",
+        "Cache hit ratio exceeds 85% for offer listing endpoints under steady-state traffic",
+        "Cloud SQL read replicas serve analytics and reporting queries to offload primary"
+      ],
+      "story_points": 3,
+      "depends_on": [
+        "US-073"
+      ],
+      "data_sensitivity": "Internal",
+      "regulatory_linkage": null,
+      "change_type": "new",
+      "existing_context": {
+        "existing_feature_ref": null,
+        "what_exists_today": null,
+        "what_changes": null,
+        "screens_affected": [],
+        "apis_affected": [],
+        "tables_affected": [],
+        "backward_compatible": true
+      },
+      "regression_criteria": [],
+      "citation": {
+        "requirements_used": [],
+        "domain_kb_sections": [],
+        "architecture_kb_sections": [],
+        "baseline_refs": []
+      },
+      "reasoning": "Should Have"
+    },
+    {
+      "story_id": "US-077",
+      "title": "Create spatial indexes for location-based offer queries",
+      "feature_id": "F-08.5",
+      "user_story": "As a platform operator, I want PostGIS spatial indexes on offer location data, so that nearby-offer queries execute within 20ms even at scale.",
+      "acceptance_criteria": [
+        "PostGIS extension enabled on Cloud SQL PostgreSQL instance",
+        "GiST spatial index created on merchant location geometry column",
+        "Nearby-offer query (radius search) returns results in <20ms for 100k merchant locations",
+        "Query plan confirms index usage via EXPLAIN ANALYZE",
+        "Index maintenance automated via scheduled REINDEX during low-traffic window"
+      ],
+      "story_points": 2,
+      "depends_on": [
+        "US-073"
+      ],
+      "data_sensitivity": "Internal",
+      "regulatory_linkage": null,
+      "change_type": "new",
+      "existing_context": {
+        "existing_feature_ref": null,
+        "what_exists_today": null,
+        "what_changes": null,
+        "screens_affected": [],
+        "apis_affected": [],
+        "tables_affected": [],
+        "backward_compatible": true
+      },
+      "regression_criteria": [],
+      "citation": {
+        "requirements_used": [],
+        "domain_kb_sections": [],
+        "architecture_kb_sections": [],
+        "baseline_refs": []
+      },
+      "reasoning": "Should Have"
+    },
+    {
+      "story_id": "US-078",
+      "title": "Establish DR testing and chaos engineering programme",
+      "feature_id": "F-08.6",
+      "user_story": "As a platform operator, I want automated DR test scripts and a monthly chaos engineering schedule, so that we continuously validate platform resilience and reduce mean time to recovery.",
+      "acceptance_criteria": [
+        "DR test runbook covers full regional failover to europe-west1 (Belgium) backup",
+        "Quarterly DR test executes end-to-end failover and validates RTO <15 minutes, RPO <5 minutes",
+        "Monthly chaos experiments include: random pod termination, zone failure simulation, network partition injection",
+        "Chaos experiments run in a dedicated chaos namespace with blast radius controls",
+        "Post-incident reports generated automatically with findings and remediation actions",
+        "All chaos tooling (e.g., Litmus/Chaos Mesh) deployed via Terraform"
+      ],
+      "story_points": 5,
+      "depends_on": [
+        "US-073",
+        "US-074"
+      ],
+      "data_sensitivity": "Internal",
+      "regulatory_linkage": null,
+      "change_type": "new",
+      "existing_context": {
+        "existing_feature_ref": null,
+        "what_exists_today": null,
+        "what_changes": null,
+        "screens_affected": [],
+        "apis_affected": [],
+        "tables_affected": [],
+        "backward_compatible": true
+      },
+      "regression_criteria": [],
+      "citation": {
+        "requirements_used": [],
+        "domain_kb_sections": [],
+        "architecture_kb_sections": [],
+        "baseline_refs": []
+      },
+      "reasoning": "Should Have"
+    }
+  ],
+  "coverage_matrix": [],
+  "regression_summary": {
+    "total_regression_criteria": 0,
+    "existing_features_with_regression_tests": [],
+    "recommendation": "Greenfield \u2014 no regression testing needed."
+  }
+}

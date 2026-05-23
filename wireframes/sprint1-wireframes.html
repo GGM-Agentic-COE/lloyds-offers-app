@@ -1,0 +1,1208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Smart Offers Platform — Sprint 1 Wireframes</title>
+<style>
+:root {
+  --lloyds-green: #006A4D;
+  --lloyds-green-dark: #005238;
+  --lloyds-green-light: #E6F2EE;
+  --bg-app: #F5F5F5;
+  --bg-surface: #FFFFFF;
+  --text-primary: #1A1A1A;
+  --text-secondary: #595959;
+  --text-muted: #888888;
+  --text-error: #C0392B;
+  --border-light: #E0E0E0;
+  --border-focus: #006A4D;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #E8E8E8; color: var(--text-primary); padding: 32px; }
+h1 { color: #1A1A1A; font-size: 28px; margin-bottom: 8px; }
+.subtitle { color: #595959; font-size: 14px; margin-bottom: 40px; }
+.flow-title { color: #1A1A1A; font-size: 20px; margin: 48px 0 24px; padding-top: 24px; border-top: 1px solid #ccc; }
+.sprint-banner { margin: 64px 0 32px; padding: 20px 24px; border-radius: 12px; border: 2px solid; }
+.sprint-banner h2 { font-size: 24px; font-weight: 700; margin-bottom: 4px; }
+.sprint-banner p { font-size: 14px; opacity: 0.8; margin: 0; }
+.sprint-1 { background: rgba(0,106,77,0.1); border-color: #006A4D; color: #006A4D; }
+.sprint-2 { background: rgba(21,101,192,0.1); border-color: #1565C0; color: #1565C0; }
+.sprint-3 { background: rgba(156,90,0,0.1); border-color: #9C5A00; color: #9C5A00; }
+.sprint-4 { background: rgba(106,27,154,0.1); border-color: #6A1B9A; color: #6A1B9A; }
+.screen-grid { display: flex; flex-wrap: wrap; gap: 24px; margin-bottom: 32px; }
+.screen-frame { width: 375px; background: var(--bg-app); border-radius: 20px; overflow: hidden; box-shadow: 0 8px 32px rgba(0,0,0,0.3); }
+.screen-label { color: #595959; font-size: 11px; text-align: center; margin-top: 8px; margin-bottom: 4px; }
+/* Phone chrome */
+.status-bar { height: 44px; background: var(--bg-surface); display: flex; align-items: center; justify-content: center; font-size: 12px; color: var(--text-secondary); }
+.top-bar { height: 56px; background: var(--bg-surface); border-bottom: 1px solid var(--border-light); display: flex; align-items: center; padding: 0 16px; gap: 12px; }
+.top-bar .back { font-size: 20px; color: var(--text-secondary); cursor: pointer; }
+.top-bar .title { font-size: 17px; font-weight: 700; color: var(--text-primary); flex: 1; }
+.top-bar .logo { font-size: 15px; font-weight: 700; color: var(--lloyds-green); }
+/* Content */
+.content { padding: 24px 16px; min-height: 500px; }
+.content h2 { font-size: 24px; font-weight: 700; margin-bottom: 8px; }
+.content p { font-size: 14px; color: var(--text-secondary); line-height: 1.6; margin-bottom: 16px; }
+/* Components */
+.btn-primary { width: 100%; height: 52px; background: var(--lloyds-green); color: #fff; border: none; border-radius: var(--radius-md); font-size: 16px; font-weight: 700; cursor: pointer; margin-top: 16px; }
+.btn-primary:disabled { background: #ccc; color: #888; }
+.btn-secondary { width: 100%; height: 52px; background: transparent; color: var(--lloyds-green); border: 2px solid var(--lloyds-green); border-radius: var(--radius-md); font-size: 16px; font-weight: 700; cursor: pointer; margin-top: 12px; }
+.btn-ghost { background: none; border: none; color: var(--lloyds-green); font-size: 14px; font-weight: 700; text-decoration: underline; cursor: pointer; margin-top: 12px; }
+.input-field { width: 100%; height: 52px; border: 1.5px solid #ccc; border-radius: var(--radius-md); padding: 0 16px; font-size: 16px; margin-bottom: 6px; background: #fff; }
+.input-field:focus { border-color: var(--lloyds-green); outline: none; }
+.input-field.error { border-color: var(--text-error); }
+.field-label { font-size: 14px; font-weight: 700; margin-bottom: 6px; color: var(--text-primary); }
+.field-error { font-size: 13px; color: var(--text-error); margin-bottom: 12px; }
+.field-helper { font-size: 13px; color: var(--text-secondary); margin-bottom: 16px; }
+.card { background: var(--bg-surface); border: 1px solid var(--border-light); border-radius: var(--radius-lg); padding: 20px; margin-bottom: 16px; }
+.card-green { background: var(--lloyds-green); color: #fff; border: none; border-radius: var(--radius-xl); padding: 24px; margin-bottom: 16px; }
+.option-card { background: var(--bg-surface); border: 2px solid var(--border-light); border-radius: var(--radius-lg); padding: 16px; margin-bottom: 12px; cursor: pointer; display: flex; align-items: center; gap: 12px; }
+.option-card.selected { border-color: var(--lloyds-green); background: var(--lloyds-green-light); }
+.option-radio { width: 20px; height: 20px; border-radius: 50%; border: 2px solid #ccc; flex-shrink: 0; }
+.option-card.selected .option-radio { border-color: var(--lloyds-green); background: var(--lloyds-green); box-shadow: inset 0 0 0 3px #fff; }
+.option-label { font-size: 15px; font-weight: 600; }
+.option-desc { font-size: 13px; color: var(--text-secondary); margin-top: 2px; }
+/* Bottom nav */
+.bottom-nav { height: 60px; background: var(--bg-surface); border-top: 1px solid var(--border-light); display: flex; align-items: center; }
+.nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px; font-size: 11px; color: var(--text-muted); text-decoration: none; }
+.nav-item.active { color: var(--lloyds-green); font-weight: 700; }
+.nav-icon { font-size: 20px; }
+/* OTP */
+.otp-row { display: flex; gap: 8px; justify-content: center; margin: 24px 0; }
+.otp-box { width: 48px; height: 56px; border: 1.5px solid #ccc; border-radius: var(--radius-md); text-align: center; font-size: 24px; font-weight: 700; }
+.timer { text-align: center; font-size: 14px; color: var(--text-secondary); margin-bottom: 16px; }
+/* List items */
+.list-item { display: flex; align-items: center; gap: 12px; padding: 16px; border-bottom: 1px solid var(--border-light); background: #fff; }
+.list-icon { width: 40px; height: 40px; border-radius: 10px; background: var(--lloyds-green-light); display: flex; align-items: center; justify-content: center; color: var(--lloyds-green); font-size: 18px; }
+.list-label { flex: 1; font-size: 15px; }
+.list-value { font-size: 13px; color: var(--text-secondary); }
+.list-chevron { color: #ccc; }
+/* Toggle */
+.toggle-row { display: flex; align-items: center; justify-content: space-between; padding: 14px 0; border-bottom: 1px solid var(--border-light); }
+.toggle-label { font-size: 15px; }
+.toggle { width: 48px; height: 26px; background: #ccc; border-radius: 13px; position: relative; }
+.toggle.on { background: var(--lloyds-green); }
+.toggle::after { content: ''; width: 20px; height: 20px; background: #fff; border-radius: 50%; position: absolute; top: 3px; left: 3px; transition: 0.2s; }
+.toggle.on::after { left: 25px; }
+/* Step indicator */
+.steps { display: flex; align-items: center; justify-content: center; gap: 0; margin-bottom: 24px; padding: 0 16px; }
+.step-dot { width: 8px; height: 8px; border-radius: 50%; background: #ddd; }
+.step-dot.active { background: var(--lloyds-green); width: 24px; border-radius: 4px; }
+.step-dot + .step-dot { margin-left: 6px; }
+/* Badge */
+.badge { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 12px; font-weight: 700; }
+.badge-green { background: var(--lloyds-green-light); color: var(--lloyds-green-dark); }
+.badge-pending { background: #FFF3E0; color: #9C5A00; }
+/* Illustration placeholder */
+.illustration { width: 120px; height: 120px; background: var(--lloyds-green-light); border-radius: 50%; margin: 0 auto 24px; display: flex; align-items: center; justify-content: center; font-size: 48px; color: var(--lloyds-green); }
+/* Chip */
+.chip { display: inline-block; padding: 6px 12px; border-radius: 20px; font-size: 13px; border: 1px solid var(--border-light); margin: 4px; background: #fff; }
+.chip.selected { background: var(--lloyds-green-light); border-color: var(--lloyds-green); color: var(--lloyds-green-dark); }
+</style>
+</head>
+<body>
+<h1>Smart Location-Based Offers Platform</h1>
+<p class="subtitle">All Sprints · Lloyds Design System · 35 Screens · 4 Sprints<br>Design tokens (US-001) and component library (US-002) applied throughout all screens.<br>Deep link routing (US-004) and error/loading patterns (US-005) demonstrated in error states and empty states.</p>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- SPRINT 1 -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<div class="sprint-banner sprint-1">
+  <h2>Sprint 1 — Foundation</h2>
+  <p>EP-00: Design System & App Shell · EP-01: Auth & Registration · EP-02: Notifications & Preferences<br>13 screens · 12 features · 23 stories · 71 points</p>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- FLOW 1: ONBOARDING (Registration → OTP → Biometric → Consent) -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<h2 class="flow-title">Flow 1: Onboarding</h2>
+<div class="screen-grid">
+
+<!-- Screen 1.1: Registration -->
+<div>
+<p class="screen-label">/onboarding/register · US-006</p>
+<div class="screen-frame">
+  <div class="status-bar">9:41</div>
+  <div class="top-bar"><span class="logo">♞ Lloyds Offers</span></div>
+  <div class="content">
+    <div class="steps"><span class="step-dot active"></span><span class="step-dot"></span><span class="step-dot"></span><span class="step-dot"></span></div>
+    <div class="illustration">📍</div>
+    <h2>Get offers near you</h2>
+    <p>Create an account to receive personalised deals from local merchants based on your location and preferences.</p>
+    <div style="margin-top:24px">
+      <label class="field-label">Phone number or email</label>
+      <input class="input-field" type="text" placeholder="+44 7700 900000 or email@example.com">
+      <p class="field-helper">We'll send a verification code</p>
+    </div>
+    <button class="btn-primary">Continue</button>
+    <p style="text-align:center;margin-top:16px;font-size:13px;color:var(--text-secondary)">Already have an account? <a href="#" style="color:var(--lloyds-green);font-weight:700">Sign in</a></p>
+  </div>
+</div>
+</div>
+
+<!-- Screen 1.2: Registration Error State -->
+<div>
+<p class="screen-label">/onboarding/register · Error State · US-013</p>
+<div class="screen-frame">
+  <div class="status-bar">9:41</div>
+  <div class="top-bar"><span class="logo">♞ Lloyds Offers</span></div>
+  <div class="content">
+    <div class="steps"><span class="step-dot active"></span><span class="step-dot"></span><span class="step-dot"></span><span class="step-dot"></span></div>
+    <div class="illustration">📍</div>
+    <h2>Get offers near you</h2>
+    <p>Create an account to receive personalised deals from local merchants based on your location and preferences.</p>
+    <div style="margin-top:24px">
+      <label class="field-label">Phone number or email</label>
+      <input class="input-field error" type="text" value="invalid-input">
+      <p class="field-error">⚠ Please enter a valid phone number or email address</p>
+    </div>
+    <button class="btn-primary" disabled>Continue</button>
+  </div>
+</div>
+</div>
+
+<!-- Screen 1.3: OTP Verification -->
+<div>
+<p class="screen-label">/onboarding/verify · US-007</p>
+<div class="screen-frame">
+  <div class="status-bar">9:41</div>
+  <div class="top-bar"><span class="back">‹</span><span class="title">Verify</span></div>
+  <div class="content">
+    <div class="steps"><span class="step-dot" style="background:var(--lloyds-green)"></span><span class="step-dot active"></span><span class="step-dot"></span><span class="step-dot"></span></div>
+    <h2 style="text-align:center">Enter your code</h2>
+    <p style="text-align:center">We sent a 6-digit code to<br><strong>+44 7700 900***</strong></p>
+    <div class="otp-row">
+      <input class="otp-box" maxlength="1" value="4">
+      <input class="otp-box" maxlength="1" value="8">
+      <input class="otp-box" maxlength="1" value="2">
+      <input class="otp-box" maxlength="1">
+      <input class="otp-box" maxlength="1">
+      <input class="otp-box" maxlength="1">
+    </div>
+    <p class="timer">Code expires in <strong>1:23</strong></p>
+    <button class="btn-primary">Verify</button>
+    <button class="btn-ghost" style="width:100%;text-align:center;margin-top:16px">Resend code</button>
+  </div>
+</div>
+</div>
+
+<!-- Screen 1.4: Biometric Enrollment -->
+<div>
+<p class="screen-label">/onboarding/biometric · US-008</p>
+<div class="screen-frame">
+  <div class="status-bar">9:41</div>
+  <div class="top-bar"><span class="back">‹</span><span class="title">Quick access</span></div>
+  <div class="content">
+    <div class="steps"><span class="step-dot" style="background:var(--lloyds-green)"></span><span class="step-dot" style="background:var(--lloyds-green)"></span><span class="step-dot active"></span><span class="step-dot"></span></div>
+    <div class="illustration">🔐</div>
+    <h2 style="text-align:center">Enable Face ID</h2>
+    <p style="text-align:center">Use Face ID to sign in quickly and securely. You can change this later in Settings.</p>
+    <div style="margin-top:32px">
+      <button class="btn-primary">Enable Face ID</button>
+      <button class="btn-secondary">Skip for now</button>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- Screen 1.5: Location Consent -->
+<div>
+<p class="screen-label">/onboarding/consent-location · US-009</p>
+<div class="screen-frame">
+  <div class="status-bar">9:41</div>
+  <div class="top-bar"><span class="back">‹</span><span class="title">Permissions</span></div>
+  <div class="content">
+    <div class="steps"><span class="step-dot" style="background:var(--lloyds-green)"></span><span class="step-dot" style="background:var(--lloyds-green)"></span><span class="step-dot" style="background:var(--lloyds-green)"></span><span class="step-dot active"></span></div>
+    <h2>Location access</h2>
+    <p>We use your location to show offers from nearby merchants. Choose how you'd like this to work:</p>
+    <div style="margin-top:20px">
+      <div class="option-card selected">
+        <div class="option-radio"></div>
+        <div><div class="option-label">Always</div><div class="option-desc">Get notified about deals even when the app is closed</div></div>
+      </div>
+      <div class="option-card">
+        <div class="option-radio"></div>
+        <div><div class="option-label">Only when using the app</div><div class="option-desc">Offers shown only while you're browsing</div></div>
+      </div>
+      <div class="option-card">
+        <div class="option-radio"></div>
+        <div><div class="option-label">Not now</div><div class="option-desc">You'll see all offers in your city without proximity sorting</div></div>
+      </div>
+    </div>
+    <button class="btn-primary" style="margin-top:24px">Continue</button>
+    <p style="font-size:12px;color:var(--text-muted);margin-top:12px;text-align:center">You can change this anytime in Settings. <a href="#" style="color:var(--lloyds-green)">Privacy policy</a></p>
+  </div>
+</div>
+</div>
+
+<!-- Screen 1.6: Transaction Data Consent -->
+<div>
+<p class="screen-label">/onboarding/consent-transaction · US-010</p>
+<div class="screen-frame">
+  <div class="status-bar">9:41</div>
+  <div class="top-bar"><span class="back">‹</span><span class="title">Permissions</span></div>
+  <div class="content">
+    <div class="illustration">💳</div>
+    <h2>Personalise your offers</h2>
+    <p>Allow us to analyse your spending patterns to show you more relevant deals. We only see categories and amounts — never your card details.</p>
+    <div class="card" style="margin-top:20px">
+      <p style="font-size:13px;font-weight:700;margin-bottom:8px">What we use:</p>
+      <p style="font-size:13px;color:var(--text-secondary);margin:0">✓ Spending categories (dining, retail, etc.)<br>✓ Average transaction amounts<br>✓ Frequency patterns</p>
+    </div>
+    <div class="card">
+      <p style="font-size:13px;font-weight:700;margin-bottom:8px">What we never access:</p>
+      <p style="font-size:13px;color:var(--text-secondary);margin:0">✗ Card numbers or bank details<br>✗ Specific merchant names<br>✗ Your account balance</p>
+    </div>
+    <button class="btn-primary">Allow</button>
+    <button class="btn-ghost" style="width:100%;text-align:center">No thanks</button>
+  </div>
+</div>
+</div>
+
+</div><!-- end screen-grid -->
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- FLOW 2: MAIN APP (Tabs, Profile, Settings) -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- SPRINT 2 -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<div class="sprint-banner sprint-2">
+  <h2>Sprint 2 — Core MVP</h2>
+  <p>EP-03: Geofencing & Real-Time Offer Delivery · EP-04: Offer Redemption & History<br>14 screens · 10 features · 18 stories · 65 points</p>
+</div>
+
+<h2 class="flow-title">Flow 2: Main App — Happy Path (Offers Available)</h2>
+<div class="screen-grid">
+
+<!-- Screen 2.0a: Offers Tab with offers -->
+<div>
+<p class="screen-label">/offers · Happy Path · Offers Available</p>
+<div class="screen-frame">
+  <div class="status-bar">9:41</div>
+  <div class="top-bar"><span class="logo">♞ Lloyds Offers</span><span style="margin-left:auto;font-size:20px;position:relative">🔔<span style="position:absolute;top:-4px;right:-4px;width:16px;height:16px;background:#C0392B;border-radius:50%;font-size:10px;color:#fff;display:flex;align-items:center;justify-content:center">3</span></span></div>
+  <div class="content" style="padding:16px">
+    <div class="card-green">
+      <p style="font-size:13px;color:#ffffff;margin-bottom:4px">📍 Near you now</p>
+      <p style="font-size:20px;font-weight:700;color:#ffffff;margin-bottom:4px">5 offers available</p>
+      <p style="font-size:13px;color:#ffffffcc">Within 2 km · Updated just now</p>
+    </div>
+    <!-- Offer card 1 -->
+    <div class="card" style="padding:0;overflow:hidden;margin-bottom:12px">
+      <div style="height:100px;background:linear-gradient(135deg,#E6F2EE,#d4ece4);display:flex;align-items:center;justify-content:center;font-size:36px">🍕</div>
+      <div style="padding:16px">
+        <div style="display:flex;justify-content:space-between;align-items:start">
+          <div>
+            <p style="font-size:15px;font-weight:700">20% off at Pizza Express</p>
+            <p style="font-size:13px;color:var(--text-secondary);margin-top:2px">350m away · Dining</p>
+          </div>
+          <span class="badge badge-green">20% off</span>
+        </div>
+        <p style="font-size:12px;color:var(--text-muted);margin-top:8px">Expires in 3 hours</p>
+      </div>
+    </div>
+    <!-- Offer card 2 -->
+    <div class="card" style="padding:0;overflow:hidden;margin-bottom:12px">
+      <div style="height:100px;background:linear-gradient(135deg,#FFF3E0,#ffe0b2);display:flex;align-items:center;justify-content:center;font-size:36px">☕</div>
+      <div style="padding:16px">
+        <div style="display:flex;justify-content:space-between;align-items:start">
+          <div>
+            <p style="font-size:15px;font-weight:700">Free coffee with any meal</p>
+            <p style="font-size:13px;color:var(--text-secondary);margin-top:2px">500m away · Dining</p>
+          </div>
+          <span class="badge badge-green">BOGOF</span>
+        </div>
+        <p style="font-size:12px;color:var(--text-muted);margin-top:8px">Expires tomorrow</p>
+      </div>
+    </div>
+    <!-- Offer card 3 -->
+    <div class="card" style="padding:0;overflow:hidden;margin-bottom:12px">
+      <div style="height:100px;background:linear-gradient(135deg,#E3F2FD,#bbdefb);display:flex;align-items:center;justify-content:center;font-size:36px">👟</div>
+      <div style="padding:16px">
+        <div style="display:flex;justify-content:space-between;align-items:start">
+          <div>
+            <p style="font-size:15px;font-weight:700">£10 off at JD Sports</p>
+            <p style="font-size:13px;color:var(--text-secondary);margin-top:2px">1.2 km away · Retail</p>
+          </div>
+          <span class="badge badge-green">£10 off</span>
+        </div>
+        <p style="font-size:12px;color:var(--text-muted);margin-top:8px">Expires in 5 days</p>
+      </div>
+    </div>
+  </div>
+  <div class="bottom-nav">
+    <a class="nav-item active"><span class="nav-icon">🏷️</span>Offers</a>
+    <a class="nav-item"><span class="nav-icon">🕐</span>History</a>
+    <a class="nav-item"><span class="nav-icon">👤</span>Profile</a>
+    <a class="nav-item"><span class="nav-icon">⚙️</span>Settings</a>
+  </div>
+</div>
+</div>
+
+<!-- Screen 2.0b: Offer Detail -->
+<div>
+<p class="screen-label">/offers/:id · Offer Detail</p>
+<div class="screen-frame">
+  <div class="status-bar">9:41</div>
+  <div class="top-bar"><span class="back">‹</span><span class="title">Offer</span></div>
+  <div class="content">
+    <div style="height:140px;background:linear-gradient(135deg,#E6F2EE,#d4ece4);border-radius:var(--radius-lg);display:flex;align-items:center;justify-content:center;font-size:56px;margin-bottom:20px">🍕</div>
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+      <span class="badge badge-green">20% off</span>
+      <span class="badge badge-pending">Expires in 3h</span>
+    </div>
+    <h2 style="margin-top:12px">20% off your bill</h2>
+    <p style="font-size:15px;color:var(--text-secondary);margin-top:4px">Pizza Express · 350m away</p>
+    <div class="card" style="margin-top:20px">
+      <p style="font-size:14px;font-weight:700;margin-bottom:8px">Terms</p>
+      <p style="font-size:13px;color:var(--text-secondary);line-height:1.6;margin:0">Valid on dine-in orders over £15. Cannot be combined with other offers. One redemption per customer. Valid at the High Street branch only.</p>
+    </div>
+    <div class="card">
+      <div style="display:flex;align-items:center;gap:12px">
+        <span style="font-size:24px">📍</span>
+        <div>
+          <p style="font-size:14px;font-weight:700">Pizza Express, High Street</p>
+          <p style="font-size:13px;color:var(--text-secondary)">123 High Street, London EC2A 4NE</p>
+        </div>
+      </div>
+    </div>
+    <button class="btn-primary" style="margin-top:8px">Redeem this offer</button>
+    <button class="btn-ghost" style="width:100%;text-align:center;margin-top:8px">Share with a friend</button>
+  </div>
+</div>
+</div>
+
+<!-- Screen 2.0c: Notification received (offer nearby) -->
+<div>
+<p class="screen-label">Push Notification · Offer Nearby</p>
+<div class="screen-frame">
+  <div class="status-bar">9:41</div>
+  <div style="padding:60px 16px 0">
+    <div class="card" style="box-shadow:0 4px 24px rgba(0,0,0,0.15);border-radius:16px">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+        <div style="width:36px;height:36px;border-radius:8px;background:var(--lloyds-green);display:flex;align-items:center;justify-content:center;color:#fff;font-size:16px">♞</div>
+        <div>
+          <p style="font-size:12px;color:var(--text-secondary)">Lloyds Offers · now</p>
+        </div>
+      </div>
+      <p style="font-size:15px;font-weight:700;margin-bottom:4px">🍕 20% off near you!</p>
+      <p style="font-size:14px;color:var(--text-secondary)">Pizza Express on High Street has 20% off your bill. 350m away — expires in 3 hours.</p>
+    </div>
+    <p style="text-align:center;font-size:12px;color:var(--text-muted);margin-top:24px">↑ Tap to view offer details</p>
+  </div>
+</div>
+</div>
+
+</div><!-- end screen-grid -->
+
+<h2 class="flow-title">Flow 2: Main App — Empty States</h2>
+<div class="screen-grid">
+
+<!-- Screen 2.1: Offers Tab (Placeholder) -->
+<div>
+<p class="screen-label">/offers · US-003, US-005</p>
+<div class="screen-frame">
+  <div class="status-bar">9:41</div>
+  <div class="top-bar"><span class="logo">♞ Lloyds Offers</span><span style="margin-left:auto;font-size:20px">🔔</span></div>
+  <div class="content" style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:460px">
+    <div style="width:64px;height:64px;border-radius:16px;background:var(--lloyds-green-light);display:flex;align-items:center;justify-content:center;font-size:28px;color:var(--lloyds-green);margin-bottom:16px">📍</div>
+    <p style="font-size:18px;font-weight:700;margin-bottom:8px">No offers yet</p>
+    <p style="font-size:14px;color:var(--text-secondary);text-align:center;max-width:260px">We're setting up your personalised offers. Check back soon!</p>
+  </div>
+  <div class="bottom-nav">
+    <a class="nav-item active"><span class="nav-icon">🏷️</span>Offers</a>
+    <a class="nav-item"><span class="nav-icon">🕐</span>History</a>
+    <a class="nav-item"><span class="nav-icon">👤</span>Profile</a>
+    <a class="nav-item"><span class="nav-icon">⚙️</span>Settings</a>
+  </div>
+</div>
+</div>
+
+<!-- Screen 2.2: History Tab (Placeholder) -->
+<div>
+<p class="screen-label">/history · US-003</p>
+<div class="screen-frame">
+  <div class="status-bar">9:41</div>
+  <div class="top-bar"><span class="title">History</span></div>
+  <div class="content" style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:460px">
+    <div style="width:64px;height:64px;border-radius:16px;background:var(--lloyds-green-light);display:flex;align-items:center;justify-content:center;font-size:28px;color:var(--lloyds-green);margin-bottom:16px">🕐</div>
+    <p style="font-size:18px;font-weight:700;margin-bottom:8px">No history yet</p>
+    <p style="font-size:14px;color:var(--text-secondary);text-align:center;max-width:260px">Your redeemed offers will appear here.</p>
+  </div>
+  <div class="bottom-nav">
+    <a class="nav-item"><span class="nav-icon">🏷️</span>Offers</a>
+    <a class="nav-item active"><span class="nav-icon">🕐</span>History</a>
+    <a class="nav-item"><span class="nav-icon">👤</span>Profile</a>
+    <a class="nav-item"><span class="nav-icon">⚙️</span>Settings</a>
+  </div>
+</div>
+</div>
+
+<!-- Screen 2.3: Profile Tab -->
+<div>
+<p class="screen-label">/profile · US-019, US-020</p>
+<div class="screen-frame">
+  <div class="status-bar">9:41</div>
+  <div class="top-bar"><span class="title">Profile</span></div>
+  <div class="content">
+    <div class="card" style="text-align:center">
+      <div style="width:64px;height:64px;border-radius:50%;background:var(--lloyds-green-light);margin:0 auto 12px;display:flex;align-items:center;justify-content:center;font-size:24px;color:var(--lloyds-green)">👤</div>
+      <p style="font-size:17px;font-weight:700">Jane</p>
+      <p style="font-size:13px;color:var(--text-secondary)">+44 7700 900***</p>
+    </div>
+    <p style="font-size:14px;font-weight:700;margin:20px 0 12px">Spending categories</p>
+    <div>
+      <span class="chip selected">🍽️ Dining</span>
+      <span class="chip selected">🛍️ Retail</span>
+      <span class="chip">🎬 Entertainment</span>
+      <span class="chip selected">💇 Health & Beauty</span>
+      <span class="chip">✈️ Travel</span>
+      <span class="chip">🔧 Services</span>
+      <span class="chip">🛒 Grocery</span>
+    </div>
+    <p style="font-size:14px;font-weight:700;margin:20px 0 12px">Preferences</p>
+    <div class="card" style="padding:0">
+      <div class="list-item"><span class="list-label">Budget sensitivity</span><span class="list-value">Medium</span><span class="list-chevron">›</span></div>
+      <div class="list-item" style="border:none"><span class="list-label">Preferred radius</span><span class="list-value">2 km</span><span class="list-chevron">›</span></div>
+    </div>
+  </div>
+  <div class="bottom-nav">
+    <a class="nav-item"><span class="nav-icon">🏷️</span>Offers</a>
+    <a class="nav-item"><span class="nav-icon">🕐</span>History</a>
+    <a class="nav-item active"><span class="nav-icon">👤</span>Profile</a>
+    <a class="nav-item"><span class="nav-icon">⚙️</span>Settings</a>
+  </div>
+</div>
+</div>
+
+<!-- Screen 2.4: Settings Tab -->
+<div>
+<p class="screen-label">/settings · US-017, US-018</p>
+<div class="screen-frame">
+  <div class="status-bar">9:41</div>
+  <div class="top-bar"><span class="title">Settings</span></div>
+  <div class="content" style="padding:16px 0">
+    <div style="padding:0 16px;margin-bottom:8px"><p style="font-size:13px;font-weight:700;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.5px">Notifications</p></div>
+    <div class="list-item"><span class="list-icon">🔔</span><span class="list-label">Notification preferences</span><span class="list-chevron">›</span></div>
+    <div style="padding:0 16px;margin:16px 0 8px"><p style="font-size:13px;font-weight:700;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.5px">Privacy</p></div>
+    <div class="list-item"><span class="list-icon">📍</span><span class="list-label">Location tracking</span><span class="list-value">Always</span><span class="list-chevron">›</span></div>
+    <div class="list-item"><span class="list-icon">💳</span><span class="list-label">Transaction data</span><span class="list-value">Allowed</span><span class="list-chevron">›</span></div>
+    <div class="list-item"><span class="list-icon">📥</span><span class="list-label">Download my data</span><span class="list-chevron">›</span></div>
+    <div style="padding:0 16px;margin:16px 0 8px"><p style="font-size:13px;font-weight:700;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.5px">Account</p></div>
+    <div class="list-item"><span class="list-icon">🔐</span><span class="list-label">Biometric login</span><span class="badge badge-green">Enabled</span></div>
+    <div class="list-item"><span class="list-icon" style="background:#FDECEC;color:var(--text-error)">🗑️</span><span class="list-label" style="color:var(--text-error)">Delete account</span><span class="list-chevron">›</span></div>
+  </div>
+  <div class="bottom-nav">
+    <a class="nav-item"><span class="nav-icon">🏷️</span>Offers</a>
+    <a class="nav-item"><span class="nav-icon">🕐</span>History</a>
+    <a class="nav-item"><span class="nav-icon">👤</span>Profile</a>
+    <a class="nav-item active"><span class="nav-icon">⚙️</span>Settings</a>
+  </div>
+</div>
+</div>
+
+<!-- Screen 2.5: Notification Preferences -->
+<div>
+<p class="screen-label">/settings/notifications · US-017, US-018</p>
+<div class="screen-frame">
+  <div class="status-bar">9:41</div>
+  <div class="top-bar"><span class="back">‹</span><span class="title">Notifications</span></div>
+  <div class="content">
+    <p style="font-size:14px;font-weight:700;margin-bottom:12px">Delivery mode</p>
+    <div class="option-card selected">
+      <div class="option-radio"></div>
+      <div><div class="option-label">Always</div><div class="option-desc">Push notifications even when app is closed</div></div>
+    </div>
+    <div class="option-card">
+      <div class="option-radio"></div>
+      <div><div class="option-label">App open only</div><div class="option-desc">In-app notifications only</div></div>
+    </div>
+    <div class="option-card">
+      <div class="option-radio"></div>
+      <div><div class="option-label">Off</div><div class="option-desc">No notifications</div></div>
+    </div>
+    <p style="font-size:14px;font-weight:700;margin:24px 0 12px">Quiet hours</p>
+    <div style="display:flex;gap:12px;margin-bottom:20px">
+      <div style="flex:1"><label class="field-label" style="font-size:12px">From</label><input class="input-field" value="22:00" style="height:44px"></div>
+      <div style="flex:1"><label class="field-label" style="font-size:12px">To</label><input class="input-field" value="08:00" style="height:44px"></div>
+    </div>
+    <p style="font-size:14px;font-weight:700;margin-bottom:12px">Categories</p>
+    <div class="toggle-row"><span class="toggle-label">🍽️ Dining</span><div class="toggle on"></div></div>
+    <div class="toggle-row"><span class="toggle-label">🛍️ Retail</span><div class="toggle on"></div></div>
+    <div class="toggle-row"><span class="toggle-label">🎬 Entertainment</span><div class="toggle on"></div></div>
+    <div class="toggle-row"><span class="toggle-label">💇 Health & Beauty</span><div class="toggle on"></div></div>
+    <div class="toggle-row"><span class="toggle-label">✈️ Travel</span><div class="toggle"></div></div>
+  </div>
+</div>
+</div>
+
+</div><!-- end screen-grid -->
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- FLOW 3: PUSH PERMISSION -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<h2 class="flow-title">Flow 1 (cont.): Push Permission</h2>
+<div class="screen-grid">
+
+<!-- Screen 3.1: Pre-permission -->
+<div>
+<p class="screen-label">/onboarding/push-permission · US-023</p>
+<div class="screen-frame">
+  <div class="status-bar">9:41</div>
+  <div class="top-bar"><span class="back">‹</span><span class="title">Notifications</span></div>
+  <div class="content" style="text-align:center">
+    <div class="illustration">🔔</div>
+    <h2>Don't miss a deal</h2>
+    <p>Enable notifications to get alerted when there's a great offer near you. We'll never spam — max 5 per day.</p>
+    <div class="card" style="text-align:left;margin-top:24px">
+      <p style="font-size:13px;margin-bottom:8px">✓ Offers within your preferred radius</p>
+      <p style="font-size:13px;margin-bottom:8px">✓ Max 5 notifications per day</p>
+      <p style="font-size:13px;margin:0">✓ Quiet hours respected</p>
+    </div>
+    <button class="btn-primary">Enable notifications</button>
+    <button class="btn-ghost" style="width:100%;text-align:center">Maybe later</button>
+  </div>
+</div>
+</div>
+
+<!-- Screen 3.2: Permission Denied Fallback -->
+<div>
+<p class="screen-label">Push denied fallback · US-004, US-023</p>
+<div class="screen-frame">
+  <div class="status-bar">9:41</div>
+  <div class="top-bar"><span class="logo">♞ Lloyds Offers</span></div>
+  <div class="content">
+    <div style="background:#FFF3E0;border:1px solid #FFCC80;border-radius:10px;padding:16px;display:flex;gap:12px;margin-bottom:24px">
+      <span style="font-size:20px">ℹ️</span>
+      <div>
+        <p style="font-size:14px;font-weight:700;margin-bottom:4px">Notifications are off</p>
+        <p style="font-size:13px;color:var(--text-secondary);margin:0">You can enable them in your device settings to get notified about nearby deals.</p>
+      </div>
+    </div>
+    <p style="font-size:14px;color:var(--text-secondary)">You'll still see offers in the app — just check the Offers tab when you're out and about.</p>
+    <button class="btn-secondary" style="margin-top:16px">Open device settings</button>
+  </div>
+  <div class="bottom-nav">
+    <a class="nav-item active"><span class="nav-icon">🏷️</span>Offers</a>
+    <a class="nav-item"><span class="nav-icon">🕐</span>History</a>
+    <a class="nav-item"><span class="nav-icon">👤</span>Profile</a>
+    <a class="nav-item"><span class="nav-icon">⚙️</span>Settings</a>
+  </div>
+</div>
+</div>
+
+</div><!-- end screen-grid -->
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- FLOW 3: Redemption (Sprint 2 Preview) -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<h2 class="flow-title">Flow 3: Offer Redemption</h2>
+<div class="screen-grid">
+
+<div>
+<p class="screen-label">/offers/:id/redeem · Flow 3</p>
+<div class="screen-frame">
+  <div class="status-bar">9:41</div>
+  <div class="top-bar"><span class="back">‹</span><span class="title">Redeem</span></div>
+  <div class="content" style="text-align:center">
+    <p style="font-size:14px;color:var(--text-secondary);margin-bottom:20px">Show this to the cashier</p>
+    <div style="width:220px;height:220px;background:#fff;border:2px solid var(--border-light);border-radius:12px;margin:0 auto 16px;display:flex;align-items:center;justify-content:center">
+      <div style="width:180px;height:180px;background:repeating-conic-gradient(var(--text-primary) 0% 25%, #fff 0% 50%) 0 0/20px 20px;border-radius:4px;opacity:0.8"></div>
+    </div>
+    <p style="font-size:13px;color:var(--text-secondary);margin-bottom:4px">Or enter code manually:</p>
+    <p style="font-size:20px;font-weight:700;letter-spacing:2px;margin-bottom:20px">A7K2-M9X4</p>
+    <div style="background:#FFF3E0;border-radius:8px;padding:12px;display:flex;align-items:center;justify-content:center;gap:8px">
+      <span style="font-size:18px">⏱️</span>
+      <span style="font-size:14px;color:#9C5A00;font-weight:700">Expires in 4:32</span>
+    </div>
+    <p style="font-size:15px;font-weight:700;margin-top:20px">20% off at Pizza Express</p>
+    <p style="font-size:13px;color:var(--text-secondary)">High Street branch</p>
+  </div>
+</div>
+</div>
+
+<div>
+<p class="screen-label">Redemption Success · Flow 3</p>
+<div class="screen-frame">
+  <div class="status-bar">9:41</div>
+  <div class="top-bar"><span class="title">Done</span></div>
+  <div class="content" style="text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:480px">
+    <div style="width:80px;height:80px;border-radius:50%;background:var(--lloyds-green-light);display:flex;align-items:center;justify-content:center;font-size:40px;margin-bottom:20px">✓</div>
+    <h2>Offer redeemed!</h2>
+    <p style="font-size:24px;font-weight:700;color:var(--lloyds-green);margin:8px 0">You saved £3.40</p>
+    <p style="font-size:14px;color:var(--text-secondary);margin-bottom:32px">20% off at Pizza Express<br>Redeemed just now</p>
+    <button class="btn-primary">Back to offers</button>
+    <button class="btn-ghost" style="margin-top:8px">View in history</button>
+  </div>
+</div>
+</div>
+
+</div><!-- end Flow 3 screen-grid -->
+
+<h2 class="flow-title">Flow 3 (cont.): History</h2>
+<div class="screen-grid">
+
+<!-- Redeemed Tab -->
+<div>
+<p class="screen-label">/history · Redeemed · Flow 3</p>
+<div class="screen-frame">
+  <div class="status-bar">9:41</div>
+  <div class="top-bar"><span class="title">History</span></div>
+  <div class="content" style="padding:0">
+    <div style="display:flex;border-bottom:2px solid var(--border-light)">
+      <span style="flex:1;text-align:center;padding:12px;font-size:13px;font-weight:700;color:var(--lloyds-green);border-bottom:3px solid var(--lloyds-green)">Redeemed</span>
+      <span style="flex:1;text-align:center;padding:12px;font-size:13px;color:var(--text-secondary)">Expired</span>
+    </div>
+    <div style="padding:12px">
+      <div style="background:var(--lloyds-green-light);border-radius:10px;padding:16px;text-align:center;margin-bottom:16px">
+        <p style="font-size:13px;color:var(--lloyds-green)">Total saved this month</p>
+        <p style="font-size:28px;font-weight:700;color:var(--lloyds-green)">£12.40</p>
+        <p style="font-size:12px;color:var(--text-secondary)">4 offers redeemed</p>
+      </div>
+      <div class="card" style="padding:12px;margin-bottom:10px">
+        <div style="display:flex;align-items:center;gap:10px">
+          <div style="width:44px;height:44px;border-radius:8px;background:var(--lloyds-green-light);display:flex;align-items:center;justify-content:center;font-size:20px">🍕</div>
+          <div style="flex:1"><p style="font-size:14px;font-weight:700">20% off at Pizza Express</p><p style="font-size:12px;color:var(--text-secondary)">Today, 12:34 PM · Saved £3.40</p></div>
+          <span class="badge badge-green">✓</span>
+        </div>
+      </div>
+      <div class="card" style="padding:12px;margin-bottom:10px">
+        <div style="display:flex;align-items:center;gap:10px">
+          <div style="width:44px;height:44px;border-radius:8px;background:#FFF3E0;display:flex;align-items:center;justify-content:center;font-size:20px">☕</div>
+          <div style="flex:1"><p style="font-size:14px;font-weight:700">Free coffee at Costa</p><p style="font-size:12px;color:var(--text-secondary)">Yesterday · Saved £3.50</p></div>
+          <span class="badge badge-green">✓</span>
+        </div>
+      </div>
+      <div class="card" style="padding:12px;margin-bottom:10px">
+        <div style="display:flex;align-items:center;gap:10px">
+          <div style="width:44px;height:44px;border-radius:8px;background:#E3F2FD;display:flex;align-items:center;justify-content:center;font-size:20px">👟</div>
+          <div style="flex:1"><p style="font-size:14px;font-weight:700">£10 off at JD Sports</p><p style="font-size:12px;color:var(--text-secondary)">3 days ago · Saved £10.00</p></div>
+          <span class="badge badge-green">✓</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="bottom-nav">
+    <a class="nav-item"><span class="nav-icon">🏷️</span>Offers</a>
+    <a class="nav-item active"><span class="nav-icon">🕐</span>History</a>
+    <a class="nav-item"><span class="nav-icon">👤</span>Profile</a>
+    <a class="nav-item"><span class="nav-icon">⚙️</span>Settings</a>
+  </div>
+</div>
+</div>
+
+<!-- Expired Tab -->
+<div>
+<p class="screen-label">/history · Expired · Flow 3</p>
+<div class="screen-frame">
+  <div class="status-bar">9:41</div>
+  <div class="top-bar"><span class="title">History</span></div>
+  <div class="content" style="padding:0">
+    <div style="display:flex;border-bottom:2px solid var(--border-light)">
+      <span style="flex:1;text-align:center;padding:12px;font-size:13px;color:var(--text-secondary)">Redeemed</span>
+      <span style="flex:1;text-align:center;padding:12px;font-size:13px;font-weight:700;color:var(--lloyds-green);border-bottom:3px solid var(--lloyds-green)">Expired</span>
+    </div>
+    <div style="padding:12px">
+      <p style="font-size:13px;color:var(--text-secondary);margin-bottom:12px">Offers you received but didn't redeem in time</p>
+      <div class="card" style="padding:12px;margin-bottom:10px;opacity:0.6">
+        <div style="display:flex;align-items:center;gap:10px">
+          <div style="width:44px;height:44px;border-radius:8px;background:#F5F5F5;display:flex;align-items:center;justify-content:center;font-size:20px">🍔</div>
+          <div style="flex:1"><p style="font-size:14px;font-weight:700">Buy 1 get 1 at Byron</p><p style="font-size:12px;color:var(--text-muted)">Expired 3 days ago</p></div>
+          <span style="font-size:12px;color:var(--text-muted)">Missed</span>
+        </div>
+      </div>
+      <div class="card" style="padding:12px;margin-bottom:10px;opacity:0.6">
+        <div style="display:flex;align-items:center;gap:10px">
+          <div style="width:44px;height:44px;border-radius:8px;background:#F5F5F5;display:flex;align-items:center;justify-content:center;font-size:20px">🧴</div>
+          <div style="flex:1"><p style="font-size:14px;font-weight:700">20% off at Boots</p><p style="font-size:12px;color:var(--text-muted)">Expired 1 week ago</p></div>
+          <span style="font-size:12px;color:var(--text-muted)">Missed</span>
+        </div>
+      </div>
+      <div class="card" style="padding:12px;opacity:0.6">
+        <div style="display:flex;align-items:center;gap:10px">
+          <div style="width:44px;height:44px;border-radius:8px;background:#F5F5F5;display:flex;align-items:center;justify-content:center;font-size:20px">🏋️</div>
+          <div style="flex:1"><p style="font-size:14px;font-weight:700">Free trial at PureGym</p><p style="font-size:12px;color:var(--text-muted)">Expired 2 weeks ago</p></div>
+          <span style="font-size:12px;color:var(--text-muted)">Missed</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="bottom-nav">
+    <a class="nav-item"><span class="nav-icon">🏷️</span>Offers</a>
+    <a class="nav-item active"><span class="nav-icon">🕐</span>History</a>
+    <a class="nav-item"><span class="nav-icon">👤</span>Profile</a>
+    <a class="nav-item"><span class="nav-icon">⚙️</span>Settings</a>
+  </div>
+</div>
+</div>
+
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- FLOW 11: Unsupported City -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<h2 class="flow-title">Flow 11: Unsupported City (Boundary Enforcement)</h2>
+<div class="screen-grid">
+
+<div>
+<p class="screen-label">/offers · Unsupported City · Flow 11</p>
+<div class="screen-frame">
+  <div class="status-bar">9:41</div>
+  <div class="top-bar"><span class="logo">♞ Lloyds Offers</span></div>
+  <div class="content" style="text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:460px">
+    <div class="illustration">🌍</div>
+    <h2>Coming soon to your area</h2>
+    <p style="max-width:280px">We're not in your city yet, but we're growing fast! Get notified when we launch near you.</p>
+    <button class="btn-primary" style="margin-top:24px;width:auto;padding:0 32px">Notify me when available</button>
+    <button class="btn-ghost">Browse all offers</button>
+  </div>
+  <div class="bottom-nav">
+    <a class="nav-item active"><span class="nav-icon">🏷️</span>Offers</a>
+    <a class="nav-item"><span class="nav-icon">🕐</span>History</a>
+    <a class="nav-item"><span class="nav-icon">👤</span>Profile</a>
+    <a class="nav-item"><span class="nav-icon">⚙️</span>Settings</a>
+  </div>
+</div>
+</div>
+
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- FLOW 13: Offline Mode -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<h2 class="flow-title">Flow 13: Offline / Network Error</h2>
+<div class="screen-grid">
+
+<div>
+<p class="screen-label">/offers · Offline Mode · Flow 13</p>
+<div class="screen-frame">
+  <div class="status-bar">9:41</div>
+  <div style="background:#FFF3E0;padding:10px 16px;display:flex;align-items:center;gap:8px;border-bottom:1px solid #FFCC80">
+    <span style="font-size:16px">⚠️</span>
+    <span style="font-size:13px;color:#9C5A00;font-weight:600">No internet connection</span>
+  </div>
+  <div class="top-bar"><span class="logo">♞ Lloyds Offers</span></div>
+  <div class="content" style="padding:16px">
+    <p style="font-size:13px;color:var(--text-secondary);margin-bottom:16px">Showing cached offers · Last updated 15 min ago</p>
+    <div class="card" style="padding:0;overflow:hidden;margin-bottom:12px;opacity:0.7">
+      <div style="height:80px;background:var(--lloyds-green-light);display:flex;align-items:center;justify-content:center;font-size:28px">🍕</div>
+      <div style="padding:12px 16px">
+        <p style="font-size:15px;font-weight:700">20% off at Pizza Express</p>
+        <p style="font-size:13px;color:var(--text-secondary)">350m away · Dining</p>
+        <button class="btn-primary" disabled style="height:36px;font-size:13px;margin-top:8px;opacity:0.5">Redeem (offline)</button>
+      </div>
+    </div>
+    <div class="card" style="padding:0;overflow:hidden;opacity:0.7">
+      <div style="height:80px;background:#FFF3E0;display:flex;align-items:center;justify-content:center;font-size:28px">☕</div>
+      <div style="padding:12px 16px">
+        <p style="font-size:15px;font-weight:700">Free coffee with any meal</p>
+        <p style="font-size:13px;color:var(--text-secondary)">500m away · Dining</p>
+        <button class="btn-primary" disabled style="height:36px;font-size:13px;margin-top:8px;opacity:0.5">Redeem (offline)</button>
+      </div>
+    </div>
+  </div>
+  <div class="bottom-nav">
+    <a class="nav-item active"><span class="nav-icon">🏷️</span>Offers</a>
+    <a class="nav-item"><span class="nav-icon">🕐</span>History</a>
+    <a class="nav-item"><span class="nav-icon">👤</span>Profile</a>
+    <a class="nav-item"><span class="nav-icon">⚙️</span>Settings</a>
+  </div>
+</div>
+</div>
+
+<div>
+<p class="screen-label">Server Error State · Flow 13</p>
+<div class="screen-frame">
+  <div class="status-bar">9:41</div>
+  <div class="top-bar"><span class="logo">♞ Lloyds Offers</span></div>
+  <div class="content" style="text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:460px">
+    <div style="width:64px;height:64px;border-radius:16px;background:#FDECEC;display:flex;align-items:center;justify-content:center;font-size:28px;margin-bottom:16px">⚠️</div>
+    <p style="font-size:18px;font-weight:700;margin-bottom:8px">Something went wrong</p>
+    <p style="font-size:14px;color:var(--text-secondary);max-width:260px;margin-bottom:24px">We couldn't load your offers. Please check your connection and try again.</p>
+    <button class="btn-primary" style="width:auto;padding:0 32px">Try again</button>
+    <button class="btn-ghost">Contact support</button>
+  </div>
+  <div class="bottom-nav">
+    <a class="nav-item active"><span class="nav-icon">🏷️</span>Offers</a>
+    <a class="nav-item"><span class="nav-icon">🕐</span>History</a>
+    <a class="nav-item"><span class="nav-icon">👤</span>Profile</a>
+    <a class="nav-item"><span class="nav-icon">⚙️</span>Settings</a>
+  </div>
+</div>
+</div>
+
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- FLOW 14: Post-Redemption Rating -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<h2 class="flow-title">Flow 14: Post-Redemption Rating</h2>
+<div class="screen-grid">
+
+<div>
+<p class="screen-label">Rating Bottom Sheet · Flow 14</p>
+<div class="screen-frame">
+  <div class="status-bar">9:41</div>
+  <div class="top-bar"><span class="title">History</span></div>
+  <div class="content" style="padding:16px;opacity:0.3;min-height:200px">
+    <div class="card" style="padding:12px"><p style="font-size:14px">Previous offers...</p></div>
+  </div>
+  <div style="background:rgba(0,0,0,0.4);padding:80px 0 0 0">
+    <div style="background:#fff;border-radius:20px 20px 0 0;padding:24px">
+      <div style="width:40px;height:4px;background:#ddd;border-radius:2px;margin:0 auto 20px"></div>
+      <p style="font-size:17px;font-weight:700;margin-bottom:4px">How was Pizza Express?</p>
+      <p style="font-size:13px;color:var(--text-secondary);margin-bottom:20px">Your feedback helps improve offers for everyone</p>
+      <div style="display:flex;gap:8px;justify-content:center;margin-bottom:20px">
+        <span style="font-size:32px;color:var(--lloyds-green)">★</span>
+        <span style="font-size:32px;color:var(--lloyds-green)">★</span>
+        <span style="font-size:32px;color:var(--lloyds-green)">★</span>
+        <span style="font-size:32px;color:var(--lloyds-green)">★</span>
+        <span style="font-size:32px;color:#ddd">☆</span>
+      </div>
+      <label class="field-label">Tell us more (optional)</label>
+      <textarea class="input-field" style="height:72px;padding:12px;resize:none" placeholder="What did you think?"></textarea>
+      <button class="btn-primary" style="margin-top:12px">Submit</button>
+      <button class="btn-ghost" style="width:100%;text-align:center">Skip</button>
+    </div>
+  </div>
+</div>
+</div>
+
+</div>
+
+
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- SPRINT 3: Merchant Platform (EP-05) -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- SPRINT 3 -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<div class="sprint-banner sprint-3">
+  <h2>Sprint 3 — Intelligence & Self-Service</h2>
+  <p>EP-05: Personalization & Merchant Platform · EP-06: Privacy Controls & Data Rights<br>8 screens · 10 features · 17 stories · 64 points</p>
+</div>
+
+<h2 class="flow-title">Flow 8: Merchant Platform (EP-05)</h2>
+<div class="screen-grid">
+
+<div>
+<p class="screen-label">Merchant Registration · F-05.3 · Flow 8</p>
+<div class="screen-frame" style="width:480px">
+  <div class="status-bar" style="background:#fff;font-size:11px">merchant.offers.lloyds.com/register</div>
+  <div class="top-bar"><span class="logo">♞ Lloyds Offers — Merchant Portal</span></div>
+  <div class="content">
+    <h2>Register your business</h2>
+    <p>Join the Lloyds Offers network and reach customers near your locations.</p>
+    <div style="margin-top:20px">
+      <label class="field-label">Business name</label>
+      <input class="input-field" placeholder="e.g. Pizza Express Ltd">
+      <label class="field-label">Company registration number</label>
+      <input class="input-field" placeholder="e.g. 12345678">
+      <label class="field-label">Business type</label>
+      <select class="input-field" style="appearance:auto"><option>Restaurant / Café</option><option>Retail</option><option>Health & Beauty</option></select>
+      <label class="field-label">Business address</label>
+      <input class="input-field" placeholder="123 High Street, London">
+      <label class="field-label">Primary contact email</label>
+      <input class="input-field" placeholder="marketing@business.com">
+      <label class="field-label">Upload documents</label>
+      <div style="border:2px dashed #ccc;border-radius:8px;padding:24px;text-align:center;margin-bottom:16px">
+        <p style="font-size:14px;color:var(--text-secondary)">📄 Drop files or <a style="color:var(--lloyds-green);font-weight:700">browse</a></p>
+        <p style="font-size:12px;color:var(--text-muted)">Certificate of incorporation, proof of address</p>
+      </div>
+      <button class="btn-primary">Submit for review</button>
+    </div>
+  </div>
+</div>
+</div>
+
+<div>
+<p class="screen-label">Campaign Creation · F-05.4 · Flow 8</p>
+<div class="screen-frame" style="width:480px">
+  <div class="status-bar" style="background:#fff;font-size:11px">merchant.offers.lloyds.com/campaigns/new</div>
+  <div class="top-bar"><span class="back">‹</span><span class="title">Create Campaign</span></div>
+  <div class="content">
+    <div class="steps"><span class="step-dot active"></span><span class="step-dot"></span><span class="step-dot"></span></div>
+    <p style="font-size:13px;font-weight:700;color:var(--text-secondary);text-transform:uppercase;margin-bottom:12px">Offer Content</p>
+    <label class="field-label">Offer title</label>
+    <input class="input-field" value="20% off your bill">
+    <label class="field-label">Description</label>
+    <textarea class="input-field" style="height:72px;padding:12px">Valid on dine-in orders over £15.</textarea>
+    <label class="field-label">Discount type</label>
+    <div style="display:flex;gap:8px;margin-bottom:16px"><span class="chip selected">% Percentage</span><span class="chip">£ Fixed</span><span class="chip">BOGOF</span></div>
+    <label class="field-label">Discount value</label>
+    <input class="input-field" value="20" style="width:100px">
+    <label class="field-label">Hero image</label>
+    <div style="border:2px dashed #ccc;border-radius:8px;padding:16px;text-align:center;margin-bottom:16px"><p style="font-size:13px;color:var(--text-secondary)">📷 Upload (16:9, max 2MB)</p></div>
+    <button class="btn-primary">Next: Targeting →</button>
+  </div>
+</div>
+</div>
+
+<div>
+<p class="screen-label">Campaign Targeting · F-05.4 · Flow 8</p>
+<div class="screen-frame" style="width:480px">
+  <div class="status-bar" style="background:#fff;font-size:11px">merchant.offers.lloyds.com/campaigns/new</div>
+  <div class="top-bar"><span class="back">‹</span><span class="title">Create Campaign</span></div>
+  <div class="content">
+    <div class="steps"><span class="step-dot" style="background:var(--lloyds-green)"></span><span class="step-dot active"></span><span class="step-dot"></span></div>
+    <p style="font-size:13px;font-weight:700;color:var(--text-secondary);text-transform:uppercase;margin-bottom:12px">Targeting & Limits</p>
+    <label class="field-label">Geofence locations</label>
+    <div class="card" style="padding:12px;margin-bottom:8px"><div style="display:flex;align-items:center;gap:8px"><span>📍</span><span style="font-size:14px">High Street — 200m radius</span><span class="badge badge-green">Active</span></div></div>
+    <button class="btn-ghost" style="margin-bottom:16px">+ Add location</button>
+    <label class="field-label">Active hours</label>
+    <div style="display:flex;gap:8px;margin-bottom:16px"><input class="input-field" value="11:00" style="height:40px;width:100px"><span style="align-self:center">to</span><input class="input-field" value="22:00" style="height:40px;width:100px"></div>
+    <label class="field-label">Target categories</label>
+    <div style="margin-bottom:16px"><span class="chip selected">🍽️ Dining</span><span class="chip">🛍️ Retail</span></div>
+    <label class="field-label">Max redemptions</label>
+    <input class="input-field" value="500" style="width:100px">
+    <label class="field-label">Valid until</label>
+    <input class="input-field" type="date" value="2026-07-01" style="width:180px">
+    <button class="btn-primary" style="margin-top:16px">Next: Preview →</button>
+  </div>
+</div>
+</div>
+
+<div>
+<p class="screen-label">Merchant Analytics · F-05.5 · Flow 8</p>
+<div class="screen-frame" style="width:480px">
+  <div class="status-bar" style="background:#fff;font-size:11px">merchant.offers.lloyds.com/analytics</div>
+  <div class="top-bar"><span class="logo">♞ Merchant Portal</span><span style="margin-left:auto;font-size:13px;color:var(--text-secondary)">Pizza Express</span></div>
+  <div class="content">
+    <h2>Campaign Analytics</h2>
+    <div style="display:flex;gap:12px;margin:16px 0">
+      <div class="card" style="flex:1;text-align:center;padding:16px"><p style="font-size:24px;font-weight:700;color:var(--lloyds-green)">1,247</p><p style="font-size:12px;color:var(--text-secondary)">Impressions</p></div>
+      <div class="card" style="flex:1;text-align:center;padding:16px"><p style="font-size:24px;font-weight:700;color:var(--lloyds-green)">186</p><p style="font-size:12px;color:var(--text-secondary)">Redemptions</p></div>
+      <div class="card" style="flex:1;text-align:center;padding:16px"><p style="font-size:24px;font-weight:700;color:var(--lloyds-green)">14.9%</p><p style="font-size:12px;color:var(--text-secondary)">Conversion</p></div>
+    </div>
+    <div class="card">
+      <p style="font-size:14px;font-weight:700;margin-bottom:12px">Redemptions this week</p>
+      <div style="height:80px;background:var(--lloyds-green-light);border-radius:4px;display:flex;align-items:flex-end;padding:0 4px;gap:4px">
+        <div style="flex:1;background:var(--lloyds-green);border-radius:2px 2px 0 0;height:30%"></div>
+        <div style="flex:1;background:var(--lloyds-green);border-radius:2px 2px 0 0;height:55%"></div>
+        <div style="flex:1;background:var(--lloyds-green);border-radius:2px 2px 0 0;height:80%"></div>
+        <div style="flex:1;background:var(--lloyds-green);border-radius:2px 2px 0 0;height:60%"></div>
+        <div style="flex:1;background:var(--lloyds-green);border-radius:2px 2px 0 0;height:90%"></div>
+        <div style="flex:1;background:var(--lloyds-green);border-radius:2px 2px 0 0;height:45%"></div>
+        <div style="flex:1;background:var(--lloyds-green);border-radius:2px 2px 0 0;height:70%"></div>
+      </div>
+      <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--text-muted);margin-top:4px"><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span></div>
+    </div>
+    <div style="display:flex;gap:8px;margin-top:12px"><button class="btn-secondary" style="flex:1;height:40px;font-size:13px">Export CSV</button><button class="btn-secondary" style="flex:1;height:40px;font-size:13px">PDF Report</button></div>
+  </div>
+</div>
+</div>
+
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- SPRINT 3: Privacy & Data Rights (EP-06) -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<h2 class="flow-title">Flow 7: Privacy & Data Rights (EP-06)</h2>
+<div class="screen-grid">
+
+<div>
+<p class="screen-label">Offer Report · F-06.4 · Flow 9</p>
+<div class="screen-frame">
+  <div class="status-bar">9:41</div>
+  <div class="top-bar"><span class="title">Report Issue</span><span style="margin-left:auto;cursor:pointer">✕</span></div>
+  <div class="content">
+    <p style="font-size:14px;color:var(--text-secondary);margin-bottom:20px">What's wrong with this offer?</p>
+    <div class="option-card selected"><div class="option-radio"></div><div><div class="option-label">Expired</div><div class="option-desc">No longer valid at the merchant</div></div></div>
+    <div class="option-card"><div class="option-radio"></div><div><div class="option-label">Invalid terms</div><div class="option-desc">Terms don't match what's offered</div></div></div>
+    <div class="option-card"><div class="option-radio"></div><div><div class="option-label">Inappropriate</div><div class="option-desc">Offensive or misleading content</div></div></div>
+    <div class="option-card"><div class="option-radio"></div><div><div class="option-label">Other</div><div class="option-desc">Something else</div></div></div>
+    <button class="btn-primary" style="margin-top:20px">Submit report</button>
+    <p style="font-size:12px;color:var(--text-muted);text-align:center;margin-top:12px">We'll review within 48 hours</p>
+  </div>
+</div>
+</div>
+
+<div>
+<p class="screen-label">Data Export · F-06.5 · Flow 7</p>
+<div class="screen-frame">
+  <div class="status-bar">9:41</div>
+  <div class="top-bar"><span class="back">‹</span><span class="title">Download my data</span></div>
+  <div class="content" style="text-align:center">
+    <div class="illustration">📥</div>
+    <h2>Export your data</h2>
+    <p>We'll prepare a JSON file with all your personal data. Usually takes less than 5 minutes.</p>
+    <div class="card" style="text-align:left;margin-top:20px">
+      <p style="font-size:13px;font-weight:700;margin-bottom:8px">Included:</p>
+      <p style="font-size:13px;color:var(--text-secondary);margin:0">✓ Profile · ✓ Consents · ✓ Offer history<br>✓ Redemptions · ✓ Preferences</p>
+    </div>
+    <button class="btn-primary" style="margin-top:20px">Generate export</button>
+    <p style="font-size:12px;color:var(--text-muted);margin-top:12px">Link valid 24h · Max 1 per 7 days</p>
+  </div>
+</div>
+</div>
+
+<div>
+<p class="screen-label">Account Deletion · F-06.3 · Flow 7</p>
+<div class="screen-frame">
+  <div class="status-bar">9:41</div>
+  <div class="top-bar"><span class="back">‹</span><span class="title">Delete account</span></div>
+  <div class="content">
+    <div style="background:#FDECEC;border:1px solid #F5B7B1;border-radius:10px;padding:16px;margin-bottom:20px">
+      <p style="font-size:14px;font-weight:700;color:#922B21;margin-bottom:4px">⚠️ This cannot be undone</p>
+      <p style="font-size:13px;color:#922B21">After 7-day cooling-off, all data permanently deleted within 30 days.</p>
+    </div>
+    <p style="font-size:13px;color:var(--text-secondary);margin-bottom:16px">• Profile and preferences<br>• All consent records<br>• Offer and redemption history<br>• Device tokens and sessions</p>
+    <p style="font-size:14px;font-weight:700;margin-bottom:8px">7-day cooling-off:</p>
+    <p style="font-size:13px;color:var(--text-secondary);margin-bottom:20px">Cancel by logging back in within 7 days.</p>
+    <label class="field-label">Confirm with password</label>
+    <input class="input-field" type="password" placeholder="Enter password">
+    <button class="btn-primary" style="background:#C0392B;margin-top:16px">Delete my account</button>
+    <button class="btn-ghost" style="width:100%;text-align:center">Cancel</button>
+  </div>
+</div>
+</div>
+
+<div>
+<p class="screen-label">Transaction Opt-Out · F-06.2 · Flow 7</p>
+<div class="screen-frame">
+  <div class="status-bar">9:41</div>
+  <div class="top-bar"><span class="back">‹</span><span class="title">Transaction data</span></div>
+  <div class="content">
+    <div class="card-green" style="padding:16px">
+      <p style="font-size:13px;color:#ffffff">Currently</p>
+      <p style="font-size:17px;font-weight:700;color:#ffffff">Sharing enabled</p>
+      <p style="font-size:13px;color:#ffffffcc;margin-top:4px">Offers personalised based on spending</p>
+    </div>
+    <div class="card" style="margin-top:16px">
+      <p style="font-size:14px;font-weight:700;margin-bottom:8px">If you opt out:</p>
+      <p style="font-size:13px;color:var(--text-secondary)">• Stop syncing transaction data<br>• Spending profile deleted<br>• Category-only matching<br>• Can opt back in anytime</p>
+    </div>
+    <button class="btn-primary" style="background:#C0392B;margin-top:20px">Stop sharing</button>
+    <button class="btn-ghost" style="width:100%;text-align:center">Keep sharing</button>
+  </div>
+</div>
+</div>
+
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- SPRINT 4: Social, Wearables (EP-07) -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- SPRINT 4 -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<div class="sprint-banner sprint-4">
+  <h2>Sprint 4 — Scale & Engagement</h2>
+  <p>EP-07: Social Features & Extended Channels · EP-08: Platform Resilience & Operational Excellence<br>5 screens · 9 features · 14 stories · 49 points</p>
+</div>
+
+<h2 class="flow-title">Flow 10: Social & Wearables (EP-07)</h2>
+<div class="screen-grid">
+
+<div>
+<p class="screen-label">Share Offer · F-07.1 · Flow 10</p>
+<div class="screen-frame">
+  <div class="status-bar">9:41</div>
+  <div class="top-bar"><span class="back">‹</span><span class="title">Share</span></div>
+  <div class="content" style="text-align:center">
+    <div style="height:80px;background:var(--lloyds-green-light);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:32px;margin-bottom:16px">🍕</div>
+    <p style="font-size:15px;font-weight:700">20% off at Pizza Express</p>
+    <p style="font-size:13px;color:var(--text-secondary);margin-bottom:20px">Share this deal with friends</p>
+    <div style="display:flex;justify-content:center;gap:16px;margin-bottom:20px">
+      <div style="text-align:center"><div style="width:48px;height:48px;border-radius:50%;background:#25D366;display:flex;align-items:center;justify-content:center;font-size:20px;margin:0 auto 4px">💬</div><p style="font-size:10px">WhatsApp</p></div>
+      <div style="text-align:center"><div style="width:48px;height:48px;border-radius:50%;background:#007AFF;display:flex;align-items:center;justify-content:center;font-size:20px;margin:0 auto 4px">✉️</div><p style="font-size:10px">Messages</p></div>
+      <div style="text-align:center"><div style="width:48px;height:48px;border-radius:50%;background:#eee;display:flex;align-items:center;justify-content:center;font-size:20px;margin:0 auto 4px">⋯</div><p style="font-size:10px">More</p></div>
+    </div>
+    <div class="card" style="text-align:left">
+      <p style="font-size:12px;font-weight:700;margin-bottom:4px">Or copy link</p>
+      <div style="display:flex;gap:8px"><input class="input-field" value="https://offers.lloyds.com/s/a7k2" style="height:40px;font-size:12px;flex:1" readonly><button class="btn-secondary" style="height:40px;width:auto;padding:0 12px;font-size:12px">Copy</button></div>
+    </div>
+  </div>
+</div>
+</div>
+
+<div>
+<p class="screen-label">Apple Watch · F-07.3 · Flow 12</p>
+<div class="screen-frame" style="width:200px;border-radius:44px">
+  <div style="background:#000;padding:8px 16px;border-radius:44px 44px 0 0"><p style="color:#888;font-size:10px;text-align:center">9:41</p></div>
+  <div style="background:#1a1a1a;padding:16px;min-height:200px;color:#fff">
+    <div style="display:flex;align-items:center;gap:6px;margin-bottom:10px"><div style="width:18px;height:18px;border-radius:4px;background:var(--lloyds-green);display:flex;align-items:center;justify-content:center;font-size:9px">♞</div><span style="font-size:9px;color:#aaa">LLOYDS OFFERS</span></div>
+    <p style="font-size:12px;font-weight:700;margin-bottom:4px">🍕 20% off nearby!</p>
+    <p style="font-size:10px;color:#ccc;margin-bottom:10px">Pizza Express · 350m</p>
+    <div style="display:flex;gap:4px">
+      <button style="flex:1;background:var(--lloyds-green);color:#fff;border:none;border-radius:14px;padding:6px;font-size:9px;font-weight:700">Open on phone</button>
+      <button style="flex:1;background:#333;color:#fff;border:none;border-radius:14px;padding:6px;font-size:9px">Dismiss</button>
+    </div>
+  </div>
+  <div style="background:#000;padding:6px;border-radius:0 0 44px 44px;text-align:center">
+    <div style="width:32px;height:32px;border-radius:50%;background:#1a1a1a;margin:0 auto;display:flex;align-items:center;justify-content:center"><span style="font-size:10px;color:var(--lloyds-green);font-weight:700">3</span></div>
+    <p style="font-size:8px;color:#666;margin-top:2px">offers nearby</p>
+  </div>
+</div>
+</div>
+
+<div>
+<p class="screen-label">/history · Populated · Flow 3, 14</p>
+<div class="screen-frame">
+  <div class="status-bar">9:41</div>
+  <div class="top-bar"><span class="title">History</span></div>
+  <div class="content" style="padding:0">
+    <div style="display:flex;border-bottom:2px solid var(--border-light)">
+      <span style="flex:1;text-align:center;padding:12px;font-size:13px;font-weight:700;color:var(--lloyds-green);border-bottom:3px solid var(--lloyds-green)">Redeemed</span>
+      <span style="flex:1;text-align:center;padding:12px;font-size:13px;color:var(--text-secondary)">Active</span>
+      <span style="flex:1;text-align:center;padding:12px;font-size:13px;color:var(--text-secondary)">Expired</span>
+    </div>
+    <div style="padding:12px">
+      <div class="card" style="padding:12px;margin-bottom:10px">
+        <div style="display:flex;align-items:center;gap:10px">
+          <div style="width:40px;height:40px;border-radius:8px;background:var(--lloyds-green-light);display:flex;align-items:center;justify-content:center;font-size:18px">🍕</div>
+          <div style="flex:1"><p style="font-size:14px;font-weight:700">20% off Pizza Express</p><p style="font-size:12px;color:var(--text-secondary)">2h ago · Saved £3.40</p></div>
+          <span class="badge badge-green">✓</span>
+        </div>
+        <button class="btn-ghost" style="font-size:11px;margin-top:6px;padding:0">⭐ Rate this</button>
+      </div>
+      <div class="card" style="padding:12px">
+        <div style="display:flex;align-items:center;gap:10px">
+          <div style="width:40px;height:40px;border-radius:8px;background:#FFF3E0;display:flex;align-items:center;justify-content:center;font-size:18px">☕</div>
+          <div style="flex:1"><p style="font-size:14px;font-weight:700">Free coffee at Costa</p><p style="font-size:12px;color:var(--text-secondary)">Yesterday · Saved £3.50</p></div>
+          <span class="badge badge-green">✓</span>
+        </div>
+        <div style="margin-top:6px"><span style="color:var(--lloyds-green);font-size:11px">★★★★★</span><span style="font-size:10px;color:var(--text-muted);margin-left:4px">Rated</span></div>
+      </div>
+      <div style="text-align:center;margin-top:16px">
+        <p style="font-size:17px;font-weight:700;color:var(--lloyds-green)">Total saved: £6.90</p>
+      </div>
+    </div>
+  </div>
+  <div class="bottom-nav">
+    <a class="nav-item"><span class="nav-icon">🏷️</span>Offers</a>
+    <a class="nav-item active"><span class="nav-icon">🕐</span>History</a>
+    <a class="nav-item"><span class="nav-icon">👤</span>Profile</a>
+    <a class="nav-item"><span class="nav-icon">⚙️</span>Settings</a>
+  </div>
+</div>
+</div>
+
+<div>
+<p class="screen-label">Merchant QR Scan · F-04.5 · Flow 3</p>
+<div class="screen-frame">
+  <div class="status-bar">9:41</div>
+  <div class="top-bar"><span class="logo">♞ Merchant App</span></div>
+  <div class="content" style="text-align:center">
+    <h2>Scan customer QR</h2>
+    <p style="margin-bottom:16px">Point camera at customer's screen</p>
+    <div style="width:240px;height:240px;background:#000;border-radius:16px;margin:0 auto 16px;display:flex;align-items:center;justify-content:center">
+      <div style="width:180px;height:180px;border:3px solid var(--lloyds-green);border-radius:8px"></div>
+    </div>
+    <p style="font-size:13px;color:var(--text-secondary);margin-bottom:8px">Or enter code:</p>
+    <div style="display:flex;gap:8px;justify-content:center">
+      <input class="input-field" placeholder="A7K2-M9X4" style="width:140px;height:44px;text-align:center;font-weight:700;letter-spacing:1px">
+      <button class="btn-primary" style="width:auto;height:44px;padding:0 16px">Verify</button>
+    </div>
+  </div>
+</div>
+</div>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,1241 @@
+{
+  "product_name": "Smart Location-Based Offers Platform",
+  "total_epics": 9,
+  "total_features": 41,
+  "delivery_sprints": 4,
+
+  "epics": [
+    {
+      "epic_id": "EP-00",
+      "title": "Design System & App Shell",
+      "description": "Establish the mobile app's visual foundation, navigation structure, and reusable component library. Unblocks all subsequent UI work by providing consistent patterns for screens, buttons, typography, and navigation.",
+      "sprint": 1,
+      "requirements_covered": ["NFR-08"],
+      "scope_in": [
+        "Design token system (colors, typography, spacing, elevation)",
+        "Reusable UI component library (buttons, inputs, cards, modals, toasts)",
+        "Tab bar navigation structure",
+        "App shell with header, content area, and bottom navigation",
+        "Loading states, empty states, and error state patterns",
+        "Accessibility foundations (screen reader labels, touch targets, contrast)"
+      ],
+      "scope_out": [
+        "Screen-specific layouts — built within each epic",
+        "Merchant dashboard design system — separate web component library",
+        "Animation library — added incrementally per feature"
+      ],
+      "reasoning": "Rule 4 mandates a Design System epic in Sprint 1 for products with UI. Mobile apps need consistent navigation, component patterns, and accessibility foundations before feature screens are built. Without this, each epic would independently solve navigation and styling, creating inconsistency.",
+      "features": [
+        {
+          "feature_id": "F-00.1",
+          "title": "Design Token System & Component Library",
+          "description": "Define and implement design tokens: (1) Colors — primary (brand blue), secondary (teal for offers), success (green), error (red), neutral greys. (2) Typography — heading (24/20/16pt bold), body (14pt regular), caption (12pt). (3) Spacing — 4pt grid system (4, 8, 12, 16, 24, 32, 48). (4) Elevation — 3 levels (flat, raised, floating). Reusable components: Button (primary/secondary/ghost/danger, with loading state), TextInput (with label, error, helper text), Card (offer card, info card), Badge (status badges), Toast (success/error/info, auto-dismiss 3s). All components support dark mode. All touch targets minimum 44x44pt. On validation failure: show inline error below input in red with icon. On network error: show toast with retry action.",
+          "requirements_covered": ["NFR-08"],
+          "nfrs_applicable": ["NFR-02", "NFR-08"],
+          "user_facing": true,
+          "data_sensitivity": "Public",
+          "change_type": "new",
+          "existing_feature_ref": null,
+          "existing_screens_affected": [],
+          "existing_apis_affected": [],
+          "existing_tables_affected": [],
+          "change_description": null,
+          "backward_compatible": true,
+          "regression_risks": [],
+          "citation": {
+            "requirements_used": ["NFR-08: WCAG 2.1 AA Compliance — screen readers, high-contrast modes, adjustable font sizes"],
+            "kb_sections_used": ["kb-L0-lloyds-enterprise-architecture §3.1 (Shared design system component library across brands)", "kb-L0-lloyds-enterprise-architecture §9 (Use shared design system, WCAG 2.1 AA)"]
+          },
+          "reasoning": "Lloyds architecture mandates a shared design system. 44pt touch targets and contrast ratios from WCAG 2.1 AA. 4pt grid is the mobile standard (iOS/Material Design). Components defined here are reused across all subsequent epics, ensuring consistency."
+        },
+        {
+          "feature_id": "F-00.2",
+          "title": "App Shell & Tab Navigation",
+          "description": "App shell structure: (1) Status bar (system). (2) Header — screen title, optional back button, optional action button. (3) Content area — scrollable, pull-to-refresh capable. (4) Bottom tab bar — 4 tabs: Offers (feed icon), History (clock icon), Profile (person icon), Settings (gear icon). Tab bar behavior: highlight active tab, badge on Offers tab showing unread count, hide on full-screen flows (QR display, onboarding). Deep link handling: app links / universal links route to correct tab and screen. Navigation stack: each tab maintains independent navigation history. On app launch: open last active tab (persisted). On notification tap: navigate to relevant offer in Offers tab. Error state: if app fails to load, show retry screen with 'Try again' button and support contact link.",
+          "requirements_covered": ["NFR-08"],
+          "nfrs_applicable": ["NFR-02", "NFR-08"],
+          "user_facing": true,
+          "data_sensitivity": "Public",
+          "change_type": "new",
+          "existing_feature_ref": null,
+          "existing_screens_affected": [],
+          "existing_apis_affected": [],
+          "existing_tables_affected": [],
+          "change_description": null,
+          "backward_compatible": true,
+          "regression_risks": [],
+          "citation": {
+            "requirements_used": ["NFR-08: WCAG 2.1 AA — all interactive elements accessible and labeled"],
+            "kb_sections_used": ["kb-L0-lloyds-enterprise-architecture §3.1 (Native mobile — Swift iOS, Kotlin Android)"]
+          },
+          "reasoning": "4-tab structure covers the core user journeys: discover offers, track history, manage profile, control settings. Independent navigation stacks per tab is the native iOS/Android pattern. Deep linking required for notification tap → offer detail flow. Badge count drives engagement by showing unread offers."
+        }
+      ]
+    },
+    {
+      "epic_id": "EP-01",
+      "title": "User Authentication & Registration",
+      "description": "Enable consumers to create accounts, verify identity, and securely authenticate. Foundation for all personalized features — every subsequent epic requires an authenticated user context.",
+      "sprint": 1,
+      "requirements_covered": ["FR-16", "FR-20", "NFR-03", "NFR-04", "NFR-05"],
+      "scope_in": [
+        "User registration (email/phone)",
+        "OTP verification",
+        "Biometric enrollment (Face ID/Touch ID)",
+        "JWT session management with refresh tokens",
+        "Consent collection during registration",
+        "Account lockout after failed attempts"
+      ],
+      "scope_out": [
+        "Social login (Google, Apple) — future phase",
+        "Merchant authentication — covered in EP-05",
+        "Password reset via customer support — future phase"
+      ],
+      "reasoning": "FR-16 (auth) and FR-20 (consent) are tightly coupled — consent must be collected during registration. Sprint 1 because every other epic depends on authenticated users. NFR-03 (encryption), NFR-04 (GDPR), NFR-05 (CCPA) apply because auth handles credentials and PII.",
+      "features": [
+        {
+          "feature_id": "F-01.1",
+          "title": "Phone/Email Registration",
+          "description": "User provides email or phone number to create account. Validate format (E.164 for phone, RFC 5322 for email). Create account in 'pending_verification' state. Prevent duplicate registration by checking existing accounts. Rate limit: 5 registration attempts per device per hour. On success: trigger OTP verification flow. On failure: show inline validation errors with specific guidance.",
+          "requirements_covered": ["FR-16"],
+          "nfrs_applicable": ["NFR-03", "NFR-04"],
+          "user_facing": true,
+          "data_sensitivity": "Confidential",
+          "change_type": "new",
+          "existing_feature_ref": null,
+          "existing_screens_affected": [],
+          "existing_apis_affected": [],
+          "existing_tables_affected": [],
+          "change_description": null,
+          "backward_compatible": true,
+          "regression_risks": [],
+          "citation": {
+            "requirements_used": ["FR-16: User Registration and Authentication — Users must be able to create an account and authenticate"],
+            "kb_sections_used": ["kb-L0-lloyds-enterprise-architecture §5.1 (Security Layers — Cloud IAM, OAuth 2.0)", "kb-L0-epics-best-practices §2 (Compliance Checkpoints — PII handling)"]
+          },
+          "reasoning": "Scoped to registration only (not verification) as these are separate user actions. Data sensitivity Confidential because phone/email are PII. Rate limiting per device prevents abuse while allowing legitimate retries."
+        },
+        {
+          "feature_id": "F-01.2",
+          "title": "OTP Verification",
+          "description": "Generate 6-digit numeric OTP with 90-second expiry. Deliver via SMS (phone) or email. Single-use — consumed on successful verification. Rate limit: max 3 OTP requests per 10 minutes per phone/email. Auto-focus on OTP input field. Resend button with countdown timer. On success: mark account as verified, proceed to consent collection. On failure: show 'Invalid code' with remaining attempts (max 5). After 5 failed attempts: block for 30 minutes.",
+          "requirements_covered": ["FR-16"],
+          "nfrs_applicable": ["NFR-03", "NFR-09"],
+          "user_facing": true,
+          "data_sensitivity": "Confidential",
+          "change_type": "new",
+          "existing_feature_ref": null,
+          "existing_screens_affected": [],
+          "existing_apis_affected": [],
+          "existing_tables_affected": [],
+          "change_description": null,
+          "backward_compatible": true,
+          "regression_risks": [],
+          "citation": {
+            "requirements_used": ["FR-16: User Registration and Authentication"],
+            "kb_sections_used": ["kb-L0-lloyds-enterprise-architecture §5.1 (Security — encryption in transit TLS 1.3)"]
+          },
+          "reasoning": "OTP parameters (6-digit, 90s, 3/10min rate limit) follow industry standards for mobile consumer apps. Separated from F-01.1 because verification is a distinct screen and user action."
+        },
+        {
+          "feature_id": "F-01.3",
+          "title": "Biometric Authentication Enrollment",
+          "description": "After OTP verification, prompt user to enable Face ID (iOS) or fingerprint (Android) for subsequent logins. Store biometric preference flag (not biometric data itself — uses OS keychain). Fallback to PIN/password if biometric fails 3 times. On success: store JWT refresh token in secure enclave. On decline: proceed with email/password login for future sessions.",
+          "requirements_covered": ["FR-16"],
+          "nfrs_applicable": ["NFR-03"],
+          "user_facing": true,
+          "data_sensitivity": "Restricted",
+          "change_type": "new",
+          "existing_feature_ref": null,
+          "existing_screens_affected": [],
+          "existing_apis_affected": [],
+          "existing_tables_affected": [],
+          "change_description": null,
+          "backward_compatible": true,
+          "regression_risks": [],
+          "citation": {
+            "requirements_used": ["FR-16: User Registration and Authentication"],
+            "kb_sections_used": ["kb-L0-lloyds-enterprise-architecture §3.1 (Native mobile — Swift iOS, Kotlin Android)"]
+          },
+          "reasoning": "Native biometric APIs (LocalAuthentication/BiometricPrompt) are the standard for consumer mobile apps. Data sensitivity Restricted because biometric preference + secure enclave token access is highest sensitivity. Biometric data never leaves device."
+        },
+        {
+          "feature_id": "F-01.4",
+          "title": "Consent Collection Flow",
+          "description": "During registration, present consent screens for: (1) Location data access — explain purpose, show 3 options (always/app-open/off), (2) Transaction data access — explain personalization benefit, binary opt-in/out. Each consent recorded with timestamp, version, and granular purpose. User can proceed with partial consent (location only, or transaction only) but personalization features degrade gracefully. Consent records stored immutably for audit. GDPR Article 7 compliant — consent must be freely given, specific, informed, unambiguous.",
+          "requirements_covered": ["FR-20"],
+          "nfrs_applicable": ["NFR-04", "NFR-05"],
+          "user_facing": true,
+          "data_sensitivity": "Confidential",
+          "change_type": "new",
+          "existing_feature_ref": null,
+          "existing_screens_affected": [],
+          "existing_apis_affected": [],
+          "existing_tables_affected": [],
+          "change_description": null,
+          "backward_compatible": true,
+          "regression_risks": [],
+          "citation": {
+            "requirements_used": ["FR-20: User Consent Management — transparent consent flows, explicit consent before accessing personal data"],
+            "kb_sections_used": ["kb-L0-lloyds-enterprise-architecture §5.2 (Regulatory Compliance — UK GDPR/DPA 2018)", "kb-L0-epics-best-practices §3 (Regulatory Acceptance Criteria — GDPR Art. 6)"]
+          },
+          "reasoning": "Consent is collected during registration (not after) because GDPR requires consent before data processing begins. Granular consent (location separate from transaction) follows GDPR specificity requirement. Immutable storage for audit trail per GDPR Art. 7(1)."
+        },
+        {
+          "feature_id": "F-01.5",
+          "title": "Session Management & Token Refresh",
+          "description": "Issue JWT access token (15-min expiry) and refresh token (30-day expiry) on successful authentication. Refresh token rotation — each use issues new refresh token and invalidates old. Store refresh token in device secure storage (Keychain/Keystore). On token expiry: silent refresh if valid refresh token exists. On refresh failure: redirect to biometric/login screen. Support concurrent sessions across devices with per-device token tracking. Logout invalidates all tokens for that device.",
+          "requirements_covered": ["FR-16"],
+          "nfrs_applicable": ["NFR-03", "NFR-09"],
+          "user_facing": false,
+          "data_sensitivity": "Restricted",
+          "change_type": "new",
+          "existing_feature_ref": null,
+          "existing_screens_affected": [],
+          "existing_apis_affected": [],
+          "existing_tables_affected": [],
+          "change_description": null,
+          "backward_compatible": true,
+          "regression_risks": [],
+          "citation": {
+            "requirements_used": ["FR-16: User Registration and Authentication"],
+            "kb_sections_used": ["kb-L0-lloyds-enterprise-architecture §3.2 (Backend — OAuth 2.0/OpenID Connect)", "kb-L0-lloyds-enterprise-architecture §5.1 (Security — Cloud IAM)"]
+          },
+          "reasoning": "JWT with refresh rotation is the standard pattern for mobile apps per Lloyds enterprise architecture (OAuth 2.0). 15-min access token balances security with UX. Restricted sensitivity because tokens grant system access."
+        }
+      ]
+    },
+    {
+      "epic_id": "EP-02",
+      "title": "Notification Infrastructure & User Preferences",
+      "description": "Build the push notification delivery pipeline (APNs/FCM), user preference management, and notification frequency controls. This is the primary channel for offer delivery and must be production-ready before geofencing goes live.",
+      "sprint": 1,
+      "requirements_covered": ["FR-05", "FR-09", "FR-15", "FR-24"],
+      "scope_in": [
+        "Push notification service integration (APNs + FCM)",
+        "Device token registration and management",
+        "Notification preference settings (always-on vs app-open only)",
+        "Frequency capping engine (1 per offer per day)",
+        "User profile and spending category preferences",
+        "Notification permission request flow with fallback"
+      ],
+      "scope_out": [
+        "Offer matching logic — covered in EP-03",
+        "In-app notification center — covered in EP-04",
+        "Wearable device notifications — covered in EP-07"
+      ],
+      "reasoning": "FR-05 (push), FR-09 (frequency limiting), FR-15 (preferences) form the notification delivery pipeline. Placed in Sprint 1 because Sprint 2's geofencing epic depends on a working notification channel. FR-24 (user profile) included here as preferences are managed in the same settings area.",
+      "features": [
+        {
+          "feature_id": "F-02.1",
+          "title": "Push Notification Service Integration",
+          "description": "Integrate with APNs (iOS) and FCM (Android) for push delivery. Register device tokens on app launch and refresh on token rotation. Support notification payloads: title (max 50 chars), body (max 150 chars), deep link URL, image URL (optional), action buttons (max 2). Delivery confirmation tracking via delivery receipts. Retry logic: 3 attempts with exponential backoff (1s, 5s, 30s). Handle token invalidation (uninstall detection). Batch sending support for campaign-wide notifications.",
+          "requirements_covered": ["FR-05"],
+          "nfrs_applicable": ["NFR-01", "NFR-09"],
+          "user_facing": false,
+          "data_sensitivity": "Internal",
+          "change_type": "new",
+          "existing_feature_ref": null,
+          "existing_screens_affected": [],
+          "existing_apis_affected": [],
+          "existing_tables_affected": [],
+          "change_description": null,
+          "backward_compatible": true,
+          "regression_risks": [],
+          "citation": {
+            "requirements_used": ["FR-05: Push Notification Delivery — support push notifications for relevant offers delivered within 2 seconds"],
+            "kb_sections_used": ["kb-L0-lloyds-enterprise-architecture §7.1 (Pub/Sub events for async communication)", "kb-L0-lloyds-enterprise-architecture §3.2 (Microservices on GKE)"]
+          },
+          "reasoning": "APNs/FCM are the only viable push services (CON-05). Retry with exponential backoff follows distributed systems best practice. Batch support needed for NFR-07 (10K campaigns). Internal sensitivity as device tokens are system identifiers, not PII."
+        },
+        {
+          "feature_id": "F-02.2",
+          "title": "Notification Preference Controls",
+          "description": "Settings screen where users configure: (1) Notification mode — 'Always' (background push), 'App open only' (in-app only), 'Off' (no notifications). (2) Quiet hours — start/end time when no notifications are sent. (3) Category preferences — toggle notifications per offer category (dining, retail, entertainment, services). Changes take effect immediately. Default: 'Always' with no quiet hours, all categories enabled. Persist preferences server-side for cross-device consistency.",
+          "requirements_covered": ["FR-15"],
+          "nfrs_applicable": ["NFR-08"],
+          "user_facing": true,
+          "data_sensitivity": "Internal",
+          "change_type": "new",
+          "existing_feature_ref": null,
+          "existing_screens_affected": [],
+          "existing_apis_affected": [],
+          "existing_tables_affected": [],
+          "change_description": null,
+          "backward_compatible": true,
+          "regression_risks": [],
+          "citation": {
+            "requirements_used": ["FR-15: User Notification Preferences — control notification preferences including always-on push vs in-app only"],
+            "kb_sections_used": ["kb-L0-lloyds-enterprise-architecture §9 (Key Architectural Decisions — consent management as first-class concern)"]
+          },
+          "reasoning": "Three-mode control (always/app-open/off) directly from source. Quiet hours added as standard UX for notification-heavy apps. Category toggles enable granular control without full opt-out. Server-side persistence per Lloyds architecture (Cloud SQL for transactional data)."
+        },
+        {
+          "feature_id": "F-02.3",
+          "title": "Notification Frequency Capping",
+          "description": "Engine that enforces: (1) Max 1 notification per offer per user per day — tracked via offer_id + user_id + date composite key. (2) Max 5 total notifications per user per day (configurable). (3) Minimum 30-minute gap between consecutive notifications to same user. On cap reached: queue notification for next eligible window. Frequency state stored in Redis (Memorystore) for sub-millisecond lookup. Reset daily at midnight user's local timezone.",
+          "requirements_covered": ["FR-09"],
+          "nfrs_applicable": ["NFR-01", "NFR-06"],
+          "user_facing": false,
+          "data_sensitivity": "Internal",
+          "change_type": "new",
+          "existing_feature_ref": null,
+          "existing_screens_affected": [],
+          "existing_apis_affected": [],
+          "existing_tables_affected": [],
+          "change_description": null,
+          "backward_compatible": true,
+          "regression_risks": [],
+          "citation": {
+            "requirements_used": ["FR-09: Notification Frequency Limiting — limit offer notifications to one per offer per day per user"],
+            "kb_sections_used": ["kb-L0-lloyds-enterprise-architecture §3.2 (Memorystore/Redis for caching)"]
+          },
+          "reasoning": "Redis chosen for frequency state because sub-millisecond reads are needed within the 2-second delivery SLA (NFR-01). Daily cap of 5 and 30-min gap are UX best practices to prevent notification fatigue beyond the per-offer limit in FR-09."
+        },
+        {
+          "feature_id": "F-02.4",
+          "title": "User Profile & Spending Preferences",
+          "description": "Profile screen with: (1) Display name (optional, max 50 chars). (2) Preferred spending categories — multi-select from: Dining, Retail Fashion, Grocery, Entertainment, Health & Beauty, Travel, Services. (3) Budget sensitivity — Low/Medium/High (affects offer value threshold shown). (4) Preferred radius — how far user is willing to travel for offers (500m, 1km, 2km, 5km). Profile completion is optional — system works with transaction data alone if profile is empty. Changes saved on field blur (auto-save).",
+          "requirements_covered": ["FR-24"],
+          "nfrs_applicable": ["NFR-08", "NFR-04"],
+          "user_facing": true,
+          "data_sensitivity": "Confidential",
+          "change_type": "new",
+          "existing_feature_ref": null,
+          "existing_screens_affected": [],
+          "existing_apis_affected": [],
+          "existing_tables_affected": [],
+          "change_description": null,
+          "backward_compatible": true,
+          "regression_risks": [],
+          "citation": {
+            "requirements_used": ["FR-24: User Profile and Preference Management — view and update profile, set spending category preferences"],
+            "kb_sections_used": ["kb-L0-lloyds-enterprise-architecture §9 (consent management as first-class concern)"]
+          },
+          "reasoning": "Spending categories derived from source personas (dining, retail, entertainment). Preferred radius enables geofence relevance filtering. Confidential sensitivity because spending preferences reveal financial behavior patterns. Auto-save for mobile UX best practice."
+        },
+        {
+          "feature_id": "F-02.5",
+          "title": "Push Permission Request & Fallback",
+          "description": "On first app launch post-registration, present a pre-permission screen explaining the value of push notifications ('Get notified about deals near you'). If user grants OS permission: register device token, enable push delivery. If user denies: show in-app banner explaining they can enable later in settings, default to in-app-only mode. Track permission state. If permission revoked later (detected on app foreground): update delivery mode to in-app-only automatically. Never re-prompt OS permission dialog (iOS limitation).",
+          "requirements_covered": ["FR-05", "FR-15"],
+          "nfrs_applicable": ["NFR-08"],
+          "user_facing": true,
+          "data_sensitivity": "Internal",
+          "change_type": "new",
+          "existing_feature_ref": null,
+          "existing_screens_affected": [],
+          "existing_apis_affected": [],
+          "existing_tables_affected": [],
+          "change_description": null,
+          "backward_compatible": true,
+          "regression_risks": [],
+          "citation": {
+            "requirements_used": ["FR-05: Push Notification Delivery", "FR-15: User Notification Preferences"],
+            "kb_sections_used": ["kb-L0-lloyds-enterprise-architecture §3.1 (Native mobile — Swift iOS, Kotlin Android)"]
+          },
+          "reasoning": "Pre-permission screen is critical for opt-in rates (industry best practice: 40-60% improvement). iOS only allows one OS permission prompt — must maximize first-ask success. Fallback to in-app mode ensures platform value even without push permission."
+        }
+      ]
+    },
+    {
+      "epic_id": "EP-03",
+      "title": "Geofencing & Real-Time Offer Delivery",
+      "description": "Build the core geofencing engine that detects user proximity to merchant locations and triggers real-time offer delivery. This is the platform's primary differentiator — location-aware, context-sensitive offer matching and delivery within 2 seconds.",
+      "sprint": 2,
+      "requirements_covered": ["FR-01", "FR-14", "FR-21", "FR-22", "FR-26"],
+      "scope_in": [
+        "Geofence zone creation and management",
+        "Device-side geofence monitoring (entry/exit detection)",
+        "Server-side offer matching pipeline",
+        "Real-time offer delivery within 2-second SLA",
+        "In-app offer feed (browsable offers)",
+        "Geofence boundary enforcement (supported cities only)",
+        "Time-of-day offer filtering"
+      ],
+      "scope_out": [
+        "Transaction-based personalization — covered in EP-05",
+        "Offer redemption flow — covered in EP-04",
+        "Merchant campaign creation — covered in EP-05",
+        "Wearable proximity detection — covered in EP-07"
+      ],
+      "reasoning": "FR-01 (real-time delivery), FR-21 (zone management), FR-26 (event detection), FR-14 (boundary enforcement), FR-22 (in-app feed) form the complete geofencing delivery pipeline. Sprint 2 because it depends on EP-01 (auth) and EP-02 (notifications) being complete. This is the MVP's core value proposition.",
+      "features": [
+        {
+          "feature_id": "F-03.1",
+          "title": "Geofence Zone Management Service",
+          "description": "Backend service for CRUD operations on geofence zones. Each zone has: zone_id, merchant_id, center_lat/lng, radius_meters (min 50m, max 5km), polygon_points (optional for non-circular zones), active_hours (start/end per day-of-week), status (active/paused/expired). API endpoints: POST /zones, GET /zones/{id}, PUT /zones/{id}, DELETE /zones/{id}, GET /zones?lat={}&lng={}&radius={}. Spatial indexing (PostGIS or equivalent) for efficient proximity queries. Validate: no overlapping zones for same merchant, radius within bounds, valid coordinates.",
+          "requirements_covered": ["FR-21"],
+          "nfrs_applicable": ["NFR-07", "NFR-11"],
+          "user_facing": false,
+          "data_sensitivity": "Internal",
+          "change_type": "new",
+          "existing_feature_ref": null,
+          "existing_screens_affected": [],
+          "existing_apis_affected": [],
+          "existing_tables_affected": [],
+          "change_description": null,
+          "backward_compatible": true,
+          "regression_risks": [],
+          "citation": {
+            "requirements_used": ["FR-21: Geofence Zone Management — creation, modification, deletion of geofence zones with radius/polygon boundaries and active hours"],
+            "kb_sections_used": ["kb-L0-lloyds-enterprise-architecture §3.2 (Cloud SQL PostgreSQL for transactional data)", "kb-L0-lloyds-enterprise-architecture §4.1 (Pub/Sub for async messaging)"]
+          },
+          "reasoning": "PostGIS spatial indexing enables efficient 'find zones near point' queries needed for real-time matching. Radius bounds (50m-5km) prevent abuse (too small = never triggers, too large = irrelevant). Internal sensitivity as zone data is merchant operational data, not PII."
+        },
+        {
+          "feature_id": "F-03.2",
+          "title": "Device-Side Geofence Monitoring",
+          "description": "Native mobile module that registers active geofences with OS location services. iOS: CLLocationManager with CLCircularRegion (max 20 monitored regions — use region rotation for more). Android: GeofencingClient with GeofencingRequest. On geofence entry/exit: fire event to server with user_id, zone_id, event_type (enter/exit), timestamp, accuracy_meters. Respect user's location tracking preference (always/app-open/off). Battery optimization: use significant location changes for coarse tracking, precise geofencing only for registered zones. Handle OS-level location permission changes gracefully.",
+          "requirements_covered": ["FR-26", "FR-02"],
+          "nfrs_applicable": ["NFR-01", "NFR-10"],
+          "user_facing": false,
+          "data_sensitivity": "Restricted",
+          "change_type": "new",
+          "existing_feature_ref": null,
+          "existing_screens_affected": [],
+          "existing_apis_affected": [],
+          "existing_tables_affected": [],
+          "change_description": null,
+          "backward_compatible": true,
+          "regression_risks": [],
+          "citation": {
+            "requirements_used": ["FR-26: Geofence Entry/Exit Event Detection — detect when user enters/exits geofenced area", "FR-02: User Location Tracking Controls"],
+            "kb_sections_used": ["kb-L0-lloyds-enterprise-architecture §3.1 (Native mobile — Swift iOS, Kotlin Android)"]
+          },
+          "reasoning": "iOS 20-region limit is a hard platform constraint requiring rotation strategy. Restricted sensitivity because real-time location data is highly sensitive PII. Battery optimization critical per NFR-10 — significant location changes use less power than continuous GPS."
+        },
+        {
+          "feature_id": "F-03.3",
+          "title": "Real-Time Offer Matching Pipeline",
+          "description": "Event-driven pipeline triggered by geofence entry events. Steps: (1) Receive entry event via Pub/Sub. (2) Query active offers for zone_id where current time is within active_hours. (3) Filter by user preferences (categories, notification mode). (4) Apply frequency cap check (F-02.3). (5) Rank remaining offers by relevance score (initially: recency + category match). (6) Select top offer (or top 3 for in-app). (7) Dispatch to notification service (F-02.1). End-to-end latency budget: 2000ms total — event receipt 200ms, query 300ms, filter 200ms, rank 300ms, dispatch 500ms, delivery 500ms. On pipeline failure: log error, do not notify user (silent failure — no degraded experience).",
+          "requirements_covered": ["FR-01"],
+          "nfrs_applicable": ["NFR-01", "NFR-06", "NFR-11"],
+          "user_facing": false,
+          "data_sensitivity": "Internal",
+          "change_type": "new",
+          "existing_feature_ref": null,
+          "existing_screens_affected": [],
+          "existing_apis_affected": [],
+          "existing_tables_affected": [],
+          "change_description": null,
+          "backward_compatible": true,
+          "regression_risks": [],
+          "citation": {
+            "requirements_used": ["FR-01: Real-Time Location-Based Offer Delivery — deliver offers in real time based on location and time of day within 2 seconds"],
+            "kb_sections_used": ["kb-L0-lloyds-enterprise-architecture §4.1 (Pub/Sub for event bus, Dataflow for stream processing)", "kb-L0-lloyds-enterprise-architecture §7.1 (Pub/Sub events for async communication)"]
+          },
+          "reasoning": "Pub/Sub chosen as event bus per Lloyds architecture. Latency budget breakdown ensures each component has a clear SLA contributing to the 2-second total (NFR-01). Silent failure on pipeline error prevents confusing UX — user simply doesn't get a notification rather than seeing an error."
+        },
+        {
+          "feature_id": "F-03.4",
+          "title": "In-App Offer Feed",
+          "description": "Scrollable feed screen showing available offers near the user's current location. Each offer card shows: merchant name, offer title, discount value, distance from user, expiry countdown, category icon. Sort options: nearest first (default), highest value, expiring soon. Filter by category (matches user preference categories). Pull-to-refresh updates location and re-queries. Empty state: 'No offers nearby — try expanding your radius in settings'. Pagination: 20 offers per page, infinite scroll. Offers update when user moves significantly (>500m).",
+          "requirements_covered": ["FR-22"],
+          "nfrs_applicable": ["NFR-02", "NFR-08"],
+          "user_facing": true,
+          "data_sensitivity": "Public",
+          "change_type": "new",
+          "existing_feature_ref": null,
+          "existing_screens_affected": [],
+          "existing_apis_affected": [],
+          "existing_tables_affected": [],
+          "change_description": null,
+          "backward_compatible": true,
+          "regression_risks": [],
+          "citation": {
+            "requirements_used": ["FR-22: In-App Offer Feed — browse available offers filtered by proximity, category, and relevance"],
+            "kb_sections_used": ["kb-L0-lloyds-enterprise-architecture §3.1 (Frontend — shared design system, WCAG 2.1 AA)"]
+          },
+          "reasoning": "Feed is the in-app delivery channel (source: 'push notifications or in-app'). 20-item pagination balances load time (NFR-02: 1s) with content density. 500m movement threshold prevents excessive API calls while keeping content fresh. Public sensitivity as offer content is merchant-published marketing material."
+        },
+        {
+          "feature_id": "F-03.5",
+          "title": "Supported City Boundary Enforcement",
+          "description": "Service that maintains a list of supported city boundaries (polygon coordinates). On geofence event: check if user location falls within any supported city boundary. If outside: suppress offer delivery, do not trigger matching pipeline. Admin API to add/remove/modify supported cities. Initial launch: configurable list of urban markets. User-facing: if user opens app outside supported area, show 'Coming soon to your area' message on offer feed with option to be notified when their city is added.",
+          "requirements_covered": ["FR-14"],
+          "nfrs_applicable": ["NFR-06"],
+          "user_facing": true,
+          "data_sensitivity": "Public",
+          "change_type": "new",
+          "existing_feature_ref": null,
+          "existing_screens_affected": [],
+          "existing_apis_affected": [],
+          "existing_tables_affected": [],
+          "change_description": null,
+          "backward_compatible": true,
+          "regression_risks": [],
+          "citation": {
+            "requirements_used": ["FR-14: Geofence Boundary Enforcement — must not deliver offers outside supported cities"],
+            "kb_sections_used": ["kb-L0-epics-best-practices §6 (Scoping — Geography dimension)"]
+          },
+          "reasoning": "Boundary enforcement prevents irrelevant notifications (US6) and aligns with CON-03 (initial launch limited to select urban markets). 'Coming soon' UX retains users who travel outside supported areas rather than showing empty state."
+        }
+      ]
+    },
+    {
+      "epic_id": "EP-04",
+      "title": "Offer Redemption & History",
+      "description": "Enable users to redeem offers at participating merchants and track their redemption history. Completes the core user journey: receive offer → redeem → view history. After this sprint, the MVP is functional end-to-end.",
+      "sprint": 2,
+      "requirements_covered": ["FR-04", "FR-06", "FR-23", "FR-27"],
+      "scope_in": [
+        "QR code generation for offer redemption",
+        "Merchant-side redemption confirmation",
+        "Offer status lifecycle (active → redeemed → expired)",
+        "Offer history screen with filters",
+        "Duplicate redemption prevention",
+        "Offer expiry automation"
+      ],
+      "scope_out": [
+        "Merchant POS integration — future phase (manual confirmation for MVP)",
+        "Savings calculator/gamification — covered in EP-07",
+        "Offer reporting (invalid/expired) — covered in EP-06"
+      ],
+      "reasoning": "FR-04 (redemption), FR-06 (history), FR-23 (expiry), FR-27 (duplicate prevention) form the complete redemption lifecycle. Sprint 2 alongside EP-03 because redemption is the monetization event — without it, geofencing delivers no business value. Together EP-03 + EP-04 deliver a complete MVP.",
+      "features": [
+        {
+          "feature_id": "F-04.1",
+          "title": "QR Code Offer Redemption",
+          "description": "When user taps 'Redeem' on an offer: generate a unique, time-limited QR code containing: redemption_token (UUID), offer_id, user_id (hashed), expiry_timestamp (5 minutes from generation). Display QR code full-screen with brightness auto-maximized. Countdown timer showing time remaining. Merchant scans QR via their app/device → validates token against server → marks as redeemed. On successful scan: show 'Offer Redeemed!' confirmation with confetti animation, offer details, and savings amount. On expiry: QR disappears, user can regenerate. On already-redeemed: show 'This offer has already been used'.",
+          "requirements_covered": ["FR-04"],
+          "nfrs_applicable": ["NFR-02", "NFR-03"],
+          "user_facing": true,
+          "data_sensitivity": "Internal",
+          "change_type": "new",
+          "existing_feature_ref": null,
+          "existing_screens_affected": [],
+          "existing_apis_affected": [],
+          "existing_tables_affected": [],
+          "change_description": null,
+          "backward_compatible": true,
+          "regression_risks": [],
+          "citation": {
+            "requirements_used": ["FR-04: Instant Offer Redemption at Merchant — redeem instantly via mobile interface, offer marked as redeemed, merchant receives confirmation"],
+            "kb_sections_used": ["kb-L0-lloyds-enterprise-architecture §5.1 (Security — encryption in transit)"]
+          },
+          "reasoning": "QR code is the assumed redemption mechanism (ASM-06). 5-minute expiry prevents screenshot sharing/abuse. Hashed user_id in QR prevents PII exposure if QR is photographed. Brightness maximization is standard for QR-based mobile payments."
+        },
+        {
+          "feature_id": "F-04.2",
+          "title": "Duplicate Redemption Prevention",
+          "description": "Server-side enforcement: each offer instance can only be redeemed once per user. On redemption attempt: check redemption_log table for existing entry with (offer_id, user_id). If exists: reject with 409 Conflict, return 'Already redeemed' message. Use database-level unique constraint on (offer_id, user_id) as final safety net. For multi-use offers (e.g., '10% off, use 3 times'): track redemption_count against max_redemptions. Idempotency: if same redemption_token is submitted twice within 5 minutes, return success (not duplicate error) — handles network retries.",
+          "requirements_covered": ["FR-27"],
+          "nfrs_applicable": ["NFR-09", "NFR-06"],
+          "user_facing": false,
+          "data_sensitivity": "Internal",
+          "change_type": "new",
+          "existing_feature_ref": null,
+          "existing_screens_affected": [],
+          "existing_apis_affected": [],
+          "existing_tables_affected": [],
+          "change_description": null,
+          "backward_compatible": true,
+          "regression_risks": [],
+          "citation": {
+            "requirements_used": ["FR-27: Duplicate Redemption Prevention — prevent users from redeeming same offer more than once"],
+            "kb_sections_used": ["kb-L0-lloyds-enterprise-architecture §3.2 (Cloud SQL PostgreSQL — unique constraints)"]
+          },
+          "reasoning": "Database-level constraint is the last line of defense against race conditions. Idempotency key (redemption_token) prevents false duplicate errors from network retries — critical for mobile apps with unreliable connectivity."
+        },
+        {
+          "feature_id": "F-04.3",
+          "title": "Offer History & Redemption Status",
+          "description": "History screen showing all user's offers grouped by status: (1) Active — available for redemption, sorted by expiry (soonest first). (2) Redeemed — with date, merchant, savings amount. (3) Expired — greyed out, with 'Expired on [date]'. Each entry shows: offer title, merchant name, discount value, status badge, date. Filter by: status (all/active/redeemed/expired), date range, category. Total savings counter at top ('You've saved £X.XX'). Pull-to-refresh. Empty state per tab: 'No [active/redeemed/expired] offers yet'. Pagination: 20 items, infinite scroll.",
+          "requirements_covered": ["FR-06"],
+          "nfrs_applicable": ["NFR-02", "NFR-08"],
+          "user_facing": true,
+          "data_sensitivity": "Confidential",
+          "change_type": "new",
+          "existing_feature_ref": null,
+          "existing_screens_affected": [],
+          "existing_apis_affected": [],
+          "existing_tables_affected": [],
+          "change_description": null,
+          "backward_compatible": true,
+          "regression_risks": [],
+          "citation": {
+            "requirements_used": ["FR-06: Offer History and Redemption Status — view all redeemed and active offers with status and date"],
+            "kb_sections_used": ["kb-L0-lloyds-enterprise-architecture §3.1 (WCAG 2.1 AA accessibility)"]
+          },
+          "reasoning": "Three-tab grouping (active/redeemed/expired) directly from AC4 which mentions 'all redeemed and active offers with status and date'. Savings counter adds engagement value. Confidential sensitivity because redemption history reveals spending patterns."
+        },
+        {
+          "feature_id": "F-04.4",
+          "title": "Offer Expiry Automation",
+          "description": "Scheduled job (Cloud Scheduler → Cloud Function) runs every 15 minutes: (1) Query offers where expiry_timestamp < now() AND status = 'active'. (2) Batch update status to 'expired'. (3) Remove from user's active offer list. (4) Update offer feed cache. For offers expiring within 1 hour: send 'Expiring soon' notification (if user has notifications enabled and hasn't been notified for this offer today). Merchant-side: expired offers automatically stop triggering geofence matches. Audit log: record all status transitions with timestamp.",
+          "requirements_covered": ["FR-23"],
+          "nfrs_applicable": ["NFR-09", "NFR-11"],
+          "user_facing": false,
+          "data_sensitivity": "Internal",
+          "change_type": "new",
+          "existing_feature_ref": null,
+          "existing_screens_affected": [],
+          "existing_apis_affected": [],
+          "existing_tables_affected": [],
+          "change_description": null,
+          "backward_compatible": true,
+          "regression_risks": [],
+          "citation": {
+            "requirements_used": ["FR-23: Offer Expiry and Lifecycle Management — automatically expire offers, remove from user views, prevent redemption of expired offers"],
+            "kb_sections_used": ["kb-L0-lloyds-enterprise-architecture §4.1 (Cloud Composer/Airflow for workflow orchestration)"]
+          },
+          "reasoning": "15-minute batch interval balances timeliness with system load. 'Expiring soon' notification drives urgency and redemption rates (key KPI). Cloud Scheduler + Cloud Function is the GCP-native pattern for scheduled jobs per Lloyds architecture."
+        },
+        {
+          "feature_id": "F-04.5",
+          "title": "Merchant Redemption Confirmation",
+          "description": "Merchant-facing flow: (1) Merchant opens their app/dashboard. (2) Scans customer's QR code using device camera. (3) System validates: token not expired, not already redeemed, offer is active, merchant_id matches. (4) On valid: show offer details + 'Confirm Redemption' button. (5) On confirm: mark redeemed, notify customer device in real-time (WebSocket/push). (6) On invalid: show specific error ('Expired', 'Already used', 'Wrong merchant'). Merchant sees daily redemption count on their home screen. Offline fallback: merchant can enter redemption code manually (8-char alphanumeric displayed below QR on customer device).",
+          "requirements_covered": ["FR-04"],
+          "nfrs_applicable": ["NFR-02", "NFR-09"],
+          "user_facing": true,
+          "data_sensitivity": "Internal",
+          "change_type": "new",
+          "existing_feature_ref": null,
+          "existing_screens_affected": [],
+          "existing_apis_affected": [],
+          "existing_tables_affected": [],
+          "change_description": null,
+          "backward_compatible": true,
+          "regression_risks": [],
+          "citation": {
+            "requirements_used": ["FR-04: Instant Offer Redemption — merchant receiving confirmation of redemption"],
+            "kb_sections_used": ["kb-L0-lloyds-enterprise-architecture §7.1 (REST APIs for synchronous calls)"]
+          },
+          "reasoning": "Merchant confirmation is explicitly required by AC3 ('merchant receives confirmation'). Manual code fallback handles scenarios where merchant device camera fails or connectivity is poor. Real-time customer notification creates a satisfying 'ding' moment confirming the redemption."
+        }
+      ]
+    },
+    {
+      "epic_id": "EP-05",
+      "title": "Personalization Engine & Merchant Platform",
+      "description": "Integrate transaction data analysis for personalized offer recommendations and build the merchant-facing platform for campaign creation and analytics. Transforms the MVP from generic location-based delivery to intelligent, personalized engagement.",
+      "sprint": 3,
+      "requirements_covered": ["FR-03", "FR-10", "FR-17", "FR-18", "FR-19", "FR-25"],
+      "scope_in": [
+        "Payment provider integration for transaction data",
+        "Transaction analysis and spending pattern extraction",
+        "Personalized offer ranking based on spending history",
+        "Merchant registration and onboarding workflow",
+        "Merchant campaign creation and management",
+        "Merchant analytics dashboard",
+        "Offer content authoring tools"
+      ],
+      "scope_out": [
+        "ML-based recommendation models — future phase (rules-based for MVP)",
+        "Merchant billing/payments — future phase",
+        "Merchant API for programmatic campaign management — future phase"
+      ],
+      "reasoning": "FR-03 (transaction analysis), FR-19 (payment integration) enable personalization. FR-10 (analytics), FR-17 (onboarding), FR-18 (campaign management), FR-25 (offer creation) form the merchant platform. Sprint 3 because: (1) MVP works without personalization (Sprint 2 uses category matching), (2) merchant self-service reduces operational burden for scaling beyond initial partners.",
+      "features": [
+        {
+          "feature_id": "F-05.1",
+          "title": "Payment Provider Integration",
+          "description": "Integrate with Open Banking APIs to securely access user transaction history (with consent). Support: account information API (read-only transaction list). Data retrieved: merchant_name, amount, currency, date, category_code (MCC). Sync frequency: daily batch + on-demand refresh. Store normalized transactions in analytics database (BigQuery). Handle: provider downtime (circuit breaker, cached data), consent revocation (stop sync, retain historical), multiple accounts (user links 1+ bank accounts). PSD2/Open Banking compliant: registered as AISP (Account Information Service Provider).",
+          "requirements_covered": ["FR-19"],
+          "nfrs_applicable": ["NFR-03", "NFR-04", "NFR-12"],
+          "user_facing": false,
+          "data_sensitivity": "Restricted",
+          "change_type": "new",
+          "existing_feature_ref": null,
+          "existing_screens_affected": [],
+          "existing_apis_affected": [],
+          "existing_tables_affected": [],
+          "change_description": null,
+          "backward_compatible": true,
+          "regression_risks": [],
+          "citation": {
+            "requirements_used": ["FR-19: Payment Provider Integration — integrate with payment providers to securely access and analyze user transaction history"],
+            "kb_sections_used": ["kb-L0-lloyds-enterprise-architecture §7.2 (Open Banking PSD2 — REST APIs via developer portal)", "kb-L0-lloyds-enterprise-architecture §3.2 (Circuit breakers for external calls)"]
+          },
+          "reasoning": "Open Banking AISP is the regulated mechanism for transaction data access (ASM-02). Restricted sensitivity because transaction data reveals complete financial behavior. Circuit breaker pattern per Lloyds architecture for external service resilience. BigQuery for analytics storage per Lloyds data platform."
+        },
+        {
+          "feature_id": "F-05.2",
+          "title": "Transaction Analysis & Spending Patterns",
+          "description": "Batch processing pipeline (Dataflow) that analyzes user transactions to extract: (1) Top spending categories (MCC code grouping). (2) Average transaction value per category. (3) Spending frequency patterns (daily/weekly/monthly). (4) Preferred merchants (by visit frequency). (5) Time-of-day spending patterns. Output: user_spending_profile stored in BigQuery, refreshed daily. Profile feeds into offer matching pipeline (F-03.3) as additional ranking signal. Privacy: only aggregated patterns stored, not raw transactions (data minimization per NFR-12). Users can view their spending profile summary in-app.",
+          "requirements_covered": ["FR-03"],
+          "nfrs_applicable": ["NFR-11", "NFR-12", "NFR-04"],
+          "user_facing": false,
+          "data_sensitivity": "Confidential",
+          "change_type": "new",
+          "existing_feature_ref": null,
+          "existing_screens_affected": [],
+          "existing_apis_affected": [],
+          "existing_tables_affected": [],
+          "change_description": null,
+          "backward_compatible": true,
+          "regression_risks": [],
+          "citation": {
+            "requirements_used": ["FR-03: Transaction History Analysis for Personalization — analyze transaction history to personalize offer recommendations based on spending patterns"],
+            "kb_sections_used": ["kb-L0-lloyds-enterprise-architecture §4.1 (Dataflow for stream processing, BigQuery for analytics)", "kb-L0-lloyds-enterprise-architecture §4.2 (ML Pipeline — data sources to BigQuery)"]
+          },
+          "reasoning": "Dataflow (Apache Beam) is Lloyds' standard for batch/stream processing. Storing aggregated patterns rather than raw transactions follows GDPR data minimization (NFR-12). MCC codes are the standard merchant category classification used by all payment networks."
+        },
+        {
+          "feature_id": "F-05.3",
+          "title": "Merchant Registration & Onboarding",
+          "description": "Web-based merchant registration flow: (1) Business details: company name, registration number, business type, address. (2) Contact: primary contact name, email, phone. (3) Verification: business document upload (certificate of incorporation, proof of address). (4) Quality review: admin reviews submission within 48 hours. (5) Approval: merchant receives credentials, can create campaigns. Status tracking: submitted → under_review → approved/rejected. Rejection includes reason and option to resubmit. Rate limit: 3 submissions per business registration number. Admin dashboard for review queue with approve/reject/request-more-info actions.",
+          "requirements_covered": ["FR-17"],
+          "nfrs_applicable": ["NFR-03", "NFR-04"],
+          "user_facing": true,
+          "data_sensitivity": "Confidential",
+          "change_type": "new",
+          "existing_feature_ref": null,
+          "existing_screens_affected": [],
+          "existing_apis_affected": [],
+          "existing_tables_affected": [],
+          "change_description": null,
+          "backward_compatible": true,
+          "regression_risks": [],
+          "citation": {
+            "requirements_used": ["FR-17: Merchant Registration and Onboarding — register and undergo quality review before campaigns go live"],
+            "kb_sections_used": ["kb-L0-epics-best-practices §2 (Compliance Checkpoints — onboarding review)"]
+          },
+          "reasoning": "Quality review is an explicit constraint (CON-04). 48-hour SLA balances merchant experience with review thoroughness. Web-based per ASM-01 (merchant dashboard is desktop). Confidential sensitivity because business registration details are commercially sensitive."
+        },
+        {
+          "feature_id": "F-05.4",
+          "title": "Campaign & Offer Creation",
+          "description": "Merchant dashboard for creating offer campaigns: (1) Offer content: title (max 60 chars), description (max 200 chars), terms (max 500 chars), hero image (upload, 16:9, max 2MB), discount type (percentage/fixed/BOGOF), discount value. (2) Targeting: geofence zones (select from merchant's registered locations), active hours per day, target categories (user spending categories to match against). (3) Limits: max redemptions total, max per user, validity period (start/end dates). (4) Budget: daily notification cap, total campaign budget (notifications × cost). Preview: show how offer appears on user's device. Save as draft, schedule, or publish immediately. Edit live campaigns (changes take effect within 5 minutes).",
+          "requirements_covered": ["FR-18", "FR-25"],
+          "nfrs_applicable": ["NFR-07"],
+          "user_facing": true,
+          "data_sensitivity": "Internal",
+          "change_type": "new",
+          "existing_feature_ref": null,
+          "existing_screens_affected": [],
+          "existing_apis_affected": [],
+          "existing_tables_affected": [],
+          "change_description": null,
+          "backward_compatible": true,
+          "regression_risks": [],
+          "citation": {
+            "requirements_used": ["FR-18: Merchant Campaign Management — create, configure, manage campaigns with geofence areas, offer hours, target audience", "FR-25: Offer Content Creation — title, description, terms, images, discount value, validity period, redemption limits"],
+            "kb_sections_used": ["kb-L0-lloyds-enterprise-architecture §3.1 (React SPA for internal/colleague-facing apps)"]
+          },
+          "reasoning": "Combined FR-18 and FR-25 as they represent a single merchant workflow (create campaign = create offer + set targeting). React web app per Lloyds architecture for internal tools. 5-minute propagation delay allows for cache invalidation across the geofencing pipeline."
+        },
+        {
+          "feature_id": "F-05.5",
+          "title": "Merchant Analytics Dashboard",
+          "description": "Dashboard showing campaign performance metrics: (1) Overview: total impressions, total redemptions, redemption rate, active campaigns count. (2) Per-campaign: impressions over time (line chart), redemptions over time, unique users reached, peak hours heatmap, geographic distribution of redemptions. (3) User engagement: average time from notification to redemption, repeat visitor rate, category breakdown of redeeming users. (4) Export: CSV download of raw data, PDF report generation. Date range selector (last 7d, 30d, 90d, custom). Real-time updates for today's data (polling every 60s). Comparison mode: compare two campaigns side-by-side.",
+          "requirements_covered": ["FR-10"],
+          "nfrs_applicable": ["NFR-02", "NFR-08"],
+          "user_facing": true,
+          "data_sensitivity": "Internal",
+          "change_type": "new",
+          "existing_feature_ref": null,
+          "existing_screens_affected": [],
+          "existing_apis_affected": [],
+          "existing_tables_affected": [],
+          "change_description": null,
+          "backward_compatible": true,
+          "regression_risks": [],
+          "citation": {
+            "requirements_used": ["FR-10: Merchant Analytics Dashboard — campaign analytics including impressions, redemptions, and user engagement metrics"],
+            "kb_sections_used": ["kb-L0-lloyds-enterprise-architecture §4.1 (BigQuery for analytics)", "kb-L0-lloyds-enterprise-architecture §1.1 (Visualisation — Power BI, Tableau, Looker)"]
+          },
+          "reasoning": "Metrics directly from AC9 (impressions, redemptions, user engagement). BigQuery backend for analytics per Lloyds data platform. Internal sensitivity because campaign performance data is merchant business intelligence but not PII. 60s polling for today's data balances freshness with server load."
+        }
+      ]
+    },
+    {
+      "epic_id": "EP-06",
+      "title": "Privacy Controls & Data Rights",
+      "description": "Implement full GDPR/CCPA data rights: opt-out, data deletion, offer reporting, and consent modification. Ensures regulatory compliance and builds user trust through transparent data controls.",
+      "sprint": 3,
+      "requirements_covered": ["FR-02", "FR-07", "FR-08"],
+      "scope_in": [
+        "Location tracking settings modification",
+        "Data sharing opt-out with graceful degradation",
+        "Account and data deletion (30-day window)",
+        "Offer reporting (expired/invalid)",
+        "Consent modification and re-consent flows",
+        "Data export (GDPR portability)"
+      ],
+      "scope_out": [
+        "Initial consent collection — covered in EP-01 (F-01.4)",
+        "Regulatory audit reporting — future phase",
+        "Automated compliance monitoring — future phase"
+      ],
+      "reasoning": "FR-02 (location controls), FR-07 (opt-out/deletion), FR-08 (reporting) are privacy and compliance features. Sprint 3 because: (1) Core functionality must exist first (Sprints 1-2), (2) GDPR rights must be available before public launch, (3) Pairs with EP-05 which introduces transaction data processing — users need controls over that data.",
+      "features": [
+        {
+          "feature_id": "F-06.1",
+          "title": "Location Tracking Settings",
+          "description": "Privacy settings screen with location control: (1) Always — app monitors geofences in background (requires OS 'Always' permission). (2) App open only — geofencing active only when app is in foreground. (3) Off — no location data collected, offer feed shows all offers in supported city (no proximity sorting). Changing from 'Always' to 'Off': immediately stop background monitoring, clear registered geofences from OS, confirm to user. Changing to 'Always': trigger OS permission dialog if not already granted. Show current OS permission state and link to system settings if mismatched. Persist choice server-side.",
+          "requirements_covered": ["FR-02"],
+          "nfrs_applicable": ["NFR-04", "NFR-10"],
+          "user_facing": true,
+          "data_sensitivity": "Confidential",
+          "change_type": "new",
+          "existing_feature_ref": null,
+          "existing_screens_affected": [],
+          "existing_apis_affected": [],
+          "existing_tables_affected": [],
+          "change_description": null,
+          "backward_compatible": true,
+          "regression_risks": [],
+          "citation": {
+            "requirements_used": ["FR-02: User Location Tracking Controls — control settings with options: always-on, app-open only, or off"],
+            "kb_sections_used": ["kb-L0-lloyds-enterprise-architecture §5.2 (UK GDPR/DPA 2018)", "kb-L0-epics-best-practices §3 (GDPR Art. 6 — consent before optional processing)"]
+          },
+          "reasoning": "Three options directly from FR-02. OS permission state sync is critical because user can change permissions in system settings outside the app. Immediate effect on 'Off' selection per GDPR — cannot continue processing after withdrawal. Confidential because location preference reveals privacy sensitivity."
+        },
+        {
+          "feature_id": "F-06.2",
+          "title": "Data Sharing Opt-Out",
+          "description": "Privacy settings toggle: 'Share transaction data for personalized offers'. On opt-out: (1) Stop syncing transaction data from payment providers. (2) Delete stored spending profile (user_spending_profile in BigQuery). (3) Revert offer matching to category-preference-only mode (no transaction-based ranking). (4) Show confirmation: 'Personalized offers disabled. You'll still receive offers based on your location and category preferences.' On opt-back-in: re-trigger consent flow (F-01.4 transaction consent), restart sync. Opt-out takes effect within 1 hour (batch deletion of profile data). Audit log: record opt-out timestamp and scope.",
+          "requirements_covered": ["FR-07"],
+          "nfrs_applicable": ["NFR-04", "NFR-05", "NFR-12"],
+          "user_facing": true,
+          "data_sensitivity": "Restricted",
+          "change_type": "new",
+          "existing_feature_ref": null,
+          "existing_screens_affected": [],
+          "existing_apis_affected": [],
+          "existing_tables_affected": [],
+          "change_description": null,
+          "backward_compatible": true,
+          "regression_risks": [],
+          "citation": {
+            "requirements_used": ["FR-07: Data Sharing Opt-Out — opt out of data sharing, stopping collection of transaction and location data, disabling personalized offers"],
+            "kb_sections_used": ["kb-L0-lloyds-enterprise-architecture §9 (consent management as first-class concern)", "kb-L0-epics-best-practices §3 (GDPR Art. 17 — erasure within 30 days)"]
+          },
+          "reasoning": "Graceful degradation (category-only matching) ensures app remains useful after opt-out — prevents user churn. 1-hour deletion window for batch processing efficiency while meeting 'without undue delay' GDPR requirement. Restricted sensitivity because opt-out action itself reveals privacy concerns."
+        },
+        {
+          "feature_id": "F-06.3",
+          "title": "Account & Data Deletion",
+          "description": "Settings option: 'Delete my account and data'. Flow: (1) Confirmation screen explaining what will be deleted and 7-day cooling-off period. (2) Enter password/biometric to confirm identity. (3) Account enters 'pending_deletion' state — user can cancel within 7 days by logging back in. (4) After 7 days: automated deletion job removes all user data across all services within 30 days total (per AC10). Deletion scope: profile, preferences, consent records, transaction data, offer history, redemption records, device tokens, notification history. Retained (anonymized): aggregated analytics contributions. Notify user via email when deletion is complete. Downstream service notification via Pub/Sub event 'user.deleted'.",
+          "requirements_covered": ["FR-07"],
+          "nfrs_applicable": ["NFR-04", "NFR-05"],
+          "user_facing": true,
+          "data_sensitivity": "Restricted",
+          "change_type": "new",
+          "existing_feature_ref": null,
+          "existing_screens_affected": [],
+          "existing_apis_affected": [],
+          "existing_tables_affected": [],
+          "change_description": null,
+          "backward_compatible": true,
+          "regression_risks": [],
+          "citation": {
+            "requirements_used": ["FR-07: Account Deletion — request account/data deletion with completion within 30 days"],
+            "kb_sections_used": ["kb-L0-lloyds-enterprise-architecture §7.1 (Pub/Sub events for async communication)", "kb-L0-epics-best-practices §3 (GDPR Art. 17 — erasure within 30 days, downstream processors notified)"]
+          },
+          "reasoning": "30-day window from AC10. 7-day cooling-off prevents accidental deletion (industry best practice). Pub/Sub event for cross-service deletion per Lloyds event-driven architecture. Anonymized analytics retained per GDPR allowance for statistical purposes. Restricted sensitivity as deletion is an irreversible action on all user data."
+        },
+        {
+          "feature_id": "F-06.4",
+          "title": "Offer Reporting",
+          "description": "On any offer card (feed or history): 'Report issue' action. Report types: (1) Expired — offer no longer valid at merchant. (2) Invalid — terms don't match what merchant offers. (3) Inappropriate — offensive or misleading content. (4) Other — free text (max 500 chars). On submit: (1) Offer flagged in admin queue. (2) User sees confirmation: 'Thanks for reporting. We'll review within 48 hours.' (3) If 3+ reports on same offer: auto-pause offer pending review. (4) Admin reviews: dismiss report, warn merchant, or deactivate offer. (5) Reporter notified of outcome. Rate limit: max 10 reports per user per day (prevent abuse).",
+          "requirements_covered": ["FR-08"],
+          "nfrs_applicable": ["NFR-08"],
+          "user_facing": true,
+          "data_sensitivity": "Internal",
+          "change_type": "new",
+          "existing_feature_ref": null,
+          "existing_screens_affected": [],
+          "existing_apis_affected": [],
+          "existing_tables_affected": [],
+          "change_description": null,
+          "backward_compatible": true,
+          "regression_risks": [],
+          "citation": {
+            "requirements_used": ["FR-08: Report Expired or Invalid Offers — report, receive confirmation, offer flagged for review"],
+            "kb_sections_used": ["kb-L0-epics-best-practices §4 (Risk — Reputational risk from inappropriate content)"]
+          },
+          "reasoning": "Report types cover all scenarios from AC6 plus 'inappropriate' for content moderation. Auto-pause at 3 reports balances merchant protection with quality control. 48-hour review SLA matches merchant onboarding review timeline. Rate limiting prevents weaponized reporting against competitors."
+        },
+        {
+          "feature_id": "F-06.5",
+          "title": "Data Export (Portability)",
+          "description": "Settings option: 'Download my data'. Generates a machine-readable export (JSON) containing: profile information, consent records with timestamps, offer history, redemption history, spending preferences, notification preferences. Excludes: raw transaction data (belongs to payment provider), system-generated IDs, internal analytics. Generation is async — user receives push notification when ready (typically < 5 minutes). Download link valid for 24 hours. Max 1 export request per 7 days. Format compliant with GDPR Article 20 (structured, commonly used, machine-readable).",
+          "requirements_covered": ["FR-07"],
+          "nfrs_applicable": ["NFR-04"],
+          "user_facing": true,
+          "data_sensitivity": "Confidential",
+          "change_type": "new",
+          "existing_feature_ref": null,
+          "existing_screens_affected": [],
+          "existing_apis_affected": [],
+          "existing_tables_affected": [],
+          "change_description": null,
+          "backward_compatible": true,
+          "regression_risks": [],
+          "citation": {
+            "requirements_used": ["FR-07: Data Sharing Opt-Out and Account Deletion — GDPR data rights"],
+            "kb_sections_used": ["kb-L0-lloyds-enterprise-architecture §5.2 (UK GDPR/DPA 2018)", "kb-L0-epics-best-practices §3 (GDPR data portability)"]
+          },
+          "reasoning": "GDPR Article 20 requires data portability in machine-readable format. JSON chosen as commonly used and machine-readable. 7-day rate limit prevents abuse of export generation (resource-intensive). 24-hour link expiry limits exposure window for sensitive data download."
+        }
+      ]
+    },
+    {
+      "epic_id": "EP-07",
+      "title": "Social Features & Extended Channels",
+      "description": "Add social sharing, wearable device support, and review-based recommendations. These are value-add features that increase engagement and viral growth but are not required for core platform operation.",
+      "sprint": 4,
+      "requirements_covered": ["FR-11", "FR-12", "FR-13"],
+      "scope_in": [
+        "Social sharing of offers (native share sheet)",
+        "Personalized recommendations from reviews/ratings",
+        "Wearable device integration (Apple Watch, Wear OS)",
+        "Referral tracking from shared offers"
+      ],
+      "scope_out": [
+        "Full social network features (friends list, messaging)",
+        "User-generated content moderation at scale",
+        "Third-party wearable SDKs beyond Apple/Google"
+      ],
+      "reasoning": "FR-11 (social sharing), FR-12 (review-based recommendations), FR-13 (wearables) are all Nice-to-Have priority. Sprint 4 because they add engagement value on top of a fully functional platform. No other features depend on these.",
+      "features": [
+        {
+          "feature_id": "F-07.1",
+          "title": "Social Offer Sharing",
+          "description": "Share button on each offer card. Triggers native share sheet (iOS UIActivityViewController / Android Intent.ACTION_SEND). Share content: offer title, merchant name, discount value, deep link to offer in app. Deep link handling: if recipient has app → open offer detail. If not → app store page with offer_id preserved for post-install attribution. Track: shares per offer, installs from shares, redemptions from shared offers. Shared offers do not bypass frequency caps for the recipient. Privacy: sharer's identity not revealed to recipient (anonymous sharing).",
+          "requirements_covered": ["FR-11"],
+          "nfrs_applicable": ["NFR-04"],
+          "user_facing": true,
+          "data_sensitivity": "Public",
+          "change_type": "new",
+          "existing_feature_ref": null,
+          "existing_screens_affected": [],
+          "existing_apis_affected": [],
+          "existing_tables_affected": [],
+          "change_description": null,
+          "backward_compatible": true,
+          "regression_risks": [],
+          "citation": {
+            "requirements_used": ["FR-11: Social Sharing of Offers — share offers with friends via social channels"],
+            "kb_sections_used": ["kb-L0-lloyds-enterprise-architecture §3.1 (Native mobile — Swift iOS, Kotlin Android)"]
+          },
+          "reasoning": "Native share sheet is the standard mobile pattern — no need to build custom sharing UI. Deep linking with deferred attribution enables viral growth measurement. Anonymous sharing protects privacy (GDPR — no PII shared without consent). Public sensitivity as offer content is already public marketing material."
+        },
+        {
+          "feature_id": "F-07.2",
+          "title": "Review-Based Recommendations",
+          "description": "After redemption (24 hours later): prompt user to rate the offer experience (1-5 stars) and optional text review (max 200 chars). Ratings feed into offer ranking: (1) Offers with >4.0 average rating get ranking boost. (2) Offers with <2.5 average rating get ranking penalty. (3) Offers with <2.0 after 10+ ratings: flag for admin review. Display: average rating and review count on offer cards. User can view their past reviews in profile. Merchant sees aggregate ratings in analytics dashboard. Moderation: reviews with flagged keywords held for manual review before publishing.",
+          "requirements_covered": ["FR-12"],
+          "nfrs_applicable": ["NFR-08"],
+          "user_facing": true,
+          "data_sensitivity": "Internal",
+          "change_type": "new",
+          "existing_feature_ref": null,
+          "existing_screens_affected": [],
+          "existing_apis_affected": [],
+          "existing_tables_affected": [],
+          "change_description": null,
+          "backward_compatible": true,
+          "regression_risks": [],
+          "citation": {
+            "requirements_used": ["FR-12: Personalized Recommendations from Reviews — recommendations based on user reviews and ratings"],
+            "kb_sections_used": ["kb-L0-epics-best-practices §4 (Reputational risk — content moderation)"]
+          },
+          "reasoning": "24-hour delay for review prompt gives user time to experience the offer. Rating thresholds (4.0 boost, 2.5 penalty, 2.0 flag) are standard marketplace quality signals. Keyword moderation prevents inappropriate content without blocking all reviews. Internal sensitivity as reviews are user-generated content visible to other users."
+        },
+        {
+          "feature_id": "F-07.3",
+          "title": "Wearable Device Notifications",
+          "description": "Companion app for Apple Watch (watchOS) and Wear OS: (1) Receive offer notifications on wrist with: merchant name, discount value, distance. (2) Quick actions: 'View in app' (opens phone app), 'Dismiss'. (3) Complication showing nearest active offer count. (4) No redemption on watch (QR too small) — 'Open on phone to redeem' action. Notification delivery: leverages existing push infrastructure (APNs/FCM handle watch routing automatically for paired devices). Settings: user can disable watch notifications independently of phone notifications.",
+          "requirements_covered": ["FR-13"],
+          "nfrs_applicable": ["NFR-10"],
+          "user_facing": true,
+          "data_sensitivity": "Internal",
+          "change_type": "new",
+          "existing_feature_ref": null,
+          "existing_screens_affected": [],
+          "existing_apis_affected": [],
+          "existing_tables_affected": [],
+          "change_description": null,
+          "backward_compatible": true,
+          "regression_risks": [],
+          "citation": {
+            "requirements_used": ["FR-13: Wearable Device Integration — integrate with wearable devices for proximity-based notifications"],
+            "kb_sections_used": ["kb-L0-lloyds-enterprise-architecture §3.1 (Native mobile — Swift iOS, Kotlin Android)"]
+          },
+          "reasoning": "Watch notifications are automatically routed by APNs/FCM for paired devices — minimal backend changes needed. No QR on watch because screen size makes scanning impractical. Complication provides glanceable value. Independent notification toggle respects user preference granularity."
+        }
+      ]
+    },
+    {
+      "epic_id": "EP-08",
+      "title": "Platform Resilience & Operational Excellence",
+      "description": "Harden the platform for production scale: automated failover, monitoring, alerting, performance optimization, and abuse prevention. Ensures the platform meets its 99.9% uptime SLA and handles 1M concurrent users.",
+      "sprint": 4,
+      "requirements_covered": ["NFR-06", "NFR-09", "NFR-11"],
+      "scope_in": [
+        "Auto-scaling configuration for all services",
+        "Health checks and automated failover",
+        "Monitoring dashboards and alerting",
+        "Performance optimization and caching",
+        "Rate limiting and abuse prevention",
+        "Chaos engineering and DR testing",
+        "Location spoofing detection"
+      ],
+      "scope_out": [
+        "Multi-region deployment — future phase",
+        "Custom SLA tiers per merchant — future phase",
+        "AI-based anomaly detection — future phase"
+      ],
+      "reasoning": "NFR-06 (1M users), NFR-09 (99.9% uptime), NFR-11 (event throughput) are cross-cutting resilience concerns. Sprint 4 because: (1) Must have working system to optimize, (2) Production hardening is the final step before public launch, (3) Monitoring requires all services to be deployed to instrument.",
+      "features": [
+        {
+          "feature_id": "F-08.1",
+          "title": "Auto-Scaling & Load Management",
+          "description": "GKE Horizontal Pod Autoscaler (HPA) configuration for all services: (1) Geofence matching service: scale on CPU (target 60%) and custom metric (event queue depth). Min 3 pods, max 50. (2) Notification service: scale on queue depth. Min 2 pods, max 30. (3) API gateway: scale on request rate. Min 3 pods, max 20. (4) Offer feed service: scale on request latency p95. Min 2 pods, max 15. Vertical Pod Autoscaler (VPA) for memory optimization. Pod Disruption Budgets: min 2 available for all critical services. Pre-scaling rules for known peak times (lunch 12-2pm, evening 5-8pm).",
+          "requirements_covered": ["NFR-06"],
+          "nfrs_applicable": ["NFR-09", "NFR-11"],
+          "user_facing": false,
+          "data_sensitivity": "Internal",
+          "change_type": "new",
+          "existing_feature_ref": null,
+          "existing_screens_affected": [],
+          "existing_apis_affected": [],
+          "existing_tables_affected": [],
+          "change_description": null,
+          "backward_compatible": true,
+          "regression_risks": [],
+          "citation": {
+            "requirements_used": ["NFR-06: Concurrent User Capacity — support 1 million concurrent users without degradation"],
+            "kb_sections_used": ["kb-L0-lloyds-enterprise-architecture §1.2 (GKE for container orchestration)", "kb-L0-lloyds-enterprise-architecture §3.3 (Cloud Monitoring, Prometheus)"]
+          },
+          "reasoning": "GKE HPA is the standard auto-scaling mechanism per Lloyds architecture. Custom metrics (queue depth, latency) provide more responsive scaling than CPU alone for event-driven workloads. Pre-scaling for known peaks prevents cold-start latency during rush hours."
+        },
+        {
+          "feature_id": "F-08.2",
+          "title": "Monitoring, Alerting & Observability",
+          "description": "Comprehensive observability stack: (1) Metrics: Cloud Monitoring dashboards for each service — request rate, error rate, latency (p50/p95/p99), queue depth, active connections. (2) Logging: structured JSON logs to Cloud Logging with correlation IDs across services. (3) Tracing: Cloud Trace for end-to-end request tracing (geofence event → notification delivery). (4) Alerting: PagerDuty integration. Critical alerts: error rate >1%, latency p95 >2s, service down. Warning alerts: error rate >0.5%, latency p95 >1.5s, disk >80%. (5) SLA dashboard: real-time uptime calculation, monthly SLA report generation. (6) Business metrics: redemption rate, notification delivery rate, active users.",
+          "requirements_covered": ["NFR-09"],
+          "nfrs_applicable": ["NFR-01", "NFR-06"],
+          "user_facing": false,
+          "data_sensitivity": "Internal",
+          "change_type": "new",
+          "existing_feature_ref": null,
+          "existing_screens_affected": [],
+          "existing_apis_affected": [],
+          "existing_tables_affected": [],
+          "change_description": null,
+          "backward_compatible": true,
+          "regression_risks": [],
+          "citation": {
+            "requirements_used": ["NFR-09: System Uptime — 99.9% uptime with automated failover and recovery"],
+            "kb_sections_used": ["kb-L0-lloyds-enterprise-architecture §3.3 (Cloud Monitoring, Cloud Logging, Cloud Trace, Prometheus)", "kb-L0-lloyds-enterprise-architecture §1.1 (Observability stack)"]
+          },
+          "reasoning": "Full observability stack directly from Lloyds enterprise architecture (Cloud Monitoring, Logging, Trace). Alert thresholds derived from NFR-01 (2s delivery SLA) — alert at 1.5s gives 500ms response window. Correlation IDs enable tracing a single geofence event through the entire pipeline."
+        },
+        {
+          "feature_id": "F-08.3",
+          "title": "Automated Failover & Recovery",
+          "description": "High availability configuration: (1) Multi-zone GKE cluster (3 zones minimum). (2) Cloud SQL HA: regional instance with automatic failover (RPO=0, RTO<60s). (3) Redis (Memorystore): HA with automatic failover. (4) Pub/Sub: inherently multi-zone (no configuration needed). (5) Health check endpoints: /health (liveness), /ready (readiness) on all services. (6) Circuit breakers: Resilience4j on all external calls (payment providers, APNs/FCM) — open after 5 failures in 30s, half-open after 60s. (7) Graceful degradation: if payment provider down → skip personalization, use category matching only. If notification service degraded → queue and retry.",
+          "requirements_covered": ["NFR-09"],
+          "nfrs_applicable": ["NFR-06", "NFR-11"],
+          "user_facing": false,
+          "data_sensitivity": "Internal",
+          "change_type": "new",
+          "existing_feature_ref": null,
+          "existing_screens_affected": [],
+          "existing_apis_affected": [],
+          "existing_tables_affected": [],
+          "change_description": null,
+          "backward_compatible": true,
+          "regression_risks": [],
+          "citation": {
+            "requirements_used": ["NFR-09: System Uptime — automated failover and recovery for critical services"],
+            "kb_sections_used": ["kb-L0-lloyds-enterprise-architecture §3.2 (Circuit breakers for external calls)", "kb-L0-lloyds-enterprise-architecture §1.2 (GKE)"]
+          },
+          "reasoning": "Multi-zone GKE is standard for 99.9% uptime. Circuit breaker pattern explicitly mentioned in Lloyds architecture for external calls. Graceful degradation ensures core functionality (location-based offers) works even when personalization services are down."
+        },
+        {
+          "feature_id": "F-08.4",
+          "title": "Rate Limiting & Abuse Prevention",
+          "description": "Multi-layer rate limiting: (1) API gateway (Cloud Armor): 100 req/s per user, 1000 req/s per IP. (2) Service-level: per-endpoint limits (e.g., redemption: 10/min per user). (3) Location spoofing detection: flag events where user 'teleports' >50km in <5 minutes, or submits events from known VPN/proxy IPs, or has GPS accuracy >100m consistently. On spoofing detection: suppress offer delivery, log for review, do not notify user (avoid revealing detection). (4) Redemption fraud: flag users with >10 redemptions/day, or redemptions at merchants >20km from last known location. (5) Bot detection: device fingerprinting, behavioral analysis (tap patterns, session duration).",
+          "requirements_covered": ["NFR-06"],
+          "nfrs_applicable": ["NFR-03", "NFR-09"],
+          "user_facing": false,
+          "data_sensitivity": "Internal",
+          "change_type": "new",
+          "existing_feature_ref": null,
+          "existing_screens_affected": [],
+          "existing_apis_affected": [],
+          "existing_tables_affected": [],
+          "change_description": null,
+          "backward_compatible": true,
+          "regression_risks": [],
+          "citation": {
+            "requirements_used": ["NFR-06: Concurrent User Capacity — 1M users without degradation (implies abuse prevention at scale)"],
+            "kb_sections_used": ["kb-L0-lloyds-enterprise-architecture §5.1 (Cloud Armor WAF/DDoS)", "kb-L0-epics-best-practices §4 (Operational risk — fraud screening)"]
+          },
+          "reasoning": "Cloud Armor is Lloyds' WAF/DDoS protection layer. Location spoofing is the primary abuse vector for geofence-based platforms (GAP-11). Silent suppression (no user notification) prevents attackers from learning detection thresholds. Multi-layer approach catches different attack types at appropriate levels."
+        },
+        {
+          "feature_id": "F-08.5",
+          "title": "Performance Optimization & Caching",
+          "description": "Caching strategy: (1) Offer feed: Redis cache with 5-minute TTL, invalidated on new offer publish or expiry. (2) Geofence zones: in-memory cache on matching service (refreshed every 60s via Pub/Sub subscription). (3) User preferences: Redis cache with 1-hour TTL (invalidated on change). (4) Merchant analytics: BigQuery materialized views refreshed hourly. (5) CDN: offer images served via Cloud CDN with 24-hour cache. Database optimization: read replicas for offer queries, connection pooling (HikariCP, max 20 per pod). Query optimization: spatial indexes on geofence table, composite indexes on (user_id, offer_id, status) for history queries. Target: all API responses <200ms at p95 (excluding notification delivery).",
+          "requirements_covered": ["NFR-11"],
+          "nfrs_applicable": ["NFR-01", "NFR-02"],
+          "user_facing": false,
+          "data_sensitivity": "Internal",
+          "change_type": "new",
+          "existing_feature_ref": null,
+          "existing_screens_affected": [],
+          "existing_apis_affected": [],
+          "existing_tables_affected": [],
+          "change_description": null,
+          "backward_compatible": true,
+          "regression_risks": [],
+          "citation": {
+            "requirements_used": ["NFR-11: Geofence Event Processing Throughput — process events for 1M users within 2-second SLA"],
+            "kb_sections_used": ["kb-L0-lloyds-enterprise-architecture §3.2 (Memorystore Redis for caching)", "kb-L0-lloyds-enterprise-architecture §4.1 (BigQuery for analytics)"]
+          },
+          "reasoning": "Redis caching per Lloyds architecture (Memorystore). TTL values balance freshness with load reduction. In-memory geofence cache on matching service eliminates network hop in the critical 2-second path. Cloud CDN for static assets (images) is standard GCP pattern. 200ms API target leaves 1800ms budget for the async notification pipeline."
+        },
+        {
+          "feature_id": "F-08.6",
+          "title": "DR Testing & Chaos Engineering",
+          "description": "Quarterly DR test plan: (1) Simulate zone failure — verify traffic shifts to remaining zones within 60s. (2) Simulate database failover — verify RTO <60s, zero data loss. (3) Simulate notification service outage — verify offers queue and deliver on recovery. (4) Simulate payment provider outage — verify graceful degradation to category-only matching. Chaos engineering (monthly): inject latency (500ms) on random service, kill random pods, simulate network partition between services. Success criteria: no user-visible errors during any test, all alerts fire correctly, recovery is automatic. Document results and remediation actions.",
+          "requirements_covered": ["NFR-09"],
+          "nfrs_applicable": ["NFR-06"],
+          "user_facing": false,
+          "data_sensitivity": "Internal",
+          "change_type": "new",
+          "existing_feature_ref": null,
+          "existing_screens_affected": [],
+          "existing_apis_affected": [],
+          "existing_tables_affected": [],
+          "change_description": null,
+          "backward_compatible": true,
+          "regression_risks": [],
+          "citation": {
+            "requirements_used": ["NFR-09: System Uptime — 99.9% uptime with automated failover and recovery"],
+            "kb_sections_used": ["kb-L0-epics-best-practices §3 (DORA Art. 11 — ICT business continuity plan tested quarterly, RTO/RPO met during DR test)"]
+          },
+          "reasoning": "Quarterly DR testing per DORA Article 11 (applicable to financial services). Chaos engineering validates that failover mechanisms actually work under realistic conditions. Monthly cadence for chaos catches regressions from deployments. Documentation requirement for audit trail."
+        }
+      ]
+    }
+  ],
+
+  "nfr_mapping": [
+    {
+      "nfr_id": "NFR-01",
+      "title": "Offer Notification Delivery Latency (2s)",
+      "applies_to_epics": ["EP-02", "EP-03", "EP-08"],
+      "implementation_notes": "EP-02: notification service must deliver within its 500ms budget. EP-03: matching pipeline must complete within 1500ms. EP-08: caching and optimization ensure latency under load.",
+      "reasoning": "The 2-second SLA spans the entire pipeline from geofence event to notification delivery. EP-02 owns the delivery leg, EP-03 owns the matching leg, EP-08 ensures it holds at scale."
+    },
+    {
+      "nfr_id": "NFR-02",
+      "title": "App Screen Load Time (1s)",
+      "applies_to_epics": ["EP-00", "EP-03", "EP-04", "EP-05"],
+      "implementation_notes": "EP-00 establishes performant component patterns (lazy loading, virtualized lists). All user-facing screens (offer feed, history, merchant dashboard) must render within 1 second. Requires efficient API responses, pagination, and client-side caching.",
+      "reasoning": "EP-00 sets the performance baseline for UI components. Applies to epics with data-heavy screens. EP-01/EP-02 screens are simple forms that inherently load fast."
+    },
+    {
+      "nfr_id": "NFR-03",
+      "title": "Data Encryption in Transit and at Rest",
+      "applies_to_epics": ["EP-01", "EP-02", "EP-03", "EP-04", "EP-05", "EP-06", "EP-07", "EP-08"],
+      "implementation_notes": "TLS 1.3 for all API communication. AES-256 for data at rest in Cloud SQL and BigQuery. Encryption keys managed via Cloud KMS. Applied universally across all services.",
+      "reasoning": "Security NFR applies to all epics — every service handles data that must be encrypted. No epic is exempt from this requirement."
+    },
+    {
+      "nfr_id": "NFR-04",
+      "title": "GDPR Compliance",
+      "applies_to_epics": ["EP-01", "EP-02", "EP-05", "EP-06", "EP-07"],
+      "implementation_notes": "EP-01: consent collection, lawful basis. EP-02: preference data handling. EP-05: transaction data processing (legitimate interest or consent). EP-06: data rights (erasure, portability, opt-out). EP-07: social sharing privacy.",
+      "reasoning": "GDPR applies wherever personal data is collected, processed, or shared. EP-03/EP-04 process data but under consent already collected in EP-01. EP-06 is the primary GDPR rights implementation."
+    },
+    {
+      "nfr_id": "NFR-05",
+      "title": "CCPA Compliance",
+      "applies_to_epics": ["EP-01", "EP-05", "EP-06"],
+      "implementation_notes": "EP-01: 'Do Not Sell' notice at registration. EP-05: transaction data qualifies as 'sale' under CCPA if shared with merchants. EP-06: right to delete, right to know.",
+      "reasoning": "CCPA applies to California residents. Key touchpoints are data collection (EP-01), data sharing with third parties (EP-05 merchant analytics), and data rights (EP-06)."
+    },
+    {
+      "nfr_id": "NFR-06",
+      "title": "Concurrent User Capacity (1M)",
+      "applies_to_epics": ["EP-03", "EP-08"],
+      "implementation_notes": "EP-03: matching pipeline must handle event throughput from 1M users. EP-08: auto-scaling, load balancing, and caching to support concurrent connections.",
+      "reasoning": "Scalability primarily affects the real-time event processing pipeline (EP-03) and requires infrastructure hardening (EP-08). Other epics benefit from EP-08's scaling but don't independently need to address 1M users."
+    },
+    {
+      "nfr_id": "NFR-07",
+      "title": "Simultaneous Campaign Capacity (10K)",
+      "applies_to_epics": ["EP-03", "EP-05"],
+      "implementation_notes": "EP-03: geofence matching must efficiently query across 10K active campaigns. EP-05: campaign management must support 10K concurrent campaigns without UI degradation.",
+      "reasoning": "10K campaigns affects the matching query performance (EP-03 spatial queries) and the merchant platform's ability to manage campaigns at scale (EP-05)."
+    },
+    {
+      "nfr_id": "NFR-08",
+      "title": "WCAG 2.1 AA Compliance",
+      "applies_to_epics": ["EP-00", "EP-02", "EP-03", "EP-04", "EP-05", "EP-06", "EP-07"],
+      "implementation_notes": "EP-00 establishes accessibility foundations (touch targets, contrast, screen reader labels). All subsequent epics with user-facing screens inherit these patterns. Minimum touch targets 44x44pt. Color contrast ratio ≥4.5:1 for text.",
+      "reasoning": "EP-00 provides the design system with accessibility baked in. All other epics with user-facing screens consume these accessible components. EP-01 has minimal UI (forms use EP-00 components). EP-08 has no user-facing components."
+    },
+    {
+      "nfr_id": "NFR-09",
+      "title": "System Uptime (99.9%)",
+      "applies_to_epics": ["EP-01", "EP-02", "EP-03", "EP-04", "EP-08"],
+      "implementation_notes": "EP-08 is the primary implementation (failover, monitoring, DR). Other epics must implement health checks and graceful degradation. 99.9% = max 8.76 hours downtime/year.",
+      "reasoning": "Uptime is a system-wide concern but primarily implemented in EP-08. Core path epics (EP-01 auth, EP-02 notifications, EP-03 geofencing, EP-04 redemption) must each be individually resilient."
+    },
+    {
+      "nfr_id": "NFR-10",
+      "title": "Battery Efficiency",
+      "applies_to_epics": ["EP-03", "EP-06"],
+      "implementation_notes": "EP-03: optimize geofence monitoring (significant location changes, region rotation). EP-06: location tracking settings allow users to reduce battery impact by choosing 'app-open only'.",
+      "reasoning": "Battery drain is caused by location monitoring (EP-03) and mitigated by user controls (EP-06). Other epics don't directly impact battery."
+    },
+    {
+      "nfr_id": "NFR-11",
+      "title": "Geofence Event Processing Throughput",
+      "applies_to_epics": ["EP-03", "EP-08"],
+      "implementation_notes": "EP-03: pipeline architecture must support high throughput. EP-08: auto-scaling and caching ensure throughput under peak load.",
+      "reasoning": "Throughput is an architectural concern (EP-03 pipeline design) and an operational concern (EP-08 scaling). Both must work together to meet the SLA."
+    },
+    {
+      "nfr_id": "NFR-12",
+      "title": "Location Data Minimization",
+      "applies_to_epics": ["EP-03", "EP-05", "EP-06"],
+      "implementation_notes": "EP-03: only store geofence events (not continuous location). EP-05: spending profiles use aggregates, not raw data. EP-06: deletion removes all location-derived data.",
+      "reasoning": "Data minimization applies wherever personal data is processed. EP-03 handles location data, EP-05 handles transaction data, EP-06 implements the deletion that enforces minimization."
+    }
+  ],
+
+  "traceability_matrix": [
+    {"requirement_id": "FR-01", "covered_by_features": ["F-03.3"], "covered_by_epic": "EP-03"},
+    {"requirement_id": "FR-02", "covered_by_features": ["F-03.2", "F-06.1"], "covered_by_epic": "EP-03"},
+    {"requirement_id": "FR-03", "covered_by_features": ["F-05.2"], "covered_by_epic": "EP-05"},
+    {"requirement_id": "FR-04", "covered_by_features": ["F-04.1", "F-04.5"], "covered_by_epic": "EP-04"},
+    {"requirement_id": "FR-05", "covered_by_features": ["F-02.1", "F-02.5"], "covered_by_epic": "EP-02"},
+    {"requirement_id": "FR-06", "covered_by_features": ["F-04.3"], "covered_by_epic": "EP-04"},
+    {"requirement_id": "FR-07", "covered_by_features": ["F-06.2", "F-06.3", "F-06.5"], "covered_by_epic": "EP-06"},
+    {"requirement_id": "FR-08", "covered_by_features": ["F-06.4"], "covered_by_epic": "EP-06"},
+    {"requirement_id": "FR-09", "covered_by_features": ["F-02.3"], "covered_by_epic": "EP-02"},
+    {"requirement_id": "FR-10", "covered_by_features": ["F-05.5"], "covered_by_epic": "EP-05"},
+    {"requirement_id": "FR-11", "covered_by_features": ["F-07.1"], "covered_by_epic": "EP-07"},
+    {"requirement_id": "FR-12", "covered_by_features": ["F-07.2"], "covered_by_epic": "EP-07"},
+    {"requirement_id": "FR-13", "covered_by_features": ["F-07.3"], "covered_by_epic": "EP-07"},
+    {"requirement_id": "FR-14", "covered_by_features": ["F-03.5"], "covered_by_epic": "EP-03"},
+    {"requirement_id": "FR-15", "covered_by_features": ["F-02.2", "F-02.5"], "covered_by_epic": "EP-02"},
+    {"requirement_id": "FR-16", "covered_by_features": ["F-01.1", "F-01.2", "F-01.3", "F-01.5"], "covered_by_epic": "EP-01"},
+    {"requirement_id": "FR-17", "covered_by_features": ["F-05.3"], "covered_by_epic": "EP-05"},
+    {"requirement_id": "FR-18", "covered_by_features": ["F-05.4"], "covered_by_epic": "EP-05"},
+    {"requirement_id": "FR-19", "covered_by_features": ["F-05.1"], "covered_by_epic": "EP-05"},
+    {"requirement_id": "FR-20", "covered_by_features": ["F-01.4"], "covered_by_epic": "EP-01"},
+    {"requirement_id": "FR-21", "covered_by_features": ["F-03.1"], "covered_by_epic": "EP-03"},
+    {"requirement_id": "FR-22", "covered_by_features": ["F-03.4"], "covered_by_epic": "EP-03"},
+    {"requirement_id": "FR-23", "covered_by_features": ["F-04.4"], "covered_by_epic": "EP-04"},
+    {"requirement_id": "FR-24", "covered_by_features": ["F-02.4"], "covered_by_epic": "EP-02"},
+    {"requirement_id": "FR-25", "covered_by_features": ["F-05.4"], "covered_by_epic": "EP-05"},
+    {"requirement_id": "FR-26", "covered_by_features": ["F-03.2"], "covered_by_epic": "EP-03"},
+    {"requirement_id": "FR-27", "covered_by_features": ["F-04.2"], "covered_by_epic": "EP-04"}
+  ],
+
+  "uncovered_requirements": [],
+
+  "delivery_summary": "The Smart Location-Based Offers Platform is delivered across 4 sprints with incremental production releases. Sprint 1 (EP-01 + EP-02) establishes the foundation: user authentication, consent management, push notification infrastructure, and user preferences — deployable as a standalone app with account management. Sprint 2 (EP-03 + EP-04) delivers the core MVP: geofencing engine, real-time offer delivery, QR-based redemption, and offer history — the platform is fully functional for end users with manually-created offers. Sprint 3 (EP-05 + EP-06) adds intelligence and self-service: transaction-based personalization, merchant self-service platform for campaign creation, analytics dashboard, and full GDPR/CCPA data rights — the platform can scale without manual offer management. Sprint 4 (EP-07 + EP-08) hardens for scale and adds engagement features: social sharing, wearables, review-based recommendations, auto-scaling to 1M users, monitoring, failover, and abuse prevention — production-ready for public launch at scale."
+}

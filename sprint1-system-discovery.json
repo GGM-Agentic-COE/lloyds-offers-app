@@ -1,0 +1,726 @@
+{
+  "epic_id": "Sprint-1",
+  "epics_covered": [
+    "EP-00",
+    "EP-01",
+    "EP-02"
+  ],
+  "mode": "greenfield",
+  "discovery": {
+    "existing_components_analysed": [],
+    "existing_docs_analysed": [
+      "kb-L0-lloyds-enterprise-architecture.md \u2014 technology stack, security, GCP services, architecture patterns",
+      "kb-L2-payments-domain.md \u2014 retail domain context, data sensitivity patterns, regulatory requirements",
+      "offers-platform-requirements.json \u2014 27 FRs, 12 NFRs, 6 constraints, 10 assumptions, 16 gaps",
+      "offers-platform-epics.json \u2014 9 epics, 41 features, 4 sprints",
+      "stories/EP-00-stories.json \u2014 5 stories, 16 pts (design system)",
+      "stories/EP-01-stories.json \u2014 8 stories, 24 pts (auth)",
+      "stories/EP-02-stories.json \u2014 10 stories, 31 pts (notifications)"
+    ]
+  },
+  "change_impact": {
+    "screens_modified": [],
+    "screens_new": [
+      {
+        "route": "/onboarding/register",
+        "purpose": "Phone/email registration form with validation",
+        "stories": [
+          "US-006",
+          "US-013"
+        ]
+      },
+      {
+        "route": "/onboarding/verify",
+        "purpose": "OTP input with timer, resend, and lockout",
+        "stories": [
+          "US-007"
+        ]
+      },
+      {
+        "route": "/onboarding/biometric",
+        "purpose": "Biometric enrollment prompt (enable/skip)",
+        "stories": [
+          "US-008"
+        ]
+      },
+      {
+        "route": "/onboarding/consent-location",
+        "purpose": "Location consent with 3 options + explanation",
+        "stories": [
+          "US-009"
+        ]
+      },
+      {
+        "route": "/onboarding/consent-transaction",
+        "purpose": "Transaction data consent (allow/decline)",
+        "stories": [
+          "US-010"
+        ]
+      },
+      {
+        "route": "/offers (tab)",
+        "purpose": "Offer feed placeholder (populated in Sprint 2)",
+        "stories": [
+          "US-003",
+          "US-004"
+        ]
+      },
+      {
+        "route": "/history (tab)",
+        "purpose": "Offer history placeholder (populated in Sprint 2)",
+        "stories": [
+          "US-003"
+        ]
+      },
+      {
+        "route": "/profile (tab)",
+        "purpose": "User profile and spending preferences",
+        "stories": [
+          "US-003",
+          "US-019",
+          "US-020"
+        ]
+      },
+      {
+        "route": "/settings (tab)",
+        "purpose": "Notification preferences, location settings",
+        "stories": [
+          "US-003",
+          "US-017",
+          "US-018"
+        ]
+      },
+      {
+        "route": "(component library)",
+        "purpose": "Reusable UI component library: Button, TextInput, Card, Badge, Toast with design tokens",
+        "stories": [
+          "US-001",
+          "US-002",
+          "US-005"
+        ]
+      },
+      {
+        "route": "/onboarding/push-permission",
+        "purpose": "Pre-permission screen explaining push notification value, with Enable/Skip options",
+        "stories": [
+          "US-023"
+        ]
+      }
+    ],
+    "apis_modified": [],
+    "apis_new": [
+      {
+        "endpoint": "/api/v1/auth/register",
+        "method": "POST",
+        "purpose": "Create account with phone/email",
+        "request_schema": "{identifier: string, type: 'phone'|'email'}",
+        "response_schema": "{user_id: uuid, verification_required: true}",
+        "stories": [
+          "US-006"
+        ]
+      },
+      {
+        "endpoint": "/api/v1/auth/verify-otp",
+        "method": "POST",
+        "purpose": "Verify OTP code",
+        "request_schema": "{user_id: uuid, code: string}",
+        "response_schema": "{verified: boolean, access_token: jwt, refresh_token: jwt}",
+        "stories": [
+          "US-007"
+        ]
+      },
+      {
+        "endpoint": "/api/v1/auth/resend-otp",
+        "method": "POST",
+        "purpose": "Resend OTP (rate limited)",
+        "request_schema": "{user_id: uuid}",
+        "response_schema": "{sent: boolean, expires_in: 90}",
+        "stories": [
+          "US-007"
+        ]
+      },
+      {
+        "endpoint": "/api/v1/auth/refresh",
+        "method": "POST",
+        "purpose": "Refresh access token",
+        "request_schema": "{refresh_token: string}",
+        "response_schema": "{access_token: jwt, refresh_token: jwt}",
+        "stories": [
+          "US-011"
+        ]
+      },
+      {
+        "endpoint": "/api/v1/auth/logout",
+        "method": "POST",
+        "purpose": "Invalidate session tokens",
+        "request_schema": "{device_id: string}",
+        "response_schema": "{success: boolean}",
+        "stories": [
+          "US-011"
+        ]
+      },
+      {
+        "endpoint": "/api/v1/users/me/consent",
+        "method": "POST",
+        "purpose": "Record consent decision",
+        "request_schema": "{type: 'location'|'transaction', decision: 'always'|'app_open'|'off'|'allow'|'deny', version: string}",
+        "response_schema": "{consent_id: uuid, recorded_at: timestamp}",
+        "stories": [
+          "US-009",
+          "US-010"
+        ]
+      },
+      {
+        "endpoint": "/api/v1/users/me/consent",
+        "method": "GET",
+        "purpose": "Get current consent state",
+        "request_schema": "{}",
+        "response_schema": "{consents: [{type, decision, recorded_at, version}]}",
+        "stories": [
+          "US-009",
+          "US-010"
+        ]
+      },
+      {
+        "endpoint": "/api/v1/users/me/profile",
+        "method": "GET",
+        "purpose": "Get user profile and preferences",
+        "request_schema": "{}",
+        "response_schema": "{display_name, categories, budget_sensitivity, preferred_radius}",
+        "stories": [
+          "US-019"
+        ]
+      },
+      {
+        "endpoint": "/api/v1/users/me/profile",
+        "method": "PATCH",
+        "purpose": "Update profile preferences",
+        "request_schema": "{display_name?, categories?, budget_sensitivity?, preferred_radius?}",
+        "response_schema": "{updated: true}",
+        "stories": [
+          "US-020"
+        ]
+      },
+      {
+        "endpoint": "/api/v1/users/me/preferences/notifications",
+        "method": "GET",
+        "purpose": "Get notification preferences",
+        "request_schema": "{}",
+        "response_schema": "{mode, quiet_hours, categories}",
+        "stories": [
+          "US-017"
+        ]
+      },
+      {
+        "endpoint": "/api/v1/users/me/preferences/notifications",
+        "method": "PATCH",
+        "purpose": "Update notification preferences",
+        "request_schema": "{mode?, quiet_hours?, categories?}",
+        "response_schema": "{updated: true}",
+        "stories": [
+          "US-018"
+        ]
+      },
+      {
+        "endpoint": "/api/v1/devices/register",
+        "method": "POST",
+        "purpose": "Register device push token",
+        "request_schema": "{device_id: string, platform: 'ios'|'android', push_token: string}",
+        "response_schema": "{registered: true}",
+        "stories": [
+          "US-014"
+        ]
+      },
+      {
+        "endpoint": "/api/v1/notifications/send",
+        "method": "POST",
+        "purpose": "Internal: dispatch notification to user",
+        "request_schema": "{user_id: uuid, title: string, body: string, deep_link?: string, image_url?: string}",
+        "response_schema": "{notification_id: uuid, status: 'queued'}",
+        "stories": [
+          "US-014"
+        ]
+      },
+      {
+        "endpoint": "/health",
+        "method": "GET",
+        "purpose": "Liveness probe",
+        "request_schema": "{}",
+        "response_schema": "{status: 'ok'}",
+        "stories": []
+      },
+      {
+        "endpoint": "/ready",
+        "method": "GET",
+        "purpose": "Readiness probe",
+        "request_schema": "{}",
+        "response_schema": "{status: 'ready', dependencies: {db: 'ok', redis: 'ok'}}",
+        "stories": []
+      },
+      {
+        "endpoint": "/api/v1/users/me",
+        "method": "GET",
+        "purpose": "Get current user basic info",
+        "request_schema": "{}",
+        "response_schema": "{id: uuid, identifier: string, identifier_type: string, status: string, display_name: string, biometric_enabled: boolean, created_at: timestamp}",
+        "stories": [
+          "US-008",
+          "US-019"
+        ]
+      },
+      {
+        "endpoint": "/api/v1/users/me/biometric",
+        "method": "PATCH",
+        "purpose": "Update biometric enrollment preference",
+        "request_schema": "{enabled: boolean}",
+        "response_schema": "{updated: true}",
+        "stories": [
+          "US-008"
+        ]
+      },
+      {
+        "endpoint": "/api/v1/devices/{device_id}",
+        "method": "DELETE",
+        "purpose": "Deregister device push token (uninstall/logout cleanup)",
+        "request_schema": "{}",
+        "response_schema": "{deleted: true}",
+        "stories": [
+          "US-011"
+        ]
+      }
+    ],
+    "handlers_modified": [],
+    "handlers_new": [
+      {
+        "handler": "RegisterUserCommand",
+        "purpose": "Create user account, validate uniqueness, rate limit",
+        "pattern": "Command",
+        "stories": [
+          "US-006"
+        ]
+      },
+      {
+        "handler": "VerifyOtpCommand",
+        "purpose": "Validate OTP, mark verified, issue tokens",
+        "pattern": "Command",
+        "stories": [
+          "US-007"
+        ]
+      },
+      {
+        "handler": "ResendOtpCommand",
+        "purpose": "Generate new OTP, enforce rate limit",
+        "pattern": "Command",
+        "stories": [
+          "US-007"
+        ]
+      },
+      {
+        "handler": "RefreshTokenCommand",
+        "purpose": "Rotate refresh token, issue new access token",
+        "pattern": "Command",
+        "stories": [
+          "US-011"
+        ]
+      },
+      {
+        "handler": "LogoutCommand",
+        "purpose": "Invalidate device tokens",
+        "pattern": "Command",
+        "stories": [
+          "US-011"
+        ]
+      },
+      {
+        "handler": "RecordConsentCommand",
+        "purpose": "Store consent with timestamp and version",
+        "pattern": "Command",
+        "stories": [
+          "US-009",
+          "US-010"
+        ]
+      },
+      {
+        "handler": "GetConsentQuery",
+        "purpose": "Retrieve current consent state",
+        "pattern": "Query",
+        "stories": [
+          "US-009",
+          "US-010"
+        ]
+      },
+      {
+        "handler": "GetProfileQuery",
+        "purpose": "Retrieve user profile and preferences",
+        "pattern": "Query",
+        "stories": [
+          "US-019"
+        ]
+      },
+      {
+        "handler": "UpdateProfileCommand",
+        "purpose": "Update profile fields",
+        "pattern": "Command",
+        "stories": [
+          "US-020"
+        ]
+      },
+      {
+        "handler": "GetNotificationPrefsQuery",
+        "purpose": "Retrieve notification settings",
+        "pattern": "Query",
+        "stories": [
+          "US-017"
+        ]
+      },
+      {
+        "handler": "UpdateNotificationPrefsCommand",
+        "purpose": "Update notification mode/categories",
+        "pattern": "Command",
+        "stories": [
+          "US-018"
+        ]
+      },
+      {
+        "handler": "RegisterDeviceCommand",
+        "purpose": "Store device push token",
+        "pattern": "Command",
+        "stories": [
+          "US-014"
+        ]
+      },
+      {
+        "handler": "SendNotificationCommand",
+        "purpose": "Dispatch via APNs/FCM with retry",
+        "pattern": "Command",
+        "stories": [
+          "US-014"
+        ]
+      },
+      {
+        "handler": "CheckFrequencyCapQuery",
+        "purpose": "Check Redis for notification eligibility",
+        "pattern": "Query",
+        "stories": [
+          "US-015",
+          "US-016",
+          "US-021",
+          "US-022"
+        ]
+      }
+    ],
+    "tables_modified": [],
+    "tables_new": [
+      {
+        "table": "users",
+        "columns": [
+          "id: uuid PK",
+          "identifier: varchar(255) NOT NULL",
+          "identifier_type: enum('phone','email')",
+          "status: enum('pending','verified','suspended','deleted')",
+          "display_name: varchar(50)",
+          "created_at: timestamptz",
+          "verified_at: timestamptz",
+          "biometric_enabled: boolean DEFAULT false"
+        ],
+        "purpose": "Core user account",
+        "stories": [
+          "US-006",
+          "US-007"
+        ]
+      },
+      {
+        "table": "otp_codes",
+        "columns": [
+          "id: uuid PK",
+          "user_id: uuid FK",
+          "code_hash: varchar(64)",
+          "expires_at: timestamptz",
+          "used: boolean DEFAULT false",
+          "attempts: int DEFAULT 0",
+          "created_at: timestamptz"
+        ],
+        "purpose": "OTP verification codes (hashed)",
+        "stories": [
+          "US-007"
+        ]
+      },
+      {
+        "table": "user_sessions",
+        "columns": [
+          "id: uuid PK",
+          "user_id: uuid FK",
+          "device_id: varchar(255)",
+          "device_name: varchar(100)",
+          "refresh_token_hash: varchar(64)",
+          "expires_at: timestamptz",
+          "last_active_at: timestamptz",
+          "created_at: timestamptz"
+        ],
+        "purpose": "Active sessions per device",
+        "stories": [
+          "US-011",
+          "US-012"
+        ]
+      },
+      {
+        "table": "consents",
+        "columns": [
+          "id: uuid PK",
+          "user_id: uuid FK",
+          "consent_type: enum('location','transaction')",
+          "decision: varchar(20)",
+          "consent_version: varchar(10)",
+          "recorded_at: timestamptz",
+          "superseded_at: timestamptz"
+        ],
+        "purpose": "Immutable consent records (append-only)",
+        "stories": [
+          "US-009",
+          "US-010"
+        ]
+      },
+      {
+        "table": "user_profiles",
+        "columns": [
+          "id: uuid PK",
+          "user_id: uuid FK UNIQUE",
+          "categories: jsonb",
+          "budget_sensitivity: enum('low','medium','high')",
+          "preferred_radius_meters: int DEFAULT 2000",
+          "updated_at: timestamptz"
+        ],
+        "purpose": "User spending preferences",
+        "stories": [
+          "US-019",
+          "US-020"
+        ]
+      },
+      {
+        "table": "notification_preferences",
+        "columns": [
+          "id: uuid PK",
+          "user_id: uuid FK UNIQUE",
+          "mode: enum('always','app_open','off') DEFAULT 'always'",
+          "quiet_hours_start: time",
+          "quiet_hours_end: time",
+          "categories: jsonb",
+          "updated_at: timestamptz"
+        ],
+        "purpose": "Notification delivery preferences",
+        "stories": [
+          "US-017",
+          "US-018"
+        ]
+      },
+      {
+        "table": "device_tokens",
+        "columns": [
+          "id: uuid PK",
+          "user_id: uuid FK",
+          "device_id: varchar(255)",
+          "platform: enum('ios','android')",
+          "push_token: varchar(512)",
+          "is_active: boolean DEFAULT true",
+          "registered_at: timestamptz",
+          "last_used_at: timestamptz"
+        ],
+        "purpose": "Push notification device tokens",
+        "stories": [
+          "US-014"
+        ]
+      },
+      {
+        "table": "notification_log",
+        "columns": [
+          "id: uuid PK",
+          "user_id: uuid FK",
+          "notification_type: varchar(50)",
+          "offer_id: uuid",
+          "status: enum('queued','sent','delivered','failed')",
+          "sent_at: timestamptz",
+          "delivered_at: timestamptz"
+        ],
+        "purpose": "Notification delivery tracking",
+        "stories": [
+          "US-014",
+          "US-015"
+        ]
+      },
+      {
+        "table": "audit_log",
+        "columns": [
+          "id: uuid PK",
+          "user_id: uuid",
+          "action: varchar(100)",
+          "resource_type: varchar(50)",
+          "resource_id: uuid",
+          "metadata: jsonb",
+          "ip_address: inet",
+          "device_id: varchar(255)",
+          "created_at: timestamptz"
+        ],
+        "purpose": "Immutable audit trail (append-only)",
+        "stories": [
+          "US-006",
+          "US-007",
+          "US-009",
+          "US-010"
+        ]
+      }
+    ],
+    "integrations_affected": [],
+    "integrations_new": [
+      {
+        "system": "APNs (Apple Push Notification service)",
+        "protocol": "HTTP/2 REST",
+        "purpose": "Push notifications to iOS devices",
+        "stories": [
+          "US-014"
+        ]
+      },
+      {
+        "system": "FCM (Firebase Cloud Messaging)",
+        "protocol": "HTTP REST",
+        "purpose": "Push notifications to Android devices",
+        "stories": [
+          "US-014"
+        ]
+      },
+      {
+        "system": "SMS Gateway (Twilio/MessageBird)",
+        "protocol": "REST",
+        "purpose": "OTP delivery via SMS",
+        "stories": [
+          "US-007"
+        ]
+      },
+      {
+        "system": "Email Service (SendGrid)",
+        "protocol": "REST",
+        "purpose": "OTP delivery via email",
+        "stories": [
+          "US-007"
+        ]
+      },
+      {
+        "system": "Redis (Memorystore)",
+        "protocol": "Redis protocol",
+        "purpose": "Frequency capping state, session cache, rate limiting",
+        "stories": [
+          "US-015",
+          "US-016"
+        ]
+      },
+      {
+        "system": "Cloud KMS",
+        "protocol": "gRPC",
+        "purpose": "Customer-managed encryption keys (CMEK) for data at rest encryption",
+        "stories": [
+          "US-006",
+          "US-007",
+          "US-009",
+          "US-010"
+        ]
+      }
+    ]
+  },
+  "architecture_decisions": [
+    {
+      "id": "ADR-01",
+      "title": "Native mobile app (iOS Swift + Android Kotlin)",
+      "context": "Platform requires geofencing, biometric auth, and push notifications \u2014 all deeply integrated with OS APIs",
+      "decision": "Build native apps using Swift (iOS) and Kotlin (Android) rather than cross-platform (React Native/Flutter)",
+      "consequences": "Higher development cost (two codebases) but better performance, battery optimization, and access to native geofencing/biometric APIs. Aligns with Lloyds standard.",
+      "kb_reference": "kb-L0-lloyds-enterprise-architecture \u00a73.1 (Native mobile \u2014 Swift iOS, Kotlin Android, NOT React Native)"
+    },
+    {
+      "id": "ADR-02",
+      "title": "Spring Boot microservices on GKE",
+      "context": "Backend needs to support 1M concurrent users with 2-second delivery SLA",
+      "decision": "Java Spring Boot microservices deployed as containers on Google Kubernetes Engine (GKE)",
+      "consequences": "Proven scalability on GKE with HPA. Spring Boot ecosystem provides OAuth2, circuit breakers (Resilience4j), and observability. Aligns with Lloyds standard.",
+      "kb_reference": "kb-L0-lloyds-enterprise-architecture \u00a73.2 (Spring Boot, GKE, Docker)"
+    },
+    {
+      "id": "ADR-03",
+      "title": "Cloud SQL (PostgreSQL) for transactional data",
+      "context": "Need ACID transactions for user accounts, consents, and sessions with HA failover",
+      "decision": "Use Cloud SQL (PostgreSQL) with regional HA configuration for all transactional data",
+      "consequences": "Automatic failover (RPO=0, RTO<60s). PostGIS extension available for Sprint 2 geofencing. Managed backups and encryption at rest.",
+      "kb_reference": "kb-L0-lloyds-enterprise-architecture \u00a73.2 (Cloud SQL PostgreSQL for transactional data)"
+    },
+    {
+      "id": "ADR-04",
+      "title": "Redis (Memorystore) for rate limiting and frequency capping",
+      "context": "Notification frequency capping requires sub-millisecond reads within the 2-second delivery SLA",
+      "decision": "Use Memorystore (Redis) for rate limiting counters, frequency cap state, and session cache",
+      "consequences": "Sub-millisecond reads. HA with automatic failover. TTL-based expiry for daily resets. Adds operational complexity of a second data store.",
+      "kb_reference": "kb-L0-lloyds-enterprise-architecture \u00a73.2 (Memorystore Redis for caching)"
+    },
+    {
+      "id": "ADR-05",
+      "title": "JWT with refresh token rotation for session management",
+      "context": "Mobile app needs persistent sessions with security against token theft",
+      "decision": "Short-lived JWT access tokens (15 min) + long-lived refresh tokens (30 days) with rotation on each use",
+      "consequences": "Stateless access token validation (no DB lookup per request). Refresh rotation detects token theft (reuse invalidates family). Secure enclave storage on device.",
+      "kb_reference": "kb-L0-lloyds-enterprise-architecture \u00a73.2 (OAuth 2.0/OpenID Connect)"
+    },
+    {
+      "id": "ADR-06",
+      "title": "Immutable consent records (append-only)",
+      "context": "GDPR Art. 7 requires proof of consent with timestamp and version. Consent can be withdrawn but history must be retained for audit.",
+      "decision": "Consents table is append-only. New consent supersedes previous (superseded_at set). Never delete or update consent records.",
+      "consequences": "Full audit trail for regulatory compliance. Slightly more complex queries (filter by superseded_at IS NULL for current state). Storage grows over time but consent records are small.",
+      "kb_reference": "kb-L0-lloyds-enterprise-architecture \u00a75.2 (UK GDPR/DPA 2018)"
+    },
+    {
+      "id": "ADR-07",
+      "title": "Pub/Sub for async event communication",
+      "context": "Notification dispatch, consent changes, and audit logging should not block the user-facing request path",
+      "decision": "Use Google Cloud Pub/Sub for async events: user.registered, user.verified, consent.recorded, notification.requested",
+      "consequences": "Decouples services. Notification service subscribes to events independently. Guaranteed delivery with dead-letter topics. Adds eventual consistency.",
+      "kb_reference": "kb-L0-lloyds-enterprise-architecture \u00a74.1 (Pub/Sub for async messaging), \u00a77.1 (Pub/Sub events for async communication)"
+    },
+    {
+      "id": "ADR-08",
+      "title": "OTP codes stored as SHA-256 hash",
+      "context": "OTP codes are sensitive \u2014 if database is compromised, codes should not be usable",
+      "decision": "Store OTP codes as SHA-256 hash. On verification, hash the submitted code and compare. Never store or log plaintext OTP.",
+      "consequences": "Cannot recover OTP from database (one-way hash). Slightly more complex verification logic. Aligns with security best practices.",
+      "kb_reference": "kb-L0-lloyds-enterprise-architecture \u00a75.1 (Security \u2014 encryption)"
+    }
+  ],
+  "risks": [
+    {
+      "risk": "SMS OTP delivery delays in certain regions may exceed 10-second user expectation",
+      "impact": "medium",
+      "mitigation": "Offer email as alternative delivery channel. Show 'Code not received?' after 30 seconds with option to switch. Monitor delivery latency per provider."
+    },
+    {
+      "risk": "iOS push notification permission denial rate (40-60%) reduces platform value",
+      "impact": "high",
+      "mitigation": "Pre-permission screen (F-02.5) explains value before OS prompt. In-app fallback mode ensures app works without push. Track opt-in rate as KPI."
+    },
+    {
+      "risk": "Redis (Memorystore) single point of failure for frequency capping",
+      "impact": "medium",
+      "mitigation": "HA Redis with automatic failover. On Redis unavailability, allow notifications through (fail-open) rather than blocking all delivery."
+    },
+    {
+      "risk": "Refresh token theft via device compromise",
+      "impact": "high",
+      "mitigation": "Tokens stored in OS secure enclave (Keychain/Keystore). Refresh rotation detects reuse. Password change invalidates all sessions globally."
+    }
+  ],
+  "dependency_order": [
+    "EP-00 (Design System) first \u2014 all UI stories depend on component library",
+    "EP-01 F-01.1/F-01.2 (Registration + OTP) before F-01.3 (Biometric) \u2014 need account before enrollment",
+    "EP-01 F-01.4 (Consent) after F-01.2 \u2014 consent collected post-verification",
+    "EP-01 F-01.5 (Session) parallel with F-01.3 \u2014 both depend on verified account",
+    "EP-02 F-02.1 (Push integration) can start parallel with EP-01 \u2014 backend service independent",
+    "EP-02 F-02.5 (Permission request) after EP-01 F-01.4 \u2014 permission requested after consent",
+    "EP-02 F-02.2/F-02.3/F-02.4 (Preferences) after EP-01 F-01.5 \u2014 need authenticated session"
+  ],
+  "reasoning": "Sprint 1 establishes the complete user lifecycle foundation: account creation \u2192 verification \u2192 consent \u2192 session management, plus the notification delivery pipeline. Architecture follows Lloyds enterprise standards (GKE, Spring Boot, Cloud SQL, Pub/Sub, Memorystore). Native mobile chosen for geofencing/biometric requirements. Append-only consent for GDPR compliance. JWT rotation for mobile session security. All decisions prioritize the 2-second delivery SLA that Sprint 2's geofencing will depend on."
+}

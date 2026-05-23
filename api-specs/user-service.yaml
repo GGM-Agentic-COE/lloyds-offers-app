@@ -1,0 +1,432 @@
+openapi: 3.0.3
+info:
+  title: User Service - Smart Location-Based Offers Platform
+  description: Manages user profiles, preferences, and account operations.
+  version: 1.0.0
+  contact:
+    name: Platform Engineering
+servers:
+  - url: https://api.offers.lloyds.com
+    description: Production
+paths:
+  /api/v1/users/me:
+    get:
+      operationId: getUser
+      summary: Get current user info
+      tags: [User]
+      security: [{ BearerAuth: [] }]
+      responses:
+        "200":
+          description: User info
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "404": { $ref: "#/components/responses/NotFound" }
+        "429": { $ref: "#/components/responses/TooManyRequests" }
+        "500": { $ref: "#/components/responses/InternalError" }
+    patch:
+      operationId: updateUser
+      summary: Update display name
+      tags: [User]
+      security: [{ BearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateUserRequest"
+      responses:
+        "200":
+          description: Updated user
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "404": { $ref: "#/components/responses/NotFound" }
+        "429": { $ref: "#/components/responses/TooManyRequests" }
+        "500": { $ref: "#/components/responses/InternalError" }
+    delete:
+      operationId: deleteUser
+      summary: Request account deletion (7-day cooling-off period)
+      tags: [User]
+      security: [{ BearerAuth: [] }]
+      responses:
+        "202":
+          description: Deletion scheduled
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DeletionResponse"
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "404": { $ref: "#/components/responses/NotFound" }
+        "429": { $ref: "#/components/responses/TooManyRequests" }
+        "500": { $ref: "#/components/responses/InternalError" }
+
+  /api/v1/users/me/biometric:
+    patch:
+      operationId: updateBiometric
+      summary: Update biometric preference
+      tags: [User]
+      security: [{ BearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BiometricRequest"
+      responses:
+        "200":
+          description: Biometric preference updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BiometricRequest"
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "404": { $ref: "#/components/responses/NotFound" }
+        "429": { $ref: "#/components/responses/TooManyRequests" }
+        "500": { $ref: "#/components/responses/InternalError" }
+
+  /api/v1/users/me/profile:
+    get:
+      operationId: getProfile
+      summary: Get spending preferences
+      tags: [Profile]
+      security: [{ BearerAuth: [] }]
+      responses:
+        "200":
+          description: Spending preferences
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SpendingPreferences"
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "404": { $ref: "#/components/responses/NotFound" }
+        "429": { $ref: "#/components/responses/TooManyRequests" }
+        "500": { $ref: "#/components/responses/InternalError" }
+    patch:
+      operationId: updateProfile
+      summary: Update spending preferences
+      tags: [Profile]
+      security: [{ BearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SpendingPreferencesUpdate"
+      responses:
+        "200":
+          description: Updated preferences
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SpendingPreferences"
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "404": { $ref: "#/components/responses/NotFound" }
+        "429": { $ref: "#/components/responses/TooManyRequests" }
+        "500": { $ref: "#/components/responses/InternalError" }
+
+  /api/v1/users/me/preferences/notifications:
+    get:
+      operationId: getNotificationPreferences
+      summary: Get notification preferences
+      tags: [Notifications]
+      security: [{ BearerAuth: [] }]
+      responses:
+        "200":
+          description: Notification preferences
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/NotificationPreferences"
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "404": { $ref: "#/components/responses/NotFound" }
+        "429": { $ref: "#/components/responses/TooManyRequests" }
+        "500": { $ref: "#/components/responses/InternalError" }
+    patch:
+      operationId: updateNotificationPreferences
+      summary: Update notification preferences
+      tags: [Notifications]
+      security: [{ BearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/NotificationPreferencesUpdate"
+      responses:
+        "200":
+          description: Updated notification preferences
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/NotificationPreferences"
+        "400": { $ref: "#/components/responses/BadRequest" }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "404": { $ref: "#/components/responses/NotFound" }
+        "429": { $ref: "#/components/responses/TooManyRequests" }
+        "500": { $ref: "#/components/responses/InternalError" }
+
+  /api/v1/users/me/export:
+    get:
+      operationId: requestDataExport
+      summary: Request async data export
+      tags: [User]
+      security: [{ BearerAuth: [] }]
+      responses:
+        "202":
+          description: Export job accepted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ExportResponse"
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "429": { $ref: "#/components/responses/TooManyRequests" }
+        "500": { $ref: "#/components/responses/InternalError" }
+
+  /health:
+    get:
+      operationId: healthCheck
+      summary: Liveness probe
+      tags: [Health]
+      responses:
+        "200":
+          description: Service is alive
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthResponse"
+
+  /health/ready:
+    get:
+      operationId: readinessCheck
+      summary: Readiness probe
+      tags: [Health]
+      responses:
+        "200":
+          description: Service is ready
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthResponse"
+        "503":
+          description: Service not ready
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthResponse"
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+
+  parameters:
+    CorrelationId:
+      name: X-Correlation-Id
+      in: header
+      required: false
+      description: Unique ID for distributed tracing
+      schema:
+        type: string
+        format: uuid
+    IdempotencyKey:
+      name: Idempotency-Key
+      in: header
+      required: true
+      description: Idempotent write key (required on POST/PUT/PATCH/DELETE)
+      schema:
+        type: string
+
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        identifier:
+          type: string
+        status:
+          type: string
+          enum: [ACTIVE, PENDING_DELETION, DELETED]
+        displayName:
+          type: string
+        biometricEnabled:
+          type: boolean
+      required: [id, identifier, status, displayName, biometricEnabled]
+
+    UpdateUserRequest:
+      type: object
+      properties:
+        displayName:
+          type: string
+          minLength: 1
+          maxLength: 100
+      required: [displayName]
+
+    BiometricRequest:
+      type: object
+      properties:
+        enabled:
+          type: boolean
+      required: [enabled]
+
+    SpendingPreferences:
+      type: object
+      properties:
+        categories:
+          type: array
+          items:
+            type: string
+        budgetSensitivity:
+          type: string
+          enum: [LOW, MEDIUM, HIGH]
+        preferredRadiusMeters:
+          type: integer
+          minimum: 100
+          maximum: 50000
+      required: [categories, budgetSensitivity, preferredRadiusMeters]
+
+    SpendingPreferencesUpdate:
+      type: object
+      properties:
+        categories:
+          type: array
+          items:
+            type: string
+        budgetSensitivity:
+          type: string
+          enum: [LOW, MEDIUM, HIGH]
+        preferredRadiusMeters:
+          type: integer
+          minimum: 100
+          maximum: 50000
+
+    NotificationPreferences:
+      type: object
+      properties:
+        mode:
+          type: string
+          enum: [ALL, PRIORITY_ONLY, NONE]
+        quietHours:
+          $ref: "#/components/schemas/QuietHours"
+        categories:
+          type: array
+          items:
+            type: string
+      required: [mode, quietHours, categories]
+
+    NotificationPreferencesUpdate:
+      type: object
+      properties:
+        mode:
+          type: string
+          enum: [ALL, PRIORITY_ONLY, NONE]
+        quietHours:
+          $ref: "#/components/schemas/QuietHours"
+        categories:
+          type: array
+          items:
+            type: string
+
+    QuietHours:
+      type: object
+      properties:
+        enabled:
+          type: boolean
+        start:
+          type: string
+          example: "22:00"
+        end:
+          type: string
+          example: "07:00"
+      required: [enabled, start, end]
+
+    DeletionResponse:
+      type: object
+      properties:
+        message:
+          type: string
+        scheduledAt:
+          type: string
+          format: date-time
+      required: [message, scheduledAt]
+
+    ExportResponse:
+      type: object
+      properties:
+        jobId:
+          type: string
+          format: uuid
+        status:
+          type: string
+          enum: [ACCEPTED]
+      required: [jobId, status]
+
+    HealthResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [UP, DOWN]
+      required: [status]
+
+    ProblemDetails:
+      type: object
+      description: RFC 7807 Problem Details
+      properties:
+        type:
+          type: string
+          format: uri
+        title:
+          type: string
+        status:
+          type: integer
+        detail:
+          type: string
+        instance:
+          type: string
+          format: uri
+      required: [type, title, status]
+
+  responses:
+    BadRequest:
+      description: Bad request
+      content:
+        application/problem+json:
+          schema:
+            $ref: "#/components/schemas/ProblemDetails"
+    Unauthorized:
+      description: Unauthorized
+      content:
+        application/problem+json:
+          schema:
+            $ref: "#/components/schemas/ProblemDetails"
+    NotFound:
+      description: Resource not found
+      content:
+        application/problem+json:
+          schema:
+            $ref: "#/components/schemas/ProblemDetails"
+    TooManyRequests:
+      description: Rate limit exceeded
+      content:
+        application/problem+json:
+          schema:
+            $ref: "#/components/schemas/ProblemDetails"
+    InternalError:
+      description: Internal server error
+      content:
+        application/problem+json:
+          schema:
+            $ref: "#/components/schemas/ProblemDetails"

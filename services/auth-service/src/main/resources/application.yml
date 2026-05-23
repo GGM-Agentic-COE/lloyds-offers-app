@@ -1,0 +1,50 @@
+spring:
+  application:
+    name: auth-service
+  datasource:
+    url: jdbc:postgresql://${DB_HOST:localhost}:5432/${DB_NAME:auth_db}
+    username: ${DB_USER:postgres}
+    password: ${DB_PASSWORD:postgres}
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+  flyway:
+    enabled: true
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: 6379
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: ${JWT_ISSUER_URI:https://auth.offers.lloyds.com}
+
+server:
+  port: 8080
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus
+  endpoint:
+    health:
+      probes:
+        enabled: true
+      show-details: always
+
+app:
+  jwt:
+    secret: ${JWT_SECRET:dev-secret-change-in-prod}
+    access-token-expiry: 900
+    refresh-token-expiry: 2592000
+  otp:
+    expiry-seconds: 90
+    max-attempts: 5
+    resend-limit: 3
+    resend-window-minutes: 10
+  rate-limit:
+    registration-per-device: 5
+    registration-window-hours: 1

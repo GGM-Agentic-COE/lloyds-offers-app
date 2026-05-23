@@ -1,0 +1,22 @@
+spring:
+  application:
+    name: offer-service
+  datasource:
+    url: jdbc:postgresql://localhost:5432/offers
+    username: ${DB_USERNAME:offers}
+    password: ${DB_PASSWORD:offers}
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+  flyway:
+    enabled: true
+
+server:
+  port: 8080
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics

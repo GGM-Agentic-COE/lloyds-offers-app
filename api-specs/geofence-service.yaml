@@ -1,0 +1,525 @@
+openapi: 3.0.3
+info:
+  title: Geofence Service - Smart Location-Based Offers Platform
+  description: Manages geofence zones, processes entry/exit events, and provides city availability information.
+  version: 1.0.0
+  contact:
+    name: Platform Engineering
+servers:
+  - url: https://api.offers.lloyds.com
+    description: Production
+  - url: https://api.offers.staging.lloyds.com
+    description: Staging
+
+tags:
+  - name: Zones
+    description: Geofence zone CRUD (merchant auth required)
+  - name: Events
+    description: Device geofence event ingestion (user JWT required)
+  - name: Cities
+    description: Supported cities (public)
+  - name: Health
+    description: Service health checks
+
+paths:
+  /api/v1/zones:
+    post:
+      tags: [Zones]
+      summary: Create a geofence zone
+      operationId: createZone
+      security:
+        - merchantAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateZoneRequest'
+      responses:
+        '201':
+          description: Zone created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Zone'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+    get:
+      tags: [Zones]
+      summary: List zones by merchantId or proximity
+      operationId: listZones
+      security:
+        - merchantAuth: []
+      parameters:
+        - name: merchantId
+          in: query
+          schema:
+            type: string
+            format: uuid
+        - name: lat
+          in: query
+          description: Latitude for proximity search
+          schema:
+            type: number
+            format: double
+            minimum: -90
+            maximum: 90
+        - name: lng
+          in: query
+          description: Longitude for proximity search
+          schema:
+            type: number
+            format: double
+            minimum: -180
+            maximum: 180
+        - name: radiusMeters
+          in: query
+          description: Search radius in meters for proximity query
+          schema:
+            type: number
+            minimum: 50
+            maximum: 50000
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 20
+            maximum: 100
+        - name: offset
+          in: query
+          schema:
+            type: integer
+            default: 0
+      responses:
+        '200':
+          description: List of zones
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ZoneListResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /api/v1/zones/{zoneId}:
+    parameters:
+      - $ref: '#/components/parameters/zoneId'
+    get:
+      tags: [Zones]
+      summary: Get a zone by ID
+      operationId: getZone
+      security:
+        - merchantAuth: []
+      responses:
+        '200':
+          description: Zone details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Zone'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    put:
+      tags: [Zones]
+      summary: Update a zone
+      operationId: updateZone
+      security:
+        - merchantAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateZoneRequest'
+      responses:
+        '200':
+          description: Zone updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Zone'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    delete:
+      tags: [Zones]
+      summary: Delete a zone
+      operationId: deleteZone
+      security:
+        - merchantAuth: []
+      responses:
+        '204':
+          description: Zone deleted
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /api/v1/events:
+    post:
+      tags: [Events]
+      summary: Receive geofence entry/exit event from device
+      operationId: createEvent
+      security:
+        - userJwt: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GeofenceEventRequest'
+      responses:
+        '202':
+          description: Event accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EventAcceptedResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /api/v1/cities:
+    get:
+      tags: [Cities]
+      summary: List supported cities with polygon boundaries
+      operationId: listCities
+      responses:
+        '200':
+          description: List of supported cities
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CityListResponse'
+
+  /api/v1/cities/{cityId}/notify-interest:
+    post:
+      tags: [Cities]
+      summary: Register interest for notification when a city launches
+      operationId: notifyCityInterest
+      parameters:
+        - name: cityId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NotifyInterestRequest'
+      responses:
+        '202':
+          description: Interest registered
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /health:
+    get:
+      tags: [Health]
+      summary: Liveness check
+      operationId: healthLiveness
+      responses:
+        '200':
+          description: Service is alive
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthResponse'
+
+  /health/ready:
+    get:
+      tags: [Health]
+      summary: Readiness check
+      operationId: healthReadiness
+      responses:
+        '200':
+          description: Service is ready
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthResponse'
+        '503':
+          description: Service not ready
+
+components:
+  securitySchemes:
+    merchantAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: Merchant authentication token
+    userJwt:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: User device JWT for internal event ingestion
+
+  parameters:
+    zoneId:
+      name: zoneId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+
+  responses:
+    BadRequest:
+      description: Invalid request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Unauthorized:
+      description: Authentication required
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
+
+  parameters:
+    CorrelationId:
+      name: X-Correlation-Id
+      in: header
+      required: false
+      description: Unique ID for distributed tracing
+      schema:
+        type: string
+        format: uuid
+    IdempotencyKey:
+      name: Idempotency-Key
+      in: header
+      required: true
+      description: Idempotent write key (required on POST/PUT/PATCH/DELETE)
+      schema:
+        type: string
+
+  schemas:
+    CreateZoneRequest:
+      type: object
+      required: [merchantId, centerLat, centerLng, radiusMeters, activeHoursStart, activeHoursEnd, daysOfWeek]
+      properties:
+        merchantId:
+          type: string
+          format: uuid
+        centerLat:
+          type: number
+          format: double
+          minimum: -90
+          maximum: 90
+        centerLng:
+          type: number
+          format: double
+          minimum: -180
+          maximum: 180
+        radiusMeters:
+          type: integer
+          minimum: 50
+          maximum: 5000
+        activeHoursStart:
+          type: string
+          format: time
+          example: "09:00"
+        activeHoursEnd:
+          type: string
+          format: time
+          example: "21:00"
+        daysOfWeek:
+          type: array
+          items:
+            type: string
+            enum: [MON, TUE, WED, THU, FRI, SAT, SUN]
+          minItems: 1
+        status:
+          type: string
+          enum: [active, inactive]
+          default: active
+
+    UpdateZoneRequest:
+      type: object
+      properties:
+        centerLat:
+          type: number
+          format: double
+          minimum: -90
+          maximum: 90
+        centerLng:
+          type: number
+          format: double
+          minimum: -180
+          maximum: 180
+        radiusMeters:
+          type: integer
+          minimum: 50
+          maximum: 5000
+        activeHoursStart:
+          type: string
+          format: time
+        activeHoursEnd:
+          type: string
+          format: time
+        daysOfWeek:
+          type: array
+          items:
+            type: string
+            enum: [MON, TUE, WED, THU, FRI, SAT, SUN]
+        status:
+          type: string
+          enum: [active, inactive]
+
+    Zone:
+      type: object
+      properties:
+        zoneId:
+          type: string
+          format: uuid
+        merchantId:
+          type: string
+          format: uuid
+        centerLat:
+          type: number
+          format: double
+        centerLng:
+          type: number
+          format: double
+        radiusMeters:
+          type: integer
+        activeHoursStart:
+          type: string
+          format: time
+        activeHoursEnd:
+          type: string
+          format: time
+        daysOfWeek:
+          type: array
+          items:
+            type: string
+            enum: [MON, TUE, WED, THU, FRI, SAT, SUN]
+        status:
+          type: string
+          enum: [active, inactive]
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    ZoneListResponse:
+      type: object
+      properties:
+        zones:
+          type: array
+          items:
+            $ref: '#/components/schemas/Zone'
+        total:
+          type: integer
+        limit:
+          type: integer
+        offset:
+          type: integer
+
+    GeofenceEventRequest:
+      type: object
+      required: [userId, zoneId, eventType, timestamp, accuracyMeters]
+      properties:
+        userId:
+          type: string
+          format: uuid
+        zoneId:
+          type: string
+          format: uuid
+        eventType:
+          type: string
+          enum: [entry, exit]
+        timestamp:
+          type: string
+          format: date-time
+        accuracyMeters:
+          type: number
+          format: double
+          minimum: 0
+
+    EventAcceptedResponse:
+      type: object
+      properties:
+        eventId:
+          type: string
+          format: uuid
+        status:
+          type: string
+          example: accepted
+
+    City:
+      type: object
+      properties:
+        cityId:
+          type: string
+          format: uuid
+        name:
+          type: string
+        status:
+          type: string
+          enum: [active, coming_soon]
+        boundary:
+          type: object
+          description: GeoJSON Polygon
+          properties:
+            type:
+              type: string
+              enum: [Polygon]
+            coordinates:
+              type: array
+              items:
+                type: array
+                items:
+                  type: array
+                  items:
+                    type: number
+                  minItems: 2
+                  maxItems: 2
+
+    CityListResponse:
+      type: object
+      properties:
+        cities:
+          type: array
+          items:
+            $ref: '#/components/schemas/City'
+
+    NotifyInterestRequest:
+      type: object
+      required: [email]
+      properties:
+        email:
+          type: string
+          format: email
+
+    HealthResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [UP, DOWN]
+        timestamp:
+          type: string
+          format: date-time
+
+    Error:
+      type: object
+      properties:
+        code:
+          type: string
+        message:
+          type: string

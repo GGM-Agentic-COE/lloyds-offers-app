@@ -1,0 +1,513 @@
+openapi: "3.0.3"
+info:
+  title: "Auth Service API"
+  version: "1.0.0"
+  description: |
+    Authentication, registration, session management, and consent service for the Smart Location-Based Offers Platform.
+    
+    ## Authentication
+    Public endpoints: register, verify-otp, resend-otp, refresh. All others require Bearer JWT.
+    
+    ## Error Handling
+    All errors follow RFC 7807 Problem Details format.
+  contact:
+    name: "Platform Engineering"
+    email: "platform@offers.lloyds.com"
+  license:
+    name: "Proprietary"
+
+servers:
+  - url: "https://api.offers.lloyds.com/api/v1"
+    description: "Production"
+  - url: "https://staging-api.offers.lloyds.com/api/v1"
+    description: "Staging"
+
+tags:
+  - name: Registration
+    description: Account creation and verification
+  - name: Session
+    description: Token management and authentication
+  - name: Consent
+    description: GDPR consent management
+  - name: Health
+    description: Service health probes
+
+paths:
+  /auth/register:
+    post:
+      tags: [Registration]
+      operationId: registerUser
+      summary: Create a new user account
+      description: Registers a user with phone or email. Triggers OTP delivery. Rate limited to 5 per device per hour.
+      parameters:
+        - $ref: "#/components/parameters/CorrelationId"
+        - $ref: "#/components/parameters/IdempotencyKey"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [identifier, identifierType, deviceId]
+              properties:
+                identifier:
+                  type: string
+                  description: Phone (E.164) or email (RFC 5322)
+                  example: "+447700900000"
+                identifierType:
+                  type: string
+                  enum: [phone, email]
+                deviceId:
+                  type: string
+                  description: Unique device identifier
+      responses:
+        "201":
+          description: Account created, OTP sent
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RegisterResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "409":
+          description: Account already exists
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProblemDetails"
+        "429":
+          $ref: "#/components/responses/RateLimited"
+
+  /auth/verify-otp:
+    post:
+      tags: [Registration]
+      operationId: verifyOtp
+      summary: Verify OTP code
+      description: Validates the 6-digit OTP. On success, issues JWT tokens. Max 5 attempts before 30-minute lockout.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [userId, code]
+              properties:
+                userId:
+                  type: string
+                  format: uuid
+                code:
+                  type: string
+                  pattern: "^[0-9]{6}$"
+                  description: 6-digit OTP code
+      responses:
+        "200":
+          description: Verification successful, tokens issued
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TokenResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          description: Invalid or expired OTP
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OtpErrorResponse"
+        "429":
+          $ref: "#/components/responses/RateLimited"
+
+  /auth/resend-otp:
+    post:
+      tags: [Registration]
+      operationId: resendOtp
+      summary: Resend OTP code
+      description: Generates and sends a new OTP. Rate limited to 3 per 10 minutes per user.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [userId]
+              properties:
+                userId:
+                  type: string
+                  format: uuid
+      responses:
+        "200":
+          description: New OTP sent
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      sent:
+                        type: boolean
+                      expiresIn:
+                        type: integer
+                        description: Seconds until expiry
+                        example: 90
+        "429":
+          $ref: "#/components/responses/RateLimited"
+
+  /auth/refresh:
+    post:
+      tags: [Session]
+      operationId: refreshToken
+      summary: Refresh access token
+      description: Issues new access and refresh tokens. Implements refresh token rotation — old token invalidated on use.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [refreshToken]
+              properties:
+                refreshToken:
+                  type: string
+      responses:
+        "200":
+          description: New tokens issued
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TokenResponse"
+        "401":
+          description: Invalid or expired refresh token
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProblemDetails"
+
+  /auth/logout:
+    post:
+      tags: [Session]
+      operationId: logout
+      summary: Invalidate session
+      description: Invalidates all tokens for the specified device.
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/CorrelationId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [deviceId]
+              properties:
+                deviceId:
+                  type: string
+      responses:
+        "200":
+          description: Session invalidated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      success:
+                        type: boolean
+                        example: true
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
+  /auth/login:
+    post:
+      tags: [Session]
+      operationId: login
+      summary: Authenticate with credentials
+      description: Login with email/phone + password for users who skipped biometric enrollment. Issues JWT tokens on success.
+      parameters:
+        - $ref: "#/components/parameters/CorrelationId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [identifier, password, deviceId]
+              properties:
+                identifier:
+                  type: string
+                  description: Phone (E.164) or email
+                password:
+                  type: string
+                  format: password
+                deviceId:
+                  type: string
+      responses:
+        "200":
+          description: Authentication successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TokenResponse"
+        "401":
+          description: Invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProblemDetails"
+        "429":
+          $ref: "#/components/responses/RateLimited"
+
+  /auth/consent:
+    post:
+      tags: [Consent]
+      operationId: recordConsent
+      summary: Record consent decision
+      description: Stores an immutable consent record with timestamp and version. Supersedes any previous consent of the same type.
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [consentType, decision, version]
+              properties:
+                consentType:
+                  type: string
+                  enum: [location, transaction]
+                decision:
+                  type: string
+                  enum: [always, app_open, off, allow, deny]
+                version:
+                  type: string
+                  description: Consent policy version
+                  example: "1.0"
+      responses:
+        "201":
+          description: Consent recorded
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      consentId:
+                        type: string
+                        format: uuid
+                      recordedAt:
+                        type: string
+                        format: date-time
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+    get:
+      tags: [Consent]
+      operationId: getConsent
+      summary: Get current consent state
+      description: Returns the active (non-superseded) consent for each type.
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Current consent state
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      consents:
+                        type: array
+                        items:
+                          $ref: "#/components/schemas/ConsentRecord"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+
+  /health:
+    get:
+      tags: [Health]
+      operationId: healthLiveness
+      summary: Liveness probe
+      description: Returns 200 if the service process is running.
+      responses:
+        "200":
+          description: Service is alive
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "ok"
+
+  /health/ready:
+    get:
+      tags: [Health]
+      operationId: healthReadiness
+      summary: Readiness probe
+      description: Returns 200 if the service can accept traffic (DB and Redis connected).
+      responses:
+        "200":
+          description: Service is ready
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "ready"
+                  dependencies:
+                    type: object
+                    properties:
+                      database:
+                        type: string
+                        example: "ok"
+                      redis:
+                        type: string
+                        example: "ok"
+        "503":
+          description: Service not ready
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  parameters:
+    CorrelationId:
+      name: X-Correlation-Id
+      in: header
+      required: false
+      description: Unique ID for distributed tracing. Generated by client if not provided.
+      schema:
+        type: string
+        format: uuid
+    IdempotencyKey:
+      name: Idempotency-Key
+      in: header
+      required: true
+      description: Unique key to ensure write operations are idempotent. Required on all POST/PUT/PATCH/DELETE.
+      schema:
+        type: string
+
+  schemas:
+    RegisterResponse:
+      type: object
+      properties:
+        data:
+          type: object
+          properties:
+            userId:
+              type: string
+              format: uuid
+            verificationRequired:
+              type: boolean
+              example: true
+            expiresIn:
+              type: integer
+              description: OTP expiry in seconds
+              example: 90
+
+    TokenResponse:
+      type: object
+      properties:
+        data:
+          type: object
+          properties:
+            accessToken:
+              type: string
+            refreshToken:
+              type: string
+            expiresIn:
+              type: integer
+              description: Access token expiry in seconds
+              example: 900
+            tokenType:
+              type: string
+              example: "Bearer"
+
+    OtpErrorResponse:
+      type: object
+      properties:
+        data:
+          type: object
+          properties:
+            valid:
+              type: boolean
+              example: false
+            attemptsRemaining:
+              type: integer
+              example: 3
+            lockedUntil:
+              type: string
+              format: date-time
+              nullable: true
+
+    ConsentRecord:
+      type: object
+      properties:
+        consentType:
+          type: string
+          enum: [location, transaction]
+        decision:
+          type: string
+        version:
+          type: string
+        recordedAt:
+          type: string
+          format: date-time
+
+    ProblemDetails:
+      type: object
+      properties:
+        type:
+          type: string
+          format: uri
+        title:
+          type: string
+        status:
+          type: integer
+        detail:
+          type: string
+        instance:
+          type: string
+
+  responses:
+    BadRequest:
+      description: Invalid request
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ProblemDetails"
+    Unauthorized:
+      description: Missing or invalid authentication
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ProblemDetails"
+    RateLimited:
+      description: Too many requests
+      headers:
+        Retry-After:
+          schema:
+            type: integer
+          description: Seconds until rate limit resets
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ProblemDetails"
+
+security:
+  - bearerAuth: []

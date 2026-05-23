@@ -1,0 +1,519 @@
+openapi: 3.0.3
+info:
+  title: Merchant Service - Smart Location-Based Offers Platform
+  description: Service managing merchant registration, campaign lifecycle, and analytics.
+  version: 1.0.0
+
+servers:
+  - url: https://api.offers.lloyds.com
+    description: Production
+
+security:
+  - BearerAuth: []
+
+paths:
+  /api/v1/merchants/register:
+    post:
+      tags: [Merchants]
+      summary: Register a new merchant business
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [businessName, registrationNumber, businessType, address, contactEmail]
+              properties:
+                businessName:
+                  type: string
+                registrationNumber:
+                  type: string
+                businessType:
+                  type: string
+                address:
+                  type: string
+                contactEmail:
+                  type: string
+                  format: email
+                documents:
+                  type: array
+                  items:
+                    type: string
+                    format: binary
+      responses:
+        '201':
+          description: Registration submitted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MerchantProfile'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /api/v1/merchants/me:
+    get:
+      tags: [Merchants]
+      summary: Get current merchant profile and status
+      responses:
+        '200':
+          description: Merchant profile
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MerchantProfile'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /api/v1/campaigns:
+    post:
+      tags: [Campaigns]
+      summary: Create a campaign
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CampaignCreate'
+      responses:
+        '201':
+          description: Campaign created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Campaign'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+    get:
+      tags: [Campaigns]
+      summary: List merchant's campaigns
+      parameters:
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [draft, active, paused, expired]
+      responses:
+        '200':
+          description: List of campaigns
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Campaign'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /api/v1/campaigns/{campaignId}:
+    parameters:
+      - $ref: '#/components/parameters/CampaignId'
+    get:
+      tags: [Campaigns]
+      summary: Get campaign details
+      responses:
+        '200':
+          description: Campaign details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Campaign'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    put:
+      tags: [Campaigns]
+      summary: Update a campaign
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CampaignCreate'
+      responses:
+        '200':
+          description: Campaign updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Campaign'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /api/v1/campaigns/{campaignId}/publish:
+    post:
+      tags: [Campaigns]
+      summary: Publish a campaign
+      parameters:
+        - $ref: '#/components/parameters/CampaignId'
+      responses:
+        '200':
+          description: Campaign published
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Campaign'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /api/v1/campaigns/{campaignId}/pause:
+    post:
+      tags: [Campaigns]
+      summary: Pause a campaign
+      parameters:
+        - $ref: '#/components/parameters/CampaignId'
+      responses:
+        '200':
+          description: Campaign paused
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Campaign'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /api/v1/analytics/overview:
+    get:
+      tags: [Analytics]
+      summary: Get analytics overview for date range
+      parameters:
+        - name: from
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date
+        - name: to
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date
+      responses:
+        '200':
+          description: Analytics overview
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AnalyticsOverview'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /api/v1/analytics/campaigns/{campaignId}:
+    get:
+      tags: [Analytics]
+      summary: Per-campaign metrics with daily breakdown
+      parameters:
+        - $ref: '#/components/parameters/CampaignId'
+        - name: from
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date
+        - name: to
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date
+      responses:
+        '200':
+          description: Campaign analytics
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CampaignAnalytics'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /api/v1/analytics/export:
+    get:
+      tags: [Analytics]
+      summary: Export analytics as CSV (async)
+      parameters:
+        - name: from
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date
+        - name: to
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date
+      responses:
+        '202':
+          description: Export initiated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  exportId:
+                    type: string
+                    format: uuid
+                  status:
+                    type: string
+                    enum: [processing, ready]
+                  downloadUrl:
+                    type: string
+                    format: uri
+                    nullable: true
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /health:
+    get:
+      tags: [Health]
+      summary: Liveness check
+      security: []
+      responses:
+        '200':
+          description: Service is alive
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthStatus'
+
+  /health/ready:
+    get:
+      tags: [Health]
+      summary: Readiness check
+      security: []
+      responses:
+        '200':
+          description: Service is ready
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthStatus'
+        '503':
+          description: Service not ready
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  parameters:
+    CampaignId:
+      name: campaignId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+
+  responses:
+    BadRequest:
+      description: Invalid request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Unauthorized:
+      description: Missing or invalid token
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
+
+  parameters:
+    CorrelationId:
+      name: X-Correlation-Id
+      in: header
+      required: false
+      description: Unique ID for distributed tracing
+      schema:
+        type: string
+        format: uuid
+    IdempotencyKey:
+      name: Idempotency-Key
+      in: header
+      required: true
+      description: Idempotent write key (required on POST/PUT/PATCH/DELETE)
+      schema:
+        type: string
+
+  schemas:
+    MerchantProfile:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        businessName:
+          type: string
+        registrationNumber:
+          type: string
+        businessType:
+          type: string
+        address:
+          type: string
+        contactEmail:
+          type: string
+          format: email
+        status:
+          type: string
+          enum: [submitted, under_review, approved, rejected]
+        createdAt:
+          type: string
+          format: date-time
+
+    CampaignCreate:
+      type: object
+      required: [title, description, discountType, discountValue, zoneIds, validFrom, validTo]
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+        terms:
+          type: string
+          maxLength: 500
+        imageUrl:
+          type: string
+          format: uri
+        discountType:
+          type: string
+          enum: [percentage, fixed, bogof]
+        discountValue:
+          type: number
+        zoneIds:
+          type: array
+          items:
+            type: string
+            format: uuid
+        activeHoursStart:
+          type: string
+          format: time
+        activeHoursEnd:
+          type: string
+          format: time
+        targetCategories:
+          type: array
+          items:
+            type: string
+        maxRedemptions:
+          type: integer
+        maxPerUser:
+          type: integer
+        validFrom:
+          type: string
+          format: date-time
+        validTo:
+          type: string
+          format: date-time
+
+    Campaign:
+      allOf:
+        - $ref: '#/components/schemas/CampaignCreate'
+        - type: object
+          properties:
+            id:
+              type: string
+              format: uuid
+            merchantId:
+              type: string
+              format: uuid
+            status:
+              type: string
+              enum: [draft, active, paused, expired]
+            createdAt:
+              type: string
+              format: date-time
+            updatedAt:
+              type: string
+              format: date-time
+
+    AnalyticsOverview:
+      type: object
+      properties:
+        impressions:
+          type: integer
+        redemptions:
+          type: integer
+        conversionRate:
+          type: number
+          format: double
+        uniqueUsers:
+          type: integer
+
+    CampaignAnalytics:
+      type: object
+      properties:
+        campaignId:
+          type: string
+          format: uuid
+        impressions:
+          type: integer
+        redemptions:
+          type: integer
+        conversionRate:
+          type: number
+          format: double
+        uniqueUsers:
+          type: integer
+        dailyBreakdown:
+          type: array
+          items:
+            type: object
+            properties:
+              date:
+                type: string
+                format: date
+              impressions:
+                type: integer
+              redemptions:
+                type: integer
+              conversionRate:
+                type: number
+                format: double
+              uniqueUsers:
+                type: integer
+
+    HealthStatus:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [UP, DOWN]
+        timestamp:
+          type: string
+          format: date-time
+
+    Error:
+      type: object
+      properties:
+        code:
+          type: string
+        message:
+          type: string
