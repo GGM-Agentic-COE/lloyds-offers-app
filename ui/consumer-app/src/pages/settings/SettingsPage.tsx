@@ -23,7 +23,6 @@ export function SettingsPage() {
         <ListItem icon="📥" label="Download my data" onClick={() => navigate('/settings/export')} />
       </Section>
       <Section title="Account">
-        <ListItem icon="🔐" label="Biometric login" badge="Enabled" onClick={() => {}} />
         <ListItem icon="🚪" label="Sign out" onClick={handleLogout} />
         <ListItem icon="🗑️" label="Delete account" destructive onClick={() => navigate('/settings/delete')} />
       </Section>

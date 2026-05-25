@@ -116,10 +116,34 @@ h1 { color: #1A1A1A; font-size: 28px; margin-bottom: 8px; }
 </div>
 
 <!-- ═══════════════════════════════════════════════════════ -->
-<!-- FLOW 1: ONBOARDING (Registration → OTP → Biometric → Consent) -->
+<!-- FLOW 1: ONBOARDING (Feature Opt-in → Registration → OTP → Consent) -->
 <!-- ═══════════════════════════════════════════════════════ -->
 <h2 class="flow-title">Flow 1: Onboarding</h2>
 <div class="screen-grid">
+
+<!-- Screen 1.0: Feature Opt-In -->
+<div>
+<p class="screen-label">/onboarding/opt-in · New Feature Enablement</p>
+<div class="screen-frame">
+  <div class="status-bar">9:41</div>
+  <div class="top-bar"><span class="logo">♞ Lloyds Bank</span></div>
+  <div class="content" style="text-align:center">
+    <div style="margin-top:24px">
+      <span class="badge badge-green" style="font-size:13px;padding:6px 14px">NEW</span>
+    </div>
+    <div class="illustration" style="margin-top:20px">🎁</div>
+    <h2>Location-Based Offers</h2>
+    <p style="text-align:center;max-width:300px;margin:0 auto">Get personalised deals from nearby merchants as you go about your day. Exclusive to select Lloyds customers.</p>
+    <div class="card" style="text-align:left;margin-top:20px">
+      <p style="font-size:13px;font-weight:700;margin-bottom:8px">What you'll get:</p>
+      <p style="font-size:13px;color:var(--text-secondary);margin:0">✓ Real-time offers based on your location<br>✓ Personalised to your spending habits<br>✓ Redeem instantly with QR code<br>✓ Full control over privacy settings</p>
+    </div>
+    <button class="btn-primary" style="margin-top:20px">Enable this feature</button>
+    <button class="btn-ghost" style="width:100%;text-align:center;margin-top:8px">Maybe later</button>
+    <p style="font-size:11px;color:var(--text-muted);margin-top:16px">You can disable this anytime in your Lloyds app settings</p>
+  </div>
+</div>
+</div>
 
 <!-- Screen 1.1: Registration -->
 <div>
@@ -128,7 +152,7 @@ h1 { color: #1A1A1A; font-size: 28px; margin-bottom: 8px; }
   <div class="status-bar">9:41</div>
   <div class="top-bar"><span class="logo">♞ Lloyds Offers</span></div>
   <div class="content">
-    <div class="steps"><span class="step-dot active"></span><span class="step-dot"></span><span class="step-dot"></span><span class="step-dot"></span></div>
+    <div class="steps"><span class="step-dot active"></span><span class="step-dot"></span><span class="step-dot"></span></div>
     <div class="illustration">📍</div>
     <h2>Get offers near you</h2>
     <p>Create an account to receive personalised deals from local merchants based on your location and preferences.</p>
@@ -150,7 +174,7 @@ h1 { color: #1A1A1A; font-size: 28px; margin-bottom: 8px; }
   <div class="status-bar">9:41</div>
   <div class="top-bar"><span class="logo">♞ Lloyds Offers</span></div>
   <div class="content">
-    <div class="steps"><span class="step-dot active"></span><span class="step-dot"></span><span class="step-dot"></span><span class="step-dot"></span></div>
+    <div class="steps"><span class="step-dot active"></span><span class="step-dot"></span><span class="step-dot"></span></div>
     <div class="illustration">📍</div>
     <h2>Get offers near you</h2>
     <p>Create an account to receive personalised deals from local merchants based on your location and preferences.</p>
@@ -171,7 +195,7 @@ h1 { color: #1A1A1A; font-size: 28px; margin-bottom: 8px; }
   <div class="status-bar">9:41</div>
   <div class="top-bar"><span class="back">‹</span><span class="title">Verify</span></div>
   <div class="content">
-    <div class="steps"><span class="step-dot" style="background:var(--lloyds-green)"></span><span class="step-dot active"></span><span class="step-dot"></span><span class="step-dot"></span></div>
+    <div class="steps"><span class="step-dot" style="background:var(--lloyds-green)"></span><span class="step-dot active"></span><span class="step-dot"></span></div>
     <h2 style="text-align:center">Enter your code</h2>
     <p style="text-align:center">We sent a 6-digit code to<br><strong>+44 7700 900***</strong></p>
     <div class="otp-row">
@@ -189,25 +213,6 @@ h1 { color: #1A1A1A; font-size: 28px; margin-bottom: 8px; }
 </div>
 </div>
 
-<!-- Screen 1.4: Biometric Enrollment -->
-<div>
-<p class="screen-label">/onboarding/biometric · US-008</p>
-<div class="screen-frame">
-  <div class="status-bar">9:41</div>
-  <div class="top-bar"><span class="back">‹</span><span class="title">Quick access</span></div>
-  <div class="content">
-    <div class="steps"><span class="step-dot" style="background:var(--lloyds-green)"></span><span class="step-dot" style="background:var(--lloyds-green)"></span><span class="step-dot active"></span><span class="step-dot"></span></div>
-    <div class="illustration">🔐</div>
-    <h2 style="text-align:center">Enable Face ID</h2>
-    <p style="text-align:center">Use Face ID to sign in quickly and securely. You can change this later in Settings.</p>
-    <div style="margin-top:32px">
-      <button class="btn-primary">Enable Face ID</button>
-      <button class="btn-secondary">Skip for now</button>
-    </div>
-  </div>
-</div>
-</div>
-
 <!-- Screen 1.5: Location Consent -->
 <div>
 <p class="screen-label">/onboarding/consent-location · US-009</p>
@@ -215,7 +220,7 @@ h1 { color: #1A1A1A; font-size: 28px; margin-bottom: 8px; }
   <div class="status-bar">9:41</div>
   <div class="top-bar"><span class="back">‹</span><span class="title">Permissions</span></div>
   <div class="content">
-    <div class="steps"><span class="step-dot" style="background:var(--lloyds-green)"></span><span class="step-dot" style="background:var(--lloyds-green)"></span><span class="step-dot" style="background:var(--lloyds-green)"></span><span class="step-dot active"></span></div>
+    <div class="steps"><span class="step-dot" style="background:var(--lloyds-green)"></span><span class="step-dot" style="background:var(--lloyds-green)"></span><span class="step-dot active"></span></div>
     <h2>Location access</h2>
     <p>We use your location to show offers from nearby merchants. Choose how you'd like this to work:</p>
     <div style="margin-top:20px">
@@ -492,7 +497,6 @@ h1 { color: #1A1A1A; font-size: 28px; margin-bottom: 8px; }
     <div class="list-item"><span class="list-icon">💳</span><span class="list-label">Transaction data</span><span class="list-value">Allowed</span><span class="list-chevron">›</span></div>
     <div class="list-item"><span class="list-icon">📥</span><span class="list-label">Download my data</span><span class="list-chevron">›</span></div>
     <div style="padding:0 16px;margin:16px 0 8px"><p style="font-size:13px;font-weight:700;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.5px">Account</p></div>
-    <div class="list-item"><span class="list-icon">🔐</span><span class="list-label">Biometric login</span><span class="badge badge-green">Enabled</span></div>
     <div class="list-item"><span class="list-icon" style="background:#FDECEC;color:var(--text-error)">🗑️</span><span class="list-label" style="color:var(--text-error)">Delete account</span><span class="list-chevron">›</span></div>
   </div>
   <div class="bottom-nav">

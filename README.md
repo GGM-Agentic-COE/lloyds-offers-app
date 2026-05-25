@@ -28,7 +28,7 @@ The app uses **Mock Service Worker (MSW)** to simulate all backend APIs. Differe
 | `onthemove@example.com` | 📍 Dynamic location | Offers change every 15s as you "walk" through London. Push notifications appear for each new area |
 | `foodie@example.com` | 🍽️ Dining enthusiast | 5 restaurant offers (Wagamama, Dishoom, Nando's, Pret, The Ivy). Heavy redemption history (£37 saved) |
 | `shopper@example.com` | 🛍️ Retail lover | 4 fashion/beauty offers (Zara, John Lewis, H&M, Boots). £42.50 saved |
-| `traveler@example.com` | 🌍 Unsupported city | Empty offers feed — "Coming soon to your area" |
+| `traveler@example.com` | ✈️ Heathrow Airport | Duty-free offers appear one-by-one every 2 seconds as you "walk" through the terminal. Liquor, perfumes, luggage, chocolates. Urgent expiry timers. |
 | `network@example.com` | ⚠️ Network errors | Simulates timeouts and connectivity failures |
 | Any other email | Default happy path | Same as `happy@example.com` |
 
@@ -48,6 +48,27 @@ Register with `onthemove@example.com` to see the full real-time experience:
 ```
 Oxford Circus → Soho → Covent Garden → South Bank → Borough Market → (loops)
    (retail)     (food/nightlife)  (theatre/beauty)  (riverside/culture)  (artisan food)
+```
+
+### The "Heathrow Duty Free" Demo
+
+Register with `traveler@example.com` to see the airport experience:
+
+1. Offers appear **one by one every 2 seconds** (simulating walking past shops)
+2. Push notifications fire rapidly as you pass each store
+3. Some offers have **urgent expiry** (8-25 min) to create FOMO
+4. The feed grows progressively as you "walk" through the terminal
+
+**Simulated walk through Heathrow T5 Duty Free:**
+
+```
+0s   → 🥃 World Duty Free (Johnnie Walker Blue 20% off — 25 min left!)
+2s   → 💐 Heathrow Boutiques (£30 off Chanel fragrance)
+4s   → 🍾 World Duty Free (Buy 2 get 1 free spirits)
+6s   → 🧳 Terminal 5 Shop (40% off Samsonite — only 3 left! 15 min!)
+8s   → 🌸 Jo Malone London (15% off gift sets)
+10s  → 🍫 WHSmith Travel (£10 off Toblerone mega pack)
+12s  → 🔥 World Duty Free (Hendricks Gin + free tonics — 20 min!)
 ```
 
 ---

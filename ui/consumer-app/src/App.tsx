@@ -4,7 +4,7 @@ import { useAuthStore } from './stores/authStore';
 import { PushNotificationSimulator } from './components/organisms/PushNotificationSimulator';
 import { RegisterPage } from './pages/onboarding/RegisterPage';
 import { VerifyOtpPage } from './pages/onboarding/VerifyOtpPage';
-import { BiometricPage } from './pages/onboarding/BiometricPage';
+import { FeatureOptInPage } from './pages/onboarding/FeatureOptInPage';
 import { LocationConsentPage, TransactionConsentPage } from './pages/onboarding/ConsentPage';
 import { PushPermissionPage } from './pages/onboarding/PushPermissionPage';
 import { OffersPage } from './pages/offers/OffersPage';
@@ -22,7 +22,7 @@ const queryClient = new QueryClient({ defaultOptions: { queries: { retry: 1, sta
 
 function AuthGuard() {
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
-  return isAuthenticated ? <Outlet /> : <Navigate to="/onboarding/register" replace />;
+  return isAuthenticated ? <Outlet /> : <Navigate to="/onboarding/opt-in" replace />;
 }
 
 function AppShell() {
@@ -49,9 +49,9 @@ function NavTab({ to, icon, label }: { to: string; icon: string; label: string }
 }
 
 const router = createBrowserRouter([
+  { path: '/onboarding/opt-in', element: <FeatureOptInPage /> },
   { path: '/onboarding/register', element: <RegisterPage /> },
   { path: '/onboarding/verify', element: <VerifyOtpPage /> },
-  { path: '/onboarding/biometric', element: <BiometricPage /> },
   { path: '/onboarding/consent-location', element: <LocationConsentPage /> },
   { path: '/onboarding/consent-transaction', element: <TransactionConsentPage /> },
   { path: '/onboarding/push-permission', element: <PushPermissionPage /> },

@@ -28,6 +28,7 @@ export function OffersPage() {
       const res = await api.get('/offers', { params: { sort: 'nearest', pageSize: 20, locationIndex } });
       return res.data;
     },
+    refetchInterval: 2000, // Poll every 2s to pick up new offers (traveler) or location changes
   });
 
   if (isLoading) return <OffersSkeleton />;
@@ -47,9 +48,12 @@ export function OffersPage() {
         <p className="text-caption opacity-70">{locationDesc || 'Within 2 km · Updated just now'}</p>
       </div>
       <div className="flex flex-col gap-3 px-4">
-        {offers.map((offer) => (
+        {offers.map((offer) => {
+          const minsLeft = Math.round((new Date(offer.expiresAt).getTime() - Date.now()) / 60000);
+          const isUrgent = minsLeft <= 30;
+          return (
           <button key={offer.id} onClick={() => navigate(`/offers/${offer.id}`)}
-            className="bg-white border border-border-light rounded-card overflow-hidden text-left hover:shadow-md transition-shadow">
+            className={`bg-white border rounded-card overflow-hidden text-left hover:shadow-md transition-shadow ${isUrgent ? 'border-amber-300 ring-1 ring-amber-200' : 'border-border-light'}`}>
             <div className="p-4">
               <div className="flex justify-between items-start">
                 <div>
@@ -62,9 +66,16 @@ export function OffersPage() {
                   {offer.discountType === 'PERCENTAGE' ? `${offer.discountValue}% off` : offer.discountType === 'FIXED' ? `£${offer.discountValue} off` : 'BOGOF'}
                 </span>
               </div>
+              {isUrgent && (
+                <div className="mt-2 bg-amber-50 rounded px-2.5 py-1.5 flex items-center gap-1.5">
+                  <span className="text-sm">⏰</span>
+                  <span className="text-micro font-bold text-status-pending">Expires in {minsLeft} min — act now!</span>
+                </div>
+              )}
             </div>
           </button>
-        ))}
+          );
+        })}
       </div>
     </div>
   );

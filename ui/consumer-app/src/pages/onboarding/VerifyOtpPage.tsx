@@ -36,7 +36,7 @@ export function VerifyOtpPage() {
     try {
       const res = await api.post('/auth/verify-otp', { userId: state?.userId, code: otp });
       setTokens(res.data.data.accessToken, res.data.data.refreshToken, state?.userId);
-      navigate('/onboarding/biometric');
+      navigate('/onboarding/consent-location');
     } catch (err: any) {
       const detail = err.response?.data;
       if (err.response?.status === 429) setError('Too many attempts. Try again in 30 minutes');
