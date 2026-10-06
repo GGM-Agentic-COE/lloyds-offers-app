@@ -162,19 +162,6 @@ Rule 4 mandates a Design System epic in Sprint 1 for products with UI. Mobile ap
 
 Lloyds architecture mandates a shared design system. 44pt touch targets and contrast ratios from WCAG 2.1 AA. 4pt grid is the mobile standard (iOS/Material Design). Components defined here are reused across all subsequent epics, ensuring consistency.
 
-<details><summary>Sources cited</summary>
-
-*Requirements used*
-
-- NFR-08: WCAG 2.1 AA Compliance — screen readers, high-contrast modes, adjustable font sizes
-
-*Knowledge-base sections used*
-
-- kb-L0-lloyds-enterprise-architecture §3.1 (Shared design system component library across brands)
-- kb-L0-lloyds-enterprise-architecture §9 (Use shared design system, WCAG 2.1 AA)
-
-</details>
-
 #### F-00.2 — App Shell & Tab Navigation
 
 | Attribute | Value |
@@ -202,18 +189,6 @@ Lloyds architecture mandates a shared design system. 44pt touch targets and cont
 **Rationale**
 
 4-tab structure covers the core user journeys: discover offers, track history, manage profile, control settings. Independent navigation stacks per tab is the native iOS/Android pattern. Deep linking required for notification tap → offer detail flow. Badge count drives engagement by showing unread offers.
-
-<details><summary>Sources cited</summary>
-
-*Requirements used*
-
-- NFR-08: WCAG 2.1 AA — all interactive elements accessible and labeled
-
-*Knowledge-base sections used*
-
-- kb-L0-lloyds-enterprise-architecture §3.1 (Native mobile — Swift iOS, Kotlin Android)
-
-</details>
 
 ---
 
@@ -279,19 +254,6 @@ FR-16 (auth) and FR-20 (consent) are tightly coupled — consent must be collect
 
 Scoped to registration only (not verification) as these are separate user actions. Data sensitivity Confidential because phone/email are PII. Rate limiting per device prevents abuse while allowing legitimate retries.
 
-<details><summary>Sources cited</summary>
-
-*Requirements used*
-
-- FR-16: User Registration and Authentication — Users must be able to create an account and authenticate
-
-*Knowledge-base sections used*
-
-- kb-L0-lloyds-enterprise-architecture §5.1 (Security Layers — Cloud IAM, OAuth 2.0)
-- kb-L0-epics-best-practices §2 (Compliance Checkpoints — PII handling)
-
-</details>
-
 #### F-01.2 — OTP Verification
 
 | Attribute | Value |
@@ -319,18 +281,6 @@ Scoped to registration only (not verification) as these are separate user action
 
 OTP parameters (6-digit, 90s, 3/10min rate limit) follow industry standards for mobile consumer apps. Separated from F-01.1 because verification is a distinct screen and user action.
 
-<details><summary>Sources cited</summary>
-
-*Requirements used*
-
-- FR-16: User Registration and Authentication
-
-*Knowledge-base sections used*
-
-- kb-L0-lloyds-enterprise-architecture §5.1 (Security — encryption in transit TLS 1.3)
-
-</details>
-
 #### F-01.3 — Biometric Authentication Enrollment
 
 | Attribute | Value |
@@ -354,18 +304,6 @@ OTP parameters (6-digit, 90s, 3/10min rate limit) follow industry standards for 
 
 Native biometric APIs (LocalAuthentication/BiometricPrompt) are the standard for consumer mobile apps. Data sensitivity Restricted because biometric preference + secure enclave token access is highest sensitivity. Biometric data never leaves device.
 
-<details><summary>Sources cited</summary>
-
-*Requirements used*
-
-- FR-16: User Registration and Authentication
-
-*Knowledge-base sections used*
-
-- kb-L0-lloyds-enterprise-architecture §3.1 (Native mobile — Swift iOS, Kotlin Android)
-
-</details>
-
 #### F-01.4 — Consent Collection Flow
 
 | Attribute | Value |
@@ -388,19 +326,6 @@ Native biometric APIs (LocalAuthentication/BiometricPrompt) are the standard for
 **Rationale**
 
 Consent is collected during registration (not after) because GDPR requires consent before data processing begins. Granular consent (location separate from transaction) follows GDPR specificity requirement. Immutable storage for audit trail per GDPR Art. 7(1).
-
-<details><summary>Sources cited</summary>
-
-*Requirements used*
-
-- FR-20: User Consent Management — transparent consent flows, explicit consent before accessing personal data
-
-*Knowledge-base sections used*
-
-- kb-L0-lloyds-enterprise-architecture §5.2 (Regulatory Compliance — UK GDPR/DPA 2018)
-- kb-L0-epics-best-practices §3 (Regulatory Acceptance Criteria — GDPR Art. 6)
-
-</details>
 
 #### F-01.5 — Session Management & Token Refresh
 
@@ -426,19 +351,6 @@ Consent is collected during registration (not after) because GDPR requires conse
 **Rationale**
 
 JWT with refresh rotation is the standard pattern for mobile apps per Lloyds enterprise architecture (OAuth 2.0). 15-min access token balances security with UX. Restricted sensitivity because tokens grant system access.
-
-<details><summary>Sources cited</summary>
-
-*Requirements used*
-
-- FR-16: User Registration and Authentication
-
-*Knowledge-base sections used*
-
-- kb-L0-lloyds-enterprise-architecture §3.2 (Backend — OAuth 2.0/OpenID Connect)
-- kb-L0-lloyds-enterprise-architecture §5.1 (Security — Cloud IAM)
-
-</details>
 
 ---
 
@@ -504,19 +416,6 @@ FR-05 (push), FR-09 (frequency limiting), FR-15 (preferences) form the notificat
 
 APNs/FCM are the only viable push services (CON-05). Retry with exponential backoff follows distributed systems best practice. Batch support needed for NFR-07 (10K campaigns). Internal sensitivity as device tokens are system identifiers, not PII.
 
-<details><summary>Sources cited</summary>
-
-*Requirements used*
-
-- FR-05: Push Notification Delivery — support push notifications for relevant offers delivered within 2 seconds
-
-*Knowledge-base sections used*
-
-- kb-L0-lloyds-enterprise-architecture §7.1 (Pub/Sub events for async communication)
-- kb-L0-lloyds-enterprise-architecture §3.2 (Microservices on GKE)
-
-</details>
-
 #### F-02.2 — Notification Preference Controls
 
 | Attribute | Value |
@@ -540,18 +439,6 @@ APNs/FCM are the only viable push services (CON-05). Retry with exponential back
 **Rationale**
 
 Three-mode control (always/app-open/off) directly from source. Quiet hours added as standard UX for notification-heavy apps. Category toggles enable granular control without full opt-out. Server-side persistence per Lloyds architecture (Cloud SQL for transactional data).
-
-<details><summary>Sources cited</summary>
-
-*Requirements used*
-
-- FR-15: User Notification Preferences — control notification preferences including always-on push vs in-app only
-
-*Knowledge-base sections used*
-
-- kb-L0-lloyds-enterprise-architecture §9 (Key Architectural Decisions — consent management as first-class concern)
-
-</details>
 
 #### F-02.3 — Notification Frequency Capping
 
@@ -577,18 +464,6 @@ Three-mode control (always/app-open/off) directly from source. Quiet hours added
 
 Redis chosen for frequency state because sub-millisecond reads are needed within the 2-second delivery SLA (NFR-01). Daily cap of 5 and 30-min gap are UX best practices to prevent notification fatigue beyond the per-offer limit in FR-09.
 
-<details><summary>Sources cited</summary>
-
-*Requirements used*
-
-- FR-09: Notification Frequency Limiting — limit offer notifications to one per offer per day per user
-
-*Knowledge-base sections used*
-
-- kb-L0-lloyds-enterprise-architecture §3.2 (Memorystore/Redis for caching)
-
-</details>
-
 #### F-02.4 — User Profile & Spending Preferences
 
 | Attribute | Value |
@@ -613,18 +488,6 @@ Redis chosen for frequency state because sub-millisecond reads are needed within
 
 Spending categories derived from source personas (dining, retail, entertainment). Preferred radius enables geofence relevance filtering. Confidential sensitivity because spending preferences reveal financial behavior patterns. Auto-save for mobile UX best practice.
 
-<details><summary>Sources cited</summary>
-
-*Requirements used*
-
-- FR-24: User Profile and Preference Management — view and update profile, set spending category preferences
-
-*Knowledge-base sections used*
-
-- kb-L0-lloyds-enterprise-architecture §9 (consent management as first-class concern)
-
-</details>
-
 #### F-02.5 — Push Permission Request & Fallback
 
 | Attribute | Value |
@@ -648,19 +511,6 @@ Spending categories derived from source personas (dining, retail, entertainment)
 **Rationale**
 
 Pre-permission screen is critical for opt-in rates (industry best practice: 40-60% improvement). iOS only allows one OS permission prompt — must maximize first-ask success. Fallback to in-app mode ensures platform value even without push permission.
-
-<details><summary>Sources cited</summary>
-
-*Requirements used*
-
-- FR-05: Push Notification Delivery
-- FR-15: User Notification Preferences
-
-*Knowledge-base sections used*
-
-- kb-L0-lloyds-enterprise-architecture §3.1 (Native mobile — Swift iOS, Kotlin Android)
-
-</details>
 
 ---
 
@@ -726,19 +576,6 @@ FR-01 (real-time delivery), FR-21 (zone management), FR-26 (event detection), FR
 
 PostGIS spatial indexing enables efficient 'find zones near point' queries needed for real-time matching. Radius bounds (50m-5km) prevent abuse (too small = never triggers, too large = irrelevant). Internal sensitivity as zone data is merchant operational data, not PII.
 
-<details><summary>Sources cited</summary>
-
-*Requirements used*
-
-- FR-21: Geofence Zone Management — creation, modification, deletion of geofence zones with radius/polygon boundaries and active hours
-
-*Knowledge-base sections used*
-
-- kb-L0-lloyds-enterprise-architecture §3.2 (Cloud SQL PostgreSQL for transactional data)
-- kb-L0-lloyds-enterprise-architecture §4.1 (Pub/Sub for async messaging)
-
-</details>
-
 #### F-03.2 — Device-Side Geofence Monitoring
 
 | Attribute | Value |
@@ -762,19 +599,6 @@ PostGIS spatial indexing enables efficient 'find zones near point' queries neede
 **Rationale**
 
 iOS 20-region limit is a hard platform constraint requiring rotation strategy. Restricted sensitivity because real-time location data is highly sensitive PII. Battery optimization critical per NFR-10 — significant location changes use less power than continuous GPS.
-
-<details><summary>Sources cited</summary>
-
-*Requirements used*
-
-- FR-26: Geofence Entry/Exit Event Detection — detect when user enters/exits geofenced area
-- FR-02: User Location Tracking Controls
-
-*Knowledge-base sections used*
-
-- kb-L0-lloyds-enterprise-architecture §3.1 (Native mobile — Swift iOS, Kotlin Android)
-
-</details>
 
 #### F-03.3 — Real-Time Offer Matching Pipeline
 
@@ -804,19 +628,6 @@ iOS 20-region limit is a hard platform constraint requiring rotation strategy. R
 
 Pub/Sub chosen as event bus per Lloyds architecture. Latency budget breakdown ensures each component has a clear SLA contributing to the 2-second total (NFR-01). Silent failure on pipeline error prevents confusing UX — user simply doesn't get a notification rather than seeing an error.
 
-<details><summary>Sources cited</summary>
-
-*Requirements used*
-
-- FR-01: Real-Time Location-Based Offer Delivery — deliver offers in real time based on location and time of day within 2 seconds
-
-*Knowledge-base sections used*
-
-- kb-L0-lloyds-enterprise-architecture §4.1 (Pub/Sub for event bus, Dataflow for stream processing)
-- kb-L0-lloyds-enterprise-architecture §7.1 (Pub/Sub events for async communication)
-
-</details>
-
 #### F-03.4 — In-App Offer Feed
 
 | Attribute | Value |
@@ -843,18 +654,6 @@ Pub/Sub chosen as event bus per Lloyds architecture. Latency budget breakdown en
 
 Feed is the in-app delivery channel (source: 'push notifications or in-app'). 20-item pagination balances load time (NFR-02: 1s) with content density. 500m movement threshold prevents excessive API calls while keeping content fresh. Public sensitivity as offer content is merchant-published marketing material.
 
-<details><summary>Sources cited</summary>
-
-*Requirements used*
-
-- FR-22: In-App Offer Feed — browse available offers filtered by proximity, category, and relevance
-
-*Knowledge-base sections used*
-
-- kb-L0-lloyds-enterprise-architecture §3.1 (Frontend — shared design system, WCAG 2.1 AA)
-
-</details>
-
 #### F-03.5 — Supported City Boundary Enforcement
 
 | Attribute | Value |
@@ -878,18 +677,6 @@ Feed is the in-app delivery channel (source: 'push notifications or in-app'). 20
 **Rationale**
 
 Boundary enforcement prevents irrelevant notifications (US6) and aligns with CON-03 (initial launch limited to select urban markets). 'Coming soon' UX retains users who travel outside supported areas rather than showing empty state.
-
-<details><summary>Sources cited</summary>
-
-*Requirements used*
-
-- FR-14: Geofence Boundary Enforcement — must not deliver offers outside supported cities
-
-*Knowledge-base sections used*
-
-- kb-L0-epics-best-practices §6 (Scoping — Geography dimension)
-
-</details>
 
 ---
 
@@ -955,18 +742,6 @@ FR-04 (redemption), FR-06 (history), FR-23 (expiry), FR-27 (duplicate prevention
 
 QR code is the assumed redemption mechanism (ASM-06). 5-minute expiry prevents screenshot sharing/abuse. Hashed user_id in QR prevents PII exposure if QR is photographed. Brightness maximization is standard for QR-based mobile payments.
 
-<details><summary>Sources cited</summary>
-
-*Requirements used*
-
-- FR-04: Instant Offer Redemption at Merchant — redeem instantly via mobile interface, offer marked as redeemed, merchant receives confirmation
-
-*Knowledge-base sections used*
-
-- kb-L0-lloyds-enterprise-architecture §5.1 (Security — encryption in transit)
-
-</details>
-
 #### F-04.2 — Duplicate Redemption Prevention
 
 | Attribute | Value |
@@ -990,18 +765,6 @@ QR code is the assumed redemption mechanism (ASM-06). 5-minute expiry prevents s
 **Rationale**
 
 Database-level constraint is the last line of defense against race conditions. Idempotency key (redemption_token) prevents false duplicate errors from network retries — critical for mobile apps with unreliable connectivity.
-
-<details><summary>Sources cited</summary>
-
-*Requirements used*
-
-- FR-27: Duplicate Redemption Prevention — prevent users from redeeming same offer more than once
-
-*Knowledge-base sections used*
-
-- kb-L0-lloyds-enterprise-architecture §3.2 (Cloud SQL PostgreSQL — unique constraints)
-
-</details>
 
 #### F-04.3 — Offer History & Redemption Status
 
@@ -1030,18 +793,6 @@ Database-level constraint is the last line of defense against race conditions. I
 
 Three-tab grouping (active/redeemed/expired) directly from AC4 which mentions 'all redeemed and active offers with status and date'. Savings counter adds engagement value. Confidential sensitivity because redemption history reveals spending patterns.
 
-<details><summary>Sources cited</summary>
-
-*Requirements used*
-
-- FR-06: Offer History and Redemption Status — view all redeemed and active offers with status and date
-
-*Knowledge-base sections used*
-
-- kb-L0-lloyds-enterprise-architecture §3.1 (WCAG 2.1 AA accessibility)
-
-</details>
-
 #### F-04.4 — Offer Expiry Automation
 
 | Attribute | Value |
@@ -1066,18 +817,6 @@ Three-tab grouping (active/redeemed/expired) directly from AC4 which mentions 'a
 **Rationale**
 
 15-minute batch interval balances timeliness with system load. 'Expiring soon' notification drives urgency and redemption rates (key KPI). Cloud Scheduler + Cloud Function is the GCP-native pattern for scheduled jobs per Lloyds architecture.
-
-<details><summary>Sources cited</summary>
-
-*Requirements used*
-
-- FR-23: Offer Expiry and Lifecycle Management — automatically expire offers, remove from user views, prevent redemption of expired offers
-
-*Knowledge-base sections used*
-
-- kb-L0-lloyds-enterprise-architecture §4.1 (Cloud Composer/Airflow for workflow orchestration)
-
-</details>
 
 #### F-04.5 — Merchant Redemption Confirmation
 
@@ -1104,18 +843,6 @@ Three-tab grouping (active/redeemed/expired) directly from AC4 which mentions 'a
 **Rationale**
 
 Merchant confirmation is explicitly required by AC3 ('merchant receives confirmation'). Manual code fallback handles scenarios where merchant device camera fails or connectivity is poor. Real-time customer notification creates a satisfying 'ding' moment confirming the redemption.
-
-<details><summary>Sources cited</summary>
-
-*Requirements used*
-
-- FR-04: Instant Offer Redemption — merchant receiving confirmation of redemption
-
-*Knowledge-base sections used*
-
-- kb-L0-lloyds-enterprise-architecture §7.1 (REST APIs for synchronous calls)
-
-</details>
 
 ---
 
@@ -1182,19 +909,6 @@ FR-03 (transaction analysis), FR-19 (payment integration) enable personalization
 
 Open Banking AISP is the regulated mechanism for transaction data access (ASM-02). Restricted sensitivity because transaction data reveals complete financial behavior. Circuit breaker pattern per Lloyds architecture for external service resilience. BigQuery for analytics storage per Lloyds data platform.
 
-<details><summary>Sources cited</summary>
-
-*Requirements used*
-
-- FR-19: Payment Provider Integration — integrate with payment providers to securely access and analyze user transaction history
-
-*Knowledge-base sections used*
-
-- kb-L0-lloyds-enterprise-architecture §7.2 (Open Banking PSD2 — REST APIs via developer portal)
-- kb-L0-lloyds-enterprise-architecture §3.2 (Circuit breakers for external calls)
-
-</details>
-
 #### F-05.2 — Transaction Analysis & Spending Patterns
 
 | Attribute | Value |
@@ -1221,19 +935,6 @@ Open Banking AISP is the regulated mechanism for transaction data access (ASM-02
 **Rationale**
 
 Dataflow (Apache Beam) is Lloyds' standard for batch/stream processing. Storing aggregated patterns rather than raw transactions follows GDPR data minimization (NFR-12). MCC codes are the standard merchant category classification used by all payment networks.
-
-<details><summary>Sources cited</summary>
-
-*Requirements used*
-
-- FR-03: Transaction History Analysis for Personalization — analyze transaction history to personalize offer recommendations based on spending patterns
-
-*Knowledge-base sections used*
-
-- kb-L0-lloyds-enterprise-architecture §4.1 (Dataflow for stream processing, BigQuery for analytics)
-- kb-L0-lloyds-enterprise-architecture §4.2 (ML Pipeline — data sources to BigQuery)
-
-</details>
 
 #### F-05.3 — Merchant Registration & Onboarding
 
@@ -1262,18 +963,6 @@ Dataflow (Apache Beam) is Lloyds' standard for batch/stream processing. Storing 
 
 Quality review is an explicit constraint (CON-04). 48-hour SLA balances merchant experience with review thoroughness. Web-based per ASM-01 (merchant dashboard is desktop). Confidential sensitivity because business registration details are commercially sensitive.
 
-<details><summary>Sources cited</summary>
-
-*Requirements used*
-
-- FR-17: Merchant Registration and Onboarding — register and undergo quality review before campaigns go live
-
-*Knowledge-base sections used*
-
-- kb-L0-epics-best-practices §2 (Compliance Checkpoints — onboarding review)
-
-</details>
-
 #### F-05.4 — Campaign & Offer Creation
 
 | Attribute | Value |
@@ -1299,19 +988,6 @@ Quality review is an explicit constraint (CON-04). 48-hour SLA balances merchant
 
 Combined FR-18 and FR-25 as they represent a single merchant workflow (create campaign = create offer + set targeting). React web app per Lloyds architecture for internal tools. 5-minute propagation delay allows for cache invalidation across the geofencing pipeline.
 
-<details><summary>Sources cited</summary>
-
-*Requirements used*
-
-- FR-18: Merchant Campaign Management — create, configure, manage campaigns with geofence areas, offer hours, target audience
-- FR-25: Offer Content Creation — title, description, terms, images, discount value, validity period, redemption limits
-
-*Knowledge-base sections used*
-
-- kb-L0-lloyds-enterprise-architecture §3.1 (React SPA for internal/colleague-facing apps)
-
-</details>
-
 #### F-05.5 — Merchant Analytics Dashboard
 
 | Attribute | Value |
@@ -1336,19 +1012,6 @@ Combined FR-18 and FR-25 as they represent a single merchant workflow (create ca
 **Rationale**
 
 Metrics directly from AC9 (impressions, redemptions, user engagement). BigQuery backend for analytics per Lloyds data platform. Internal sensitivity because campaign performance data is merchant business intelligence but not PII. 60s polling for today's data balances freshness with server load.
-
-<details><summary>Sources cited</summary>
-
-*Requirements used*
-
-- FR-10: Merchant Analytics Dashboard — campaign analytics including impressions, redemptions, and user engagement metrics
-
-*Knowledge-base sections used*
-
-- kb-L0-lloyds-enterprise-architecture §4.1 (BigQuery for analytics)
-- kb-L0-lloyds-enterprise-architecture §1.1 (Visualisation — Power BI, Tableau, Looker)
-
-</details>
 
 ---
 
@@ -1414,19 +1077,6 @@ FR-02 (location controls), FR-07 (opt-out/deletion), FR-08 (reporting) are priva
 
 Three options directly from FR-02. OS permission state sync is critical because user can change permissions in system settings outside the app. Immediate effect on 'Off' selection per GDPR — cannot continue processing after withdrawal. Confidential because location preference reveals privacy sensitivity.
 
-<details><summary>Sources cited</summary>
-
-*Requirements used*
-
-- FR-02: User Location Tracking Controls — control settings with options: always-on, app-open only, or off
-
-*Knowledge-base sections used*
-
-- kb-L0-lloyds-enterprise-architecture §5.2 (UK GDPR/DPA 2018)
-- kb-L0-epics-best-practices §3 (GDPR Art. 6 — consent before optional processing)
-
-</details>
-
 #### F-06.2 — Data Sharing Opt-Out
 
 | Attribute | Value |
@@ -1452,19 +1102,6 @@ Three options directly from FR-02. OS permission state sync is critical because 
 **Rationale**
 
 Graceful degradation (category-only matching) ensures app remains useful after opt-out — prevents user churn. 1-hour deletion window for batch processing efficiency while meeting 'without undue delay' GDPR requirement. Restricted sensitivity because opt-out action itself reveals privacy concerns.
-
-<details><summary>Sources cited</summary>
-
-*Requirements used*
-
-- FR-07: Data Sharing Opt-Out — opt out of data sharing, stopping collection of transaction and location data, disabling personalized offers
-
-*Knowledge-base sections used*
-
-- kb-L0-lloyds-enterprise-architecture §9 (consent management as first-class concern)
-- kb-L0-epics-best-practices §3 (GDPR Art. 17 — erasure within 30 days)
-
-</details>
 
 #### F-06.3 — Account & Data Deletion
 
@@ -1492,19 +1129,6 @@ Graceful degradation (category-only matching) ensures app remains useful after o
 **Rationale**
 
 30-day window from AC10. 7-day cooling-off prevents accidental deletion (industry best practice). Pub/Sub event for cross-service deletion per Lloyds event-driven architecture. Anonymized analytics retained per GDPR allowance for statistical purposes. Restricted sensitivity as deletion is an irreversible action on all user data.
-
-<details><summary>Sources cited</summary>
-
-*Requirements used*
-
-- FR-07: Account Deletion — request account/data deletion with completion within 30 days
-
-*Knowledge-base sections used*
-
-- kb-L0-lloyds-enterprise-architecture §7.1 (Pub/Sub events for async communication)
-- kb-L0-epics-best-practices §3 (GDPR Art. 17 — erasure within 30 days, downstream processors notified)
-
-</details>
 
 #### F-06.4 — Offer Reporting
 
@@ -1535,18 +1159,6 @@ Graceful degradation (category-only matching) ensures app remains useful after o
 
 Report types cover all scenarios from AC6 plus 'inappropriate' for content moderation. Auto-pause at 3 reports balances merchant protection with quality control. 48-hour review SLA matches merchant onboarding review timeline. Rate limiting prevents weaponized reporting against competitors.
 
-<details><summary>Sources cited</summary>
-
-*Requirements used*
-
-- FR-08: Report Expired or Invalid Offers — report, receive confirmation, offer flagged for review
-
-*Knowledge-base sections used*
-
-- kb-L0-epics-best-practices §4 (Risk — Reputational risk from inappropriate content)
-
-</details>
-
 #### F-06.5 — Data Export (Portability)
 
 | Attribute | Value |
@@ -1571,19 +1183,6 @@ Report types cover all scenarios from AC6 plus 'inappropriate' for content moder
 **Rationale**
 
 GDPR Article 20 requires data portability in machine-readable format. JSON chosen as commonly used and machine-readable. 7-day rate limit prevents abuse of export generation (resource-intensive). 24-hour link expiry limits exposure window for sensitive data download.
-
-<details><summary>Sources cited</summary>
-
-*Requirements used*
-
-- FR-07: Data Sharing Opt-Out and Account Deletion — GDPR data rights
-
-*Knowledge-base sections used*
-
-- kb-L0-lloyds-enterprise-architecture §5.2 (UK GDPR/DPA 2018)
-- kb-L0-epics-best-practices §3 (GDPR data portability)
-
-</details>
 
 ---
 
@@ -1646,18 +1245,6 @@ FR-11 (social sharing), FR-12 (review-based recommendations), FR-13 (wearables) 
 
 Native share sheet is the standard mobile pattern — no need to build custom sharing UI. Deep linking with deferred attribution enables viral growth measurement. Anonymous sharing protects privacy (GDPR — no PII shared without consent). Public sensitivity as offer content is already public marketing material.
 
-<details><summary>Sources cited</summary>
-
-*Requirements used*
-
-- FR-11: Social Sharing of Offers — share offers with friends via social channels
-
-*Knowledge-base sections used*
-
-- kb-L0-lloyds-enterprise-architecture §3.1 (Native mobile — Swift iOS, Kotlin Android)
-
-</details>
-
 #### F-07.2 — Review-Based Recommendations
 
 | Attribute | Value |
@@ -1684,18 +1271,6 @@ Native share sheet is the standard mobile pattern — no need to build custom sh
 
 24-hour delay for review prompt gives user time to experience the offer. Rating thresholds (4.0 boost, 2.5 penalty, 2.0 flag) are standard marketplace quality signals. Keyword moderation prevents inappropriate content without blocking all reviews. Internal sensitivity as reviews are user-generated content visible to other users.
 
-<details><summary>Sources cited</summary>
-
-*Requirements used*
-
-- FR-12: Personalized Recommendations from Reviews — recommendations based on user reviews and ratings
-
-*Knowledge-base sections used*
-
-- kb-L0-epics-best-practices §4 (Reputational risk — content moderation)
-
-</details>
-
 #### F-07.3 — Wearable Device Notifications
 
 | Attribute | Value |
@@ -1719,18 +1294,6 @@ Native share sheet is the standard mobile pattern — no need to build custom sh
 **Rationale**
 
 Watch notifications are automatically routed by APNs/FCM for paired devices — minimal backend changes needed. No QR on watch because screen size makes scanning impractical. Complication provides glanceable value. Independent notification toggle respects user preference granularity.
-
-<details><summary>Sources cited</summary>
-
-*Requirements used*
-
-- FR-13: Wearable Device Integration — integrate with wearable devices for proximity-based notifications
-
-*Knowledge-base sections used*
-
-- kb-L0-lloyds-enterprise-architecture §3.1 (Native mobile — Swift iOS, Kotlin Android)
-
-</details>
 
 ---
 
@@ -1802,19 +1365,6 @@ NFR-06 (1M users), NFR-09 (99.9% uptime), NFR-11 (event throughput) are cross-cu
 
 GKE HPA is the standard auto-scaling mechanism per Lloyds architecture. Custom metrics (queue depth, latency) provide more responsive scaling than CPU alone for event-driven workloads. Pre-scaling for known peaks prevents cold-start latency during rush hours.
 
-<details><summary>Sources cited</summary>
-
-*Requirements used*
-
-- NFR-06: Concurrent User Capacity — support 1 million concurrent users without degradation
-
-*Knowledge-base sections used*
-
-- kb-L0-lloyds-enterprise-architecture §1.2 (GKE for container orchestration)
-- kb-L0-lloyds-enterprise-architecture §3.3 (Cloud Monitoring, Prometheus)
-
-</details>
-
 #### F-08.2 — Monitoring, Alerting & Observability
 
 | Attribute | Value |
@@ -1840,19 +1390,6 @@ GKE HPA is the standard auto-scaling mechanism per Lloyds architecture. Custom m
 **Rationale**
 
 Full observability stack directly from Lloyds enterprise architecture (Cloud Monitoring, Logging, Trace). Alert thresholds derived from NFR-01 (2s delivery SLA) — alert at 1.5s gives 500ms response window. Correlation IDs enable tracing a single geofence event through the entire pipeline.
-
-<details><summary>Sources cited</summary>
-
-*Requirements used*
-
-- NFR-09: System Uptime — 99.9% uptime with automated failover and recovery
-
-*Knowledge-base sections used*
-
-- kb-L0-lloyds-enterprise-architecture §3.3 (Cloud Monitoring, Cloud Logging, Cloud Trace, Prometheus)
-- kb-L0-lloyds-enterprise-architecture §1.1 (Observability stack)
-
-</details>
 
 #### F-08.3 — Automated Failover & Recovery
 
@@ -1880,19 +1417,6 @@ Full observability stack directly from Lloyds enterprise architecture (Cloud Mon
 
 Multi-zone GKE is standard for 99.9% uptime. Circuit breaker pattern explicitly mentioned in Lloyds architecture for external calls. Graceful degradation ensures core functionality (location-based offers) works even when personalization services are down.
 
-<details><summary>Sources cited</summary>
-
-*Requirements used*
-
-- NFR-09: System Uptime — automated failover and recovery for critical services
-
-*Knowledge-base sections used*
-
-- kb-L0-lloyds-enterprise-architecture §3.2 (Circuit breakers for external calls)
-- kb-L0-lloyds-enterprise-architecture §1.2 (GKE)
-
-</details>
-
 #### F-08.4 — Rate Limiting & Abuse Prevention
 
 | Attribute | Value |
@@ -1916,19 +1440,6 @@ Multi-zone GKE is standard for 99.9% uptime. Circuit breaker pattern explicitly 
 **Rationale**
 
 Cloud Armor is Lloyds' WAF/DDoS protection layer. Location spoofing is the primary abuse vector for geofence-based platforms (GAP-11). Silent suppression (no user notification) prevents attackers from learning detection thresholds. Multi-layer approach catches different attack types at appropriate levels.
-
-<details><summary>Sources cited</summary>
-
-*Requirements used*
-
-- NFR-06: Concurrent User Capacity — 1M users without degradation (implies abuse prevention at scale)
-
-*Knowledge-base sections used*
-
-- kb-L0-lloyds-enterprise-architecture §5.1 (Cloud Armor WAF/DDoS)
-- kb-L0-epics-best-practices §4 (Operational risk — fraud screening)
-
-</details>
 
 #### F-08.5 — Performance Optimization & Caching
 
@@ -1956,19 +1467,6 @@ Cloud Armor is Lloyds' WAF/DDoS protection layer. Location spoofing is the prima
 
 Redis caching per Lloyds architecture (Memorystore). TTL values balance freshness with load reduction. In-memory geofence cache on matching service eliminates network hop in the critical 2-second path. Cloud CDN for static assets (images) is standard GCP pattern. 200ms API target leaves 1800ms budget for the async notification pipeline.
 
-<details><summary>Sources cited</summary>
-
-*Requirements used*
-
-- NFR-11: Geofence Event Processing Throughput — process events for 1M users within 2-second SLA
-
-*Knowledge-base sections used*
-
-- kb-L0-lloyds-enterprise-architecture §3.2 (Memorystore Redis for caching)
-- kb-L0-lloyds-enterprise-architecture §4.1 (BigQuery for analytics)
-
-</details>
-
 #### F-08.6 — DR Testing & Chaos Engineering
 
 | Attribute | Value |
@@ -1993,18 +1491,6 @@ Redis caching per Lloyds architecture (Memorystore). TTL values balance freshnes
 **Rationale**
 
 Quarterly DR testing per DORA Article 11 (applicable to financial services). Chaos engineering validates that failover mechanisms actually work under realistic conditions. Monthly cadence for chaos catches regressions from deployments. Documentation requirement for audit trail.
-
-<details><summary>Sources cited</summary>
-
-*Requirements used*
-
-- NFR-09: System Uptime — 99.9% uptime with automated failover and recovery
-
-*Knowledge-base sections used*
-
-- kb-L0-epics-best-practices §3 (DORA Art. 11 — ICT business continuity plan tested quarterly, RTO/RPO met during DR test)
-
-</details>
 
 ---
 

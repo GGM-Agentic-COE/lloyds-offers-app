@@ -35,7 +35,7 @@ A mobile app that integrates geofencing, behavioral analytics, and transaction d
 
 > **Note:** Every functional requirement is classified `new` and has no baseline reference or baseline impact, so the per-requirement sections leave those fields out.
 
-> **About acceptance criteria:** The source JSON has no separate acceptance-criteria field. Each requirement's **Requirement** statement is its testable definition, and the **Source** quote shows the original brief text it came from. The feature-level detail is in the epics document.
+> **About acceptance criteria:** The source JSON has no separate acceptance-criteria field. Each requirement's **Requirement** statement is its testable definition. The feature-level detail is in the epics document.
 
 > **Action needed:** 10 of 10 assumptions need confirmation, and 16 gaps need answers from stakeholders. See [Assumptions](#assumptions) and [Gaps & open questions](#gaps--open-questions).
 
@@ -93,12 +93,6 @@ A mobile app that integrates geofencing, behavioral analytics, and transaction d
 
 **Requirement:** The system must deliver offers to users in real time based on their current location and time of day when they enter a geofenced area during merchant offer hours
 
-**Source**
-
-> “The app must deliver location-based offers to users in real time based on their current location and time of day”
->
-> — *Functional Requirements - Must Have - FR1*
-
 **Rationale:** Core capability of the platform. Priority Must-Have from explicit 'must' language. Combines FR1 and AC1 which describe the same capability.
 
 ### FR-02 User Location Tracking Controls
@@ -112,12 +106,6 @@ A mobile app that integrates geofencing, behavioral analytics, and transaction d
 | Delivered by features | `F-03.2`, `F-06.1` |
 
 **Requirement:** The system must allow users to control location tracking settings with options: always-on, app-open only, or off
-
-**Source**
-
-> “The app must allow users to control location tracking settings (always-on, app-open only, or off)”
->
-> — *Functional Requirements - Must Have - FR2*
 
 **Rationale:** Privacy control capability. Must-Have from explicit 'must' language. Maps to AC2 and US2.
 
@@ -133,12 +121,6 @@ A mobile app that integrates geofencing, behavioral analytics, and transaction d
 
 **Requirement:** The system must analyze user transaction history to personalize offer recommendations based on spending patterns
 
-**Source**
-
-> “The app must analyze user transaction history to personalize offer recommendations”
->
-> — *Functional Requirements - Must Have - FR3*
-
 **Rationale:** Backend analytics capability that drives personalization. Must-Have from explicit 'must' language. Maps to US5.
 
 ### FR-04 Instant Offer Redemption at Merchant
@@ -152,12 +134,6 @@ A mobile app that integrates geofencing, behavioral analytics, and transaction d
 | Delivered by features | `F-04.1`, `F-04.5` |
 
 **Requirement:** Users must be able to redeem offers instantly via a mobile interface at participating merchants, with the offer marked as redeemed and merchant receiving confirmation
-
-**Source**
-
-> “Users must be able to redeem offers instantly via a mobile interface at participating merchants”
->
-> — *Functional Requirements - Must Have - FR4*
 
 **Rationale:** Core redemption flow. Must-Have from explicit 'must' language. Maps to US3 and AC3.
 
@@ -173,12 +149,6 @@ A mobile app that integrates geofencing, behavioral analytics, and transaction d
 
 **Requirement:** The system must support push notifications for relevant offers delivered within 2 seconds of a qualifying geofence event
 
-**Source**
-
-> “The app must support push notifications for relevant offers”
->
-> — *Functional Requirements - Must Have - FR5*
-
 **Rationale:** Primary delivery channel for offers. Must-Have from explicit 'must' language. 2-second target from NFR Performance section.
 
 ### FR-06 Offer History and Redemption Status
@@ -192,12 +162,6 @@ A mobile app that integrates geofencing, behavioral analytics, and transaction d
 | Delivered by features | `F-04.3` |
 
 **Requirement:** Users must be able to view their offer history including all redeemed and active offers with status and date
-
-**Source**
-
-> “Users must be able to view their offer history and redemption status”
->
-> — *Functional Requirements - Must Have - FR6*
 
 **Rationale:** User transparency feature. Must-Have from explicit 'must' language. Maps to US4 and AC4.
 
@@ -213,12 +177,6 @@ A mobile app that integrates geofencing, behavioral analytics, and transaction d
 
 **Requirement:** Users must be able to opt out of data sharing at any time (stopping collection of transaction and location data, disabling personalized offers) and request account/data deletion with completion within 30 days
 
-**Source**
-
-> “The app must allow users to opt out of data sharing and delete their account/data”
->
-> — *Functional Requirements - Must Have - FR7*
-
 **Rationale:** Privacy and compliance capability. Must-Have from explicit 'must' language. Maps to US10, AC5, and AC10. 30-day deletion window from AC10.
 
 ### FR-08 Report Expired or Invalid Offers
@@ -232,12 +190,6 @@ A mobile app that integrates geofencing, behavioral analytics, and transaction d
 | Delivered by features | `F-06.4` |
 
 **Requirement:** Users should be able to report expired or invalid offers, receive confirmation of report submission, and have the offer flagged for review
-
-**Source**
-
-> “The app should allow users to report expired or invalid offers”
->
-> — *Functional Requirements - Should Have - FR8*
 
 **Rationale:** Quality control mechanism. Should-Have from explicit 'should' language. Maps to US8 and AC6.
 
@@ -253,12 +205,6 @@ A mobile app that integrates geofencing, behavioral analytics, and transaction d
 
 **Requirement:** The system should limit offer notifications to one per offer per day per user, suppressing duplicate notifications when re-entering the same geofenced area
 
-**Source**
-
-> “The app should limit offer notifications to one per offer per day per user”
->
-> — *Functional Requirements - Should Have - FR9*
-
 **Rationale:** Anti-spam mechanism. Should-Have from explicit 'should' language. Maps to US9 and AC7.
 
 ### FR-10 Merchant Analytics Dashboard
@@ -272,12 +218,6 @@ A mobile app that integrates geofencing, behavioral analytics, and transaction d
 | Delivered by features | `F-05.5` |
 
 **Requirement:** Merchants should have access to a dashboard displaying campaign analytics including impressions, redemptions, and user engagement metrics
-
-**Source**
-
-> “Merchants should have access to a dashboard with analytics on offer performance and user engagement”
->
-> — *Functional Requirements - Should Have - FR10*
 
 **Rationale:** Merchant-facing capability. Should-Have from explicit 'should' language. Maps to US7 and AC9.
 
@@ -293,12 +233,6 @@ A mobile app that integrates geofencing, behavioral analytics, and transaction d
 
 **Requirement:** Users could share offers with friends via social channels
 
-**Source**
-
-> “The app could support social sharing of offers with friends”
->
-> — *Functional Requirements - Nice to Have - FR11*
-
 **Rationale:** Viral growth feature. Nice-to-Have from explicit 'could' language.
 
 ### FR-12 Personalized Recommendations from Reviews
@@ -312,12 +246,6 @@ A mobile app that integrates geofencing, behavioral analytics, and transaction d
 | Delivered by features | `F-07.2` |
 
 **Requirement:** The system could provide personalized recommendations based on user reviews and ratings
-
-**Source**
-
-> “The app could provide personalized recommendations based on user reviews and ratings”
->
-> — *Functional Requirements - Nice to Have - FR12*
 
 **Rationale:** Enhanced personalization. Nice-to-Have from explicit 'could' language.
 
@@ -333,12 +261,6 @@ A mobile app that integrates geofencing, behavioral analytics, and transaction d
 
 **Requirement:** The system could integrate with wearable devices for proximity-based notifications
 
-**Source**
-
-> “The app could integrate with wearable devices for proximity-based notifications”
->
-> — *Functional Requirements - Nice to Have - FR13*
-
 **Rationale:** Extended device support. Nice-to-Have from explicit 'could' language.
 
 ### FR-14 Geofence Boundary Enforcement
@@ -352,12 +274,6 @@ A mobile app that integrates geofencing, behavioral analytics, and transaction d
 | Delivered by features | `F-03.5` |
 
 **Requirement:** The system must not deliver offers to users when they are outside supported cities or geofenced areas
-
-**Source**
-
-> “As a User, Not receive offers when outside supported cities, Prevents irrelevant notifications”
->
-> — *User Stories - US6*
 
 **Rationale:** Extracted from US6 as a distinct testable capability not covered by other FRs. Should-Have based on Medium priority in source.
 
@@ -373,12 +289,6 @@ A mobile app that integrates geofencing, behavioral analytics, and transaction d
 
 **Requirement:** Users must be able to control notification preferences including always-on push notifications versus in-app only delivery
 
-**Source**
-
-> “Allow users to control notification preferences (always-on vs. app-open only)”
->
-> — *Proposed Solution - Key Decisions*
-
 **Rationale:** Distinct from FR-02 (location tracking control). This is about notification delivery channel preference. Must-Have as it's listed as a key decision.
 
 ### FR-16 User Registration and Authentication
@@ -392,12 +302,6 @@ A mobile app that integrates geofencing, behavioral analytics, and transaction d
 | Delivered by features | `F-01.1`, `F-01.2`, `F-01.3`, `F-01.5` |
 
 **Requirement:** Users must be able to create an account and authenticate to access personalized features, offer history, and privacy settings
-
-**Source**
-
-> “Given a user is logged in, When They navigate to the offer history screen”
->
-> — *Acceptance Criteria - AC4*
 
 **Rationale:** AC4 implies authentication exists ('logged in'). Multiple features depend on user identity. Must-Have as it's a prerequisite for core functionality.
 
@@ -413,12 +317,6 @@ A mobile app that integrates geofencing, behavioral analytics, and transaction d
 
 **Requirement:** Merchants must be able to register on the platform and undergo a quality review process before their campaigns go live
 
-**Source**
-
-> “Merchant onboarding subject to quality review”
->
-> — *Scope & Constraints - Constraints*
-
 **Rationale:** Implied by the constraint that merchants must be onboarded with quality review. Must-Have as merchant participation is core to the platform.
 
 ### FR-18 Merchant Campaign Management
@@ -432,12 +330,6 @@ A mobile app that integrates geofencing, behavioral analytics, and transaction d
 | Delivered by features | `F-05.4` |
 
 **Requirement:** Merchants must be able to create, configure, and manage offer campaigns including setting geofence areas, offer hours, and target audience parameters
-
-**Source**
-
-> “10,000 simultaneous merchant campaigns”
->
-> — *Non-Functional Requirements - Scalability*
 
 **Rationale:** The platform must support 10,000 campaigns — implying merchants can create and manage them. Must-Have as offers cannot exist without campaign management.
 
@@ -453,12 +345,6 @@ A mobile app that integrates geofencing, behavioral analytics, and transaction d
 
 **Requirement:** The system must integrate with payment providers to securely access and analyze user transaction history for offer personalization
 
-**Source**
-
-> “Integrate with payment providers to analyze transaction history securely”
->
-> — *Proposed Solution - Key Decisions*
-
 **Rationale:** Key architectural decision and dependency. Must-Have as FR-03 (personalization) depends on this integration.
 
 ### FR-20 User Consent Management
@@ -472,12 +358,6 @@ A mobile app that integrates geofencing, behavioral analytics, and transaction d
 | Delivered by features | `F-01.4` |
 
 **Requirement:** The system must implement transparent consent flows for location tracking and transaction data access, collecting explicit user consent before accessing any personal data
-
-**Source**
-
-> “User consent required for location and transaction data access”
->
-> — *Scope & Constraints - Constraints*
 
 **Rationale:** Regulatory requirement (GDPR/CCPA) and explicit constraint. Must-Have for compliance. Mitigation strategy also mentions 'Transparent consent flows'.
 
@@ -493,12 +373,6 @@ A mobile app that integrates geofencing, behavioral analytics, and transaction d
 
 **Requirement:** The system must support creation, modification, and deletion of geofence zones associated with merchant locations, including defining radius/polygon boundaries and active hours
 
-**Source**
-
-> “Develop a mobile app that integrates geofencing, behavioral analytics, and transaction data to deliver targeted, real-time offers”
->
-> — *Proposed Solution - Approach*
-
 **Rationale:** Geofencing is the core delivery mechanism. FR-01 describes delivery but not the management of geofence zones themselves. Without this, offers cannot be spatially targeted. Must-Have as prerequisite to FR-01.
 
 ### FR-22 In-App Offer Feed
@@ -512,12 +386,6 @@ A mobile app that integrates geofencing, behavioral analytics, and transaction d
 | Delivered by features | `F-03.4` |
 
 **Requirement:** Users must be able to browse available offers within the app, filtered by proximity, category, and relevance, without relying solely on push notifications
-
-**Source**
-
-> “Offers are delivered via push notifications or in-app, with seamless redemption at partner merchants”
->
-> — *Proposed Solution - Approach*
 
 **Rationale:** Source explicitly states 'or in-app' as a delivery channel alongside push. Users who disable push or have notification preferences set to in-app-only need a browsable offer feed. Must-Have as it's a stated delivery channel.
 
@@ -533,12 +401,6 @@ A mobile app that integrates geofencing, behavioral analytics, and transaction d
 
 **Requirement:** The system must automatically expire offers based on their validity period, remove expired offers from user views, and prevent redemption of expired offers
 
-**Source**
-
-> “As a User, Report an expired or invalid offer”
->
-> — *User Stories - US8*
-
 **Rationale:** US8 and AC6 reference expired offers, implying offers have lifecycles. Without automatic expiry management, users would constantly encounter stale offers. Must-Have for data integrity and UX.
 
 ### FR-24 User Profile and Preference Management
@@ -552,12 +414,6 @@ A mobile app that integrates geofencing, behavioral analytics, and transaction d
 | Delivered by features | `F-02.4` |
 
 **Requirement:** Users must be able to view and update their profile information and set spending category preferences to improve offer relevance
-
-**Source**
-
-> “The offer matches the user's preferences and transaction history”
->
-> — *Acceptance Criteria - AC1*
 
 **Rationale:** AC1 references 'user's preferences' as a matching criterion. Users need a way to set/update these preferences. Should-Have as transaction history can bootstrap personalization without explicit preferences.
 
@@ -573,12 +429,6 @@ A mobile app that integrates geofencing, behavioral analytics, and transaction d
 
 **Requirement:** Merchants must be able to create offer content including title, description, terms and conditions, images, discount value, validity period, and redemption limits
 
-**Source**
-
-> “Partner with merchants for exclusive, redeemable offers”
->
-> — *Proposed Solution - Key Decisions*
-
 **Rationale:** Offers must be created before they can be delivered. FR-18 covers campaign management (targeting, scheduling) but not the offer content itself. Must-Have as the platform cannot function without offer content.
 
 ### FR-26 Geofence Entry/Exit Event Detection
@@ -593,12 +443,6 @@ A mobile app that integrates geofencing, behavioral analytics, and transaction d
 
 **Requirement:** The system must detect when a user enters or exits a geofenced area and trigger the offer matching pipeline within the 2-second delivery window
 
-**Source**
-
-> “A user with location tracking enabled enters a geofenced area during merchant offer hours, When The user is detected within the geofence”
->
-> — *Acceptance Criteria - AC1*
-
 **Rationale:** AC1 explicitly describes geofence entry detection as the trigger. This is the event-driven mechanism that connects location to offer delivery. Distinct from FR-21 (zone management) and FR-01 (delivery). Must-Have as the triggering mechanism.
 
 ### FR-27 Duplicate Redemption Prevention
@@ -612,12 +456,6 @@ A mobile app that integrates geofencing, behavioral analytics, and transaction d
 | Delivered by features | `F-04.2` |
 
 **Requirement:** The system must prevent users from redeeming the same offer more than once, displaying clear status when an offer has already been redeemed
-
-**Source**
-
-> “Tracks savings and avoids duplicate redemptions”
->
-> — *User Stories - US4*
 
 **Rationale:** US4 explicitly mentions avoiding duplicate redemptions. Without this, merchants face financial loss from multi-use of single-use offers. Must-Have for platform integrity.
 
@@ -655,12 +493,6 @@ A mobile app that integrates geofencing, behavioral analytics, and transaction d
 
 **Implementation notes (from epics plan):** EP-02: notification service must deliver within its 500ms budget. EP-03: matching pipeline must complete within 1500ms. EP-08: caching and optimization ensure latency under load.
 
-**Source**
-
-> “Offer notifications must be delivered within 2 seconds of a qualifying event (e.g., entering a geofenced area)”
->
-> — *Non-Functional Requirements - Performance*
-
 **Rationale:** Explicit measurable target provided. Must-Have from 'must' language. Also a KPI target.
 
 ### NFR-02 App Screen Load Time
@@ -677,12 +509,6 @@ A mobile app that integrates geofencing, behavioral analytics, and transaction d
 **Requirement:** App screens must load within 1 second on devices from the last 3 years
 
 **Implementation notes (from epics plan):** EP-00 establishes performant component patterns (lazy loading, virtualized lists). All user-facing screens (offer feed, history, merchant dashboard) must render within 1 second. Requires efficient API responses, pagination, and client-side caching.
-
-**Source**
-
-> “App screens must load within 1 second on devices from the last 3 years”
->
-> — *Non-Functional Requirements - Performance*
 
 **Rationale:** Explicit measurable target with device scope defined. Must-Have from 'must' language.
 
@@ -701,12 +527,6 @@ A mobile app that integrates geofencing, behavioral analytics, and transaction d
 
 **Implementation notes (from epics plan):** TLS 1.3 for all API communication. AES-256 for data at rest in Cloud SQL and BigQuery. Encryption keys managed via Cloud KMS. Applied universally across all services.
 
-**Source**
-
-> “All user data must be encrypted in transit and at rest”
->
-> — *Non-Functional Requirements - Security*
-
 **Rationale:** Explicit security requirement. Must-Have from 'must' language. Encryption standards inferred from industry best practice.
 
 ### NFR-04 GDPR Compliance
@@ -723,12 +543,6 @@ A mobile app that integrates geofencing, behavioral analytics, and transaction d
 **Requirement:** The system must comply with GDPR for data privacy, user consent, right to erasure, and data portability
 
 **Implementation notes (from epics plan):** EP-01: consent collection, lawful basis. EP-02: preference data handling. EP-05: transaction data processing (legitimate interest or consent). EP-06: data rights (erasure, portability, opt-out). EP-07: social sharing privacy.
-
-**Source**
-
-> “The app must comply with GDPR and CCPA for data privacy and user consent”
->
-> — *Non-Functional Requirements - Security*
 
 **Rationale:** Explicit regulatory requirement. Split from CCPA as they are distinct regulations with different obligations. Must-Have as regulatory compliance is mandatory.
 
@@ -747,12 +561,6 @@ A mobile app that integrates geofencing, behavioral analytics, and transaction d
 
 **Implementation notes (from epics plan):** EP-01: 'Do Not Sell' notice at registration. EP-05: transaction data qualifies as 'sale' under CCPA if shared with merchants. EP-06: right to delete, right to know.
 
-**Source**
-
-> “The app must comply with GDPR and CCPA for data privacy and user consent”
->
-> — *Non-Functional Requirements - Security*
-
 **Rationale:** Explicit regulatory requirement. Split from GDPR as a separate compliance obligation. Must-Have as regulatory compliance is mandatory.
 
 ### NFR-06 Concurrent User Capacity
@@ -769,12 +577,6 @@ A mobile app that integrates geofencing, behavioral analytics, and transaction d
 **Requirement:** The platform must support at least 1 million concurrent users without performance degradation
 
 **Implementation notes (from epics plan):** EP-03: matching pipeline must handle event throughput from 1M users. EP-08: auto-scaling, load balancing, and caching to support concurrent connections.
-
-**Source**
-
-> “The platform must support at least 1 million concurrent users and 10,000 simultaneous merchant campaigns without degradation”
->
-> — *Non-Functional Requirements - Scalability*
 
 **Rationale:** Explicit scalability target. Split from campaign capacity as they are independently testable. Must-Have from 'must' language.
 
@@ -793,12 +595,6 @@ A mobile app that integrates geofencing, behavioral analytics, and transaction d
 
 **Implementation notes (from epics plan):** EP-03: geofence matching must efficiently query across 10K active campaigns. EP-05: campaign management must support 10K concurrent campaigns without UI degradation.
 
-**Source**
-
-> “The platform must support at least 1 million concurrent users and 10,000 simultaneous merchant campaigns without degradation”
->
-> — *Non-Functional Requirements - Scalability*
-
 **Rationale:** Explicit scalability target for merchant side. Split from user capacity. Must-Have from 'must' language.
 
 ### NFR-08 WCAG 2.1 AA Compliance
@@ -815,12 +611,6 @@ A mobile app that integrates geofencing, behavioral analytics, and transaction d
 **Requirement:** The app must meet WCAG 2.1 AA standards including support for screen readers, high-contrast modes, and adjustable font sizes
 
 **Implementation notes (from epics plan):** EP-00 establishes accessibility foundations (touch targets, contrast, screen reader labels). All subsequent epics with user-facing screens inherit these patterns. Minimum touch targets 44x44pt. Color contrast ratio ≥4.5:1 for text.
-
-**Source**
-
-> “The app must meet WCAG 2.1 AA standards, including support for screen readers, high-contrast modes, and adjustable font sizes”
->
-> — *Non-Functional Requirements - Accessibility*
 
 **Rationale:** Explicit accessibility standard with specific features listed. Must-Have from 'must' language. Maps to AC8.
 
@@ -839,12 +629,6 @@ A mobile app that integrates geofencing, behavioral analytics, and transaction d
 
 **Implementation notes (from epics plan):** EP-08 is the primary implementation (failover, monitoring, DR). Other epics must implement health checks and graceful degradation. 99.9% = max 8.76 hours downtime/year.
 
-**Source**
-
-> “The system must maintain 99.9% uptime, with automated failover and recovery for critical services”
->
-> — *Non-Functional Requirements - Reliability*
-
 **Rationale:** Explicit availability target with recovery mechanism specified. Must-Have from 'must' language.
 
 ### NFR-10 Battery Efficiency
@@ -861,12 +645,6 @@ A mobile app that integrates geofencing, behavioral analytics, and transaction d
 **Requirement:** Geofencing logic must be optimized to minimize battery drain from continuous location tracking
 
 **Implementation notes (from epics plan):** EP-03: optimize geofence monitoring (significant location changes, region rotation). EP-06: location tracking settings allow users to reduce battery impact by choosing 'app-open only'.
-
-**Source**
-
-> “Battery drain from continuous location tracking - Mitigation: Optimize geofencing logic, allow user control over tracking frequency”
->
-> — *Dependencies & Risks*
 
 **Rationale:** Identified as a medium-likelihood risk with explicit mitigation strategy. Should-Have as it's a mitigation rather than a hard requirement. No specific target defined — flagged in gaps.
 
@@ -885,12 +663,6 @@ A mobile app that integrates geofencing, behavioral analytics, and transaction d
 
 **Implementation notes (from epics plan):** EP-03: pipeline architecture must support high throughput. EP-08: auto-scaling and caching ensure throughput under peak load.
 
-**Source**
-
-> “The platform must support at least 1 million concurrent users... Offer notifications must be delivered within 2 seconds”
->
-> — *Non-Functional Requirements - Scalability and Performance*
-
 **Rationale:** Combining NFR-01 (2s latency) with NFR-06 (1M users) implies a massive event processing throughput requirement. This is a distinct scalability concern from user connections or campaign count.
 
 ### NFR-12 Location Data Minimization
@@ -907,12 +679,6 @@ A mobile app that integrates geofencing, behavioral analytics, and transaction d
 **Requirement:** The system must implement data minimization principles — collecting only the location precision necessary for geofence matching and not storing continuous location trails
 
 **Implementation notes (from epics plan):** EP-03: only store geofence events (not continuous location). EP-05: spending profiles use aggregates, not raw data. EP-06: deletion removes all location-derived data.
-
-**Source**
-
-> “The app must comply with GDPR... Utilize real-time location tracking with user consent for precise offer delivery”
->
-> — *Non-Functional Requirements - Security; Proposed Solution - Key Decisions*
 
 **Rationale:** GDPR Article 5(1)(c) requires data minimization. Continuous location storage would be disproportionate to the purpose of offer delivery. Must-Have for GDPR compliance.
 
@@ -933,23 +699,11 @@ A mobile app that integrates geofencing, behavioral analytics, and transaction d
 
 **Constraint:** Mobile app must be built for iOS and Android platforms
 
-**Source**
-
-> “Mobile app for iOS and Android”
->
-> — *Scope & Constraints - In Scope*
-
 **Rationale:** Fixed platform decision — not negotiable. Constrains technology choices to cross-platform or dual native development.
 
 ### CON-02 (Regulatory)
 
 **Constraint:** User consent is required before accessing location and transaction data
-
-**Source**
-
-> “User consent required for location and transaction data access”
->
-> — *Scope & Constraints - Constraints*
 
 **Rationale:** Regulatory constraint from GDPR/CCPA. Fixed decision that affects all data collection flows.
 
@@ -957,23 +711,11 @@ A mobile app that integrates geofencing, behavioral analytics, and transaction d
 
 **Constraint:** Initial launch limited to select urban markets only
 
-**Source**
-
-> “Initial launch limited to select urban markets”
->
-> — *Scope & Constraints - Constraints*
-
 **Rationale:** Business decision constraining geographic scope. Affects geofence coverage and merchant partnerships.
 
 ### CON-04 (Organisational)
 
 **Constraint:** Merchant onboarding is subject to quality review before campaigns go live
-
-**Source**
-
-> “Merchant onboarding subject to quality review”
->
-> — *Scope & Constraints - Constraints*
 
 **Rationale:** Operational constraint affecting merchant go-live timelines. Fixed process decision.
 
@@ -981,23 +723,11 @@ A mobile app that integrates geofencing, behavioral analytics, and transaction d
 
 **Constraint:** Push notifications must use APNs (iOS) and FCM (Android)
 
-**Source**
-
-> “Push notification services (APNs, FCM)”
->
-> — *Dependencies & Risks - Dependencies*
-
 **Rationale:** Technology dependency that constrains notification implementation. These are the only viable push services for mobile platforms.
 
 ### CON-06 (Technology)
 
 **Constraint:** No web-based consumer interface — mobile app only
-
-**Source**
-
-> “Web-based user interface for consumers”
->
-> — *Scope & Constraints - Out of Scope*
 
 **Rationale:** Explicit scope exclusion. Constrains delivery to mobile channels only for consumers.
 
